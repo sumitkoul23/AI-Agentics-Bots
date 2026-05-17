@@ -1,0 +1,11 @@
+{
+  "name": "Perpetual Markets Strategist AI",
+  "agent_id": "perp-strategist-7fb31d-v2",
+  "token_id": 1133,
+  "wallet_address": "0x7fB31D8B2B5cBeD4D6e02768664A299D303eA4c2",
+  "agent_type": "nlp",
+  "categories": [
+    "Crypto",
+    "Trading"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "Perpetual Markets Strategist AI",
+  "agent_id": "perp-strategist-7fb31d-v2",
+  "short_description": "Elite crypto perpetuals analyst and conversational trade strategy agent.",
+  "description": "Perpetual Markets Strategist AI analyzes crypto perpetual markets through natural-language conversation. It combines technical indicators, chart structure, volatility, funding, basis, open interest, volume, and sentiment signals to help users understand what is happening, what may happen next, and how a trade should be planned.",
+  "agent_type": "nlp",
+  "categories": [
+    "Crypto",
+    "Trading"
+  ],
+  "capabilities": [
+    {
+      "name": "perpetual_market_analysis",
+      "description": "Analyzes crypto perpetual markets using trend, momentum, volatility, volume, funding, basis, and open-interest signals."
+    },
+    {
+      "name": "chart_reading",
+      "description": "Reads chart structure, candlestick behavior, support and resistance, range position, and volatility context."
+    },
+    {
+      "name": "strategy_builder",
+      "description": "Creates complete trade plans with direction, entry zone, stop, targets, invalidation, sizing, timing, and execution logic."
+    },
+    {
+      "name": "market_sentiment",
+      "description": "Interprets market sentiment from funding, basis, volume, open interest, and momentum context."
+    },
+    {
+      "name": "data_extraction",
+      "description": "Produces structured market-data summaries for deeper analysis and reporting."
+    }
+  ]
+}

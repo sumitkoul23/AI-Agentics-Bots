@@ -1,0 +1,16 @@
+[Unit]
+Description=Perpetual Market Strategist Teneo Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=teneo
+WorkingDirectory=/opt/perpetual-market-strategist
+EnvironmentFile=/opt/perpetual-market-strategist/.env
+ExecStart=/opt/perpetual-market-strategist/deploy/linux/start-agent.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

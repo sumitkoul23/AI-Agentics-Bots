@@ -1,0 +1,17 @@
+# Local secrets
+.env
+**/.env
+
+# Local runtime outputs
+*.log
+*.pid
+*.exe
+.teneo-deploy-state-*.json
+
+# Go / local build state
+**/.gocache/
+**/.gopath/
+
+# OS / editor noise
+Thumbs.db
+.DS_Store

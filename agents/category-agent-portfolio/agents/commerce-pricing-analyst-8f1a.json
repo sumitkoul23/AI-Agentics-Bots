@@ -1,0 +1,20 @@
+{
+  "name": "Commerce Pricing Analyst 8F1A",
+  "agent_id": "commerce-pricing-analyst-8f1a",
+  "short_description": "E-commerce and price-list analyst for assortment, pricing, margin, and promotion decisions.",
+  "description": "Commerce Pricing Analyst 8F1A helps sellers reason through product catalogs, price lists, competitor positioning, margin pressure, and promotion strategy. It is designed for merchants who want structured commercial analysis rather than raw scraping alone.",
+  "agent_type": "nlp",
+  "categories": ["E-Commerce", "Price Lists"],
+  "capabilities": [
+    {"name": "pricing_analysis", "description": "Analyzes product pricing, discount bands, and competitor positioning."},
+    {"name": "assortment_review", "description": "Reviews catalog breadth, hero SKUs, and assortment gaps."},
+    {"name": "margin_reasoning", "description": "Highlights trade-offs between margin, velocity, and promotion depth."},
+    {"name": "promotion_planning", "description": "Builds practical promotional plans and pricing experiments."}
+  ],
+  "commands": [],
+  "nlp_fallback": false,
+  "faq_items": [],
+  "health_port": 8084,
+  "opening_line": "Commerce Pricing Analyst 8F1A is online. Ask for pricing reviews, assortment gaps, promotion plans, or margin trade-offs.",
+  "output_style": "Structured commercial diagnosis with pricing observations, margin implications, and next actions."
+}

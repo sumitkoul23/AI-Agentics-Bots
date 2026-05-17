@@ -1,0 +1,252 @@
+{
+  "name": "Perpetual Market Strategist",
+  "agent_id": "perp-strategist-7fb31d",
+  "short_description": "Elite crypto perpetuals analyst and guarded trade strategy agent.",
+  "description": "A crypto perpetual markets agent that analyzes USDT-M perpetual pairs using technical indicators, chart structure, volatility, funding, basis, open interest, volume, and market sentiment. It can produce predictions, complete execution plans, risk sizing, guarded order tickets, and structured market data extraction. Pricing policy: first query free where the platform supports introductory free usage, then 0.5 USDC per analysis/strategy query and 1.5 USDC per data extraction query. Live execution is disabled unless the operator explicitly enables exchange credentials, max notional limits, and a confirmation phrase.",
+  "pricing_policy": {
+    "first_query_free": true,
+    "analysis_usdc_per_query": 0.5,
+    "data_extraction_usdc_per_query": 1.5,
+    "note": "Teneo command metadata stores static per-command prices. First-query-free introductory handling must be supported by the platform or enforced at the listing/billing layer."
+  },
+  "agent_type": "command",
+  "capabilities": [
+    {
+      "name": "perpetual-market-analysis",
+      "description": "Analyzes crypto perpetual markets with EMA/SMA trend, RSI, MACD, Bollinger Bands, ATR, VWAP, stochastic, volume, support/resistance, funding, basis, and open interest."
+    },
+    {
+      "name": "chart-reading",
+      "description": "Reads candlestick structure, volatility, range position, support/resistance, wick behavior, and trend confirmation from OHLCV data."
+    },
+    {
+      "name": "sentiment-signals",
+      "description": "Interprets market sentiment through funding, mark/index basis, 24h price change, volume, open interest, and momentum context."
+    },
+    {
+      "name": "strategy-building",
+      "description": "Creates trade plans with direction, entry zone, stop, targets, invalidation, position sizing, risk, timing, and execution checklist."
+    },
+    {
+      "name": "guarded-execution",
+      "description": "Creates dry-run order tickets by default. Live Binance Futures execution requires explicit env configuration, max notional control, and confirm=EXECUTE_LIVE_ORDER."
+    },
+    {
+      "name": "data-extraction",
+      "description": "Extracts structured OHLCV rows, indicator values, funding, basis, 24h ticker, and open interest for crypto perpetual markets."
+    }
+  ],
+  "commands": [
+    {
+      "trigger": "help",
+      "description": "Lists all commands and usage examples.",
+      "parameters": [],
+      "strictArg": true,
+      "minArgs": 0,
+      "maxArgs": 0,
+      "pricePerUnit": 0,
+      "priceType": "task-transaction",
+      "taskUnit": "per-query"
+    },
+    {
+      "trigger": "analyze",
+      "description": "Full crypto perpetual technical and sentiment analysis for a symbol.",
+      "parameters": [
+        {
+          "name": "symbol",
+          "description": "Perpetual pair such as BTC, BTCUSDT, ETH, or SOLUSDT.",
+          "required": true
+        },
+        {
+          "name": "timeframe",
+          "description": "Optional candle timeframe: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, or 1d. Default 1h.",
+          "required": false
+        },
+        {
+          "name": "limit",
+          "description": "Optional candle count from 60 to 500. Default 250.",
+          "required": false
+        }
+      ],
+      "strictArg": false,
+      "minArgs": 1,
+      "maxArgs": 3,
+      "pricePerUnit": 0.5,
+      "priceType": "task-transaction",
+      "taskUnit": "per-query"
+    },
+    {
+      "trigger": "chart",
+      "description": "Reads recent chart structure, candle behavior, support/resistance, volatility, and trend state.",
+      "parameters": [
+        {
+          "name": "symbol",
+          "description": "Perpetual pair such as BTC, BTCUSDT, ETH, or SOLUSDT.",
+          "required": true
+        },
+        {
+          "name": "timeframe",
+          "description": "Optional candle timeframe. Default 1h.",
+          "required": false
+        }
+      ],
+      "strictArg": false,
+      "minArgs": 1,
+      "maxArgs": 2,
+      "pricePerUnit": 0.5,
+      "priceType": "task-transaction",
+      "taskUnit": "per-query"
+    },
+    {
+      "trigger": "sentiment",
+      "description": "Summarizes market sentiment using funding, basis, 24h change, volume, and open interest.",
+      "parameters": [
+        {
+          "name": "symbol",
+          "description": "Perpetual pair such as BTC, BTCUSDT, ETH, or SOLUSDT.",
+          "required": true
+        }
+      ],
+      "strictArg": true,
+      "minArgs": 1,
+      "maxArgs": 1,
+      "pricePerUnit": 0.5,
+      "priceType": "task-transaction",
+      "taskUnit": "per-query"
+    },
+    {
+      "trigger": "extract-data",
+      "description": "Extracts structured perpetual market data including recent OHLCV rows, indicator values, funding, basis, 24h ticker, and open interest.",
+      "parameters": [
+        {
+          "name": "symbol",
+          "description": "Perpetual pair such as BTC, BTCUSDT, ETH, or SOLUSDT.",
+          "required": true
+        },
+        {
+          "name": "timeframe",
+          "description": "Optional candle timeframe. Default 1h.",
+          "required": false
+        },
+        {
+          "name": "limit",
+          "description": "Optional candle count from 60 to 200. Default 120.",
+          "required": false
+        }
+      ],
+      "strictArg": false,
+      "minArgs": 1,
+      "maxArgs": 3,
+      "pricePerUnit": 1.5,
+      "priceType": "task-transaction",
+      "taskUnit": "per-query"
+    },
+    {
+      "trigger": "predict",
+      "description": "Creates a probabilistic market forecast with base case, invalidation, confirmation signals, and risk notes.",
+      "parameters": [
+        {
+          "name": "symbol",
+          "description": "Perpetual pair such as BTC, BTCUSDT, ETH, or SOLUSDT.",
+          "required": true
+        },
+        {
+          "name": "timeframe",
+          "description": "Optional candle timeframe. Default 1h.",
+          "required": false
+        },
+        {
+          "name": "horizon",
+          "description": "Optional horizon label such as next-24h or next-session.",
+          "required": false
+        }
+      ],
+      "strictArg": false,
+      "minArgs": 1,
+      "maxArgs": 3,
+      "pricePerUnit": 0.5,
+      "priceType": "task-transaction",
+      "taskUnit": "per-query"
+    },
+    {
+      "trigger": "strategy",
+      "description": "Builds a complete trade plan with what, where, when, and how to execute, including risk sizing.",
+      "parameters": [
+        {
+          "name": "symbol",
+          "description": "Perpetual pair such as BTC, BTCUSDT, ETH, or SOLUSDT.",
+          "required": true
+        },
+        {
+          "name": "timeframe",
+          "description": "Optional candle timeframe. Default 1h.",
+          "required": false
+        },
+        {
+          "name": "account_usd",
+          "description": "Optional account size in USD for position sizing. Default 10000.",
+          "required": false
+        },
+        {
+          "name": "risk_pct",
+          "description": "Optional percent of account to risk, between 0 and 5. Default 0.5.",
+          "required": false
+        }
+      ],
+      "strictArg": false,
+      "minArgs": 1,
+      "maxArgs": 4,
+      "pricePerUnit": 0.5,
+      "priceType": "task-transaction",
+      "taskUnit": "per-query"
+    },
+    {
+      "trigger": "execute",
+      "description": "Creates a dry-run order ticket by default. Live Binance Futures order placement is guarded by env vars, max notional limit, and confirm=EXECUTE_LIVE_ORDER.",
+      "parameters": [
+        {
+          "name": "symbol",
+          "description": "Perpetual pair such as BTCUSDT.",
+          "required": true
+        },
+        {
+          "name": "side",
+          "description": "BUY or SELL.",
+          "required": true
+        },
+        {
+          "name": "quantity",
+          "description": "Order quantity.",
+          "required": true
+        },
+        {
+          "name": "order_type",
+          "description": "MARKET or LIMIT.",
+          "required": true
+        },
+        {
+          "name": "price",
+          "description": "Limit price when order_type is LIMIT.",
+          "required": false
+        },
+        {
+          "name": "confirm",
+          "description": "Optional exact phrase confirm=EXECUTE_LIVE_ORDER for live order execution after env guardrails are enabled.",
+          "required": false
+        }
+      ],
+      "strictArg": false,
+      "minArgs": 4,
+      "maxArgs": 6,
+      "pricePerUnit": 0.5,
+      "priceType": "task-transaction",
+      "taskUnit": "per-query"
+    }
+  ],
+  "nlp_fallback": false,
+  "categories": [
+    "Crypto",
+    "Trading"
+  ],
+  "metadata_version": "2.4.0"
+}

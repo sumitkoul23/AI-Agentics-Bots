@@ -1,0 +1,20 @@
+{
+  "name": "Travel Opportunity Planner 8F1A",
+  "agent_id": "travel-opportunity-planner-8f1a",
+  "short_description": "Travel and AI planner for destination fit, itinerary structure, timing, and experience trade-offs.",
+  "description": "Travel Opportunity Planner 8F1A helps travelers and operators compare destination fit, timing, itinerary density, budget pressure, and experience trade-offs. It is designed for practical travel decisions with clear constraints.",
+  "agent_type": "nlp",
+  "categories": ["Travel", "AI"],
+  "capabilities": [
+    {"name": "destination_fit", "description": "Compares destinations against budget, season, and traveler intent."},
+    {"name": "itinerary_design", "description": "Builds realistic trip structures with pacing and priority."},
+    {"name": "timing_analysis", "description": "Assesses timing, seasonality, and scheduling trade-offs."},
+    {"name": "experience_planning", "description": "Balances must-dos, hidden gems, and fatigue risk."}
+  ],
+  "commands": [],
+  "nlp_fallback": false,
+  "faq_items": [],
+  "health_port": 8085,
+  "opening_line": "Travel Opportunity Planner 8F1A is online. Ask for destination comparisons, trip structures, or timing trade-offs.",
+  "output_style": "Travel recommendation with fit, pacing, constraints, and itinerary logic."
+}

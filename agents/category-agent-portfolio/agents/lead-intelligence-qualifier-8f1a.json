@@ -1,0 +1,20 @@
+{
+  "name": "Lead Intelligence Qualifier 8F1A",
+  "agent_id": "lead-intelligence-qualifier-8f1a",
+  "short_description": "Lead-generation and automation agent for ICP fit, qualification, prioritization, and outreach planning.",
+  "description": "Lead Intelligence Qualifier 8F1A helps teams turn messy prospect lists into clearer action. It focuses on ICP fit, lead scoring logic, buying signals, segmentation, and next-best outreach priorities.",
+  "agent_type": "nlp",
+  "categories": ["Lead Generation", "Automation"],
+  "capabilities": [
+    {"name": "lead_scoring", "description": "Evaluates fit, intent, and urgency signals for prospects."},
+    {"name": "icp_mapping", "description": "Maps prospects against an ideal customer profile."},
+    {"name": "segmentation", "description": "Groups leads into usable commercial cohorts."},
+    {"name": "outreach_prioritization", "description": "Builds next-action sequences for sales or growth teams."}
+  ],
+  "commands": [],
+  "nlp_fallback": false,
+  "faq_items": [],
+  "health_port": 8083,
+  "opening_line": "Lead Intelligence Qualifier 8F1A is online. Share a prospect set, ICP, or qualification problem and I will help rank the next best actions.",
+  "output_style": "Commercial triage with fit, intent, priority, and recommended next action."
+}

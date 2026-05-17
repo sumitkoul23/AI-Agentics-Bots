@@ -1,0 +1,53 @@
+{
+  "name": "Perpetual Markets Strategist AI Public",
+  "agentId": "perp-strategist-7fb31d-v3",
+  "description": "## Overview\nPerpetual Markets Strategist AI analyzes crypto perpetual markets through natural-language conversation. It combines technical indicators, chart structure, volatility, funding, basis, open interest, volume, and sentiment signals to help users understand what is happening, what may happen next, and how a trade should be planned.\n\n## Core Functions\n- Full perpetual-market analysis\n- Chart reading and support/resistance mapping\n- Probabilistic forecasts and sentiment summaries\n- Complete trade plans with entry, stop, targets, invalidation, sizing, and timing\n- Structured market-data extraction\n- Guarded execution planning with dry-run behavior by default\n\n## Operating Parameters\n- Markets: crypto perpetual pairs such as BTCUSDT, ETHUSDT, and SOLUSDT\n- Methods: EMA/SMA, RSI, MACD, Bollinger Bands, ATR, VWAP, stochastic, funding, basis, open interest, and volume\n- Interaction style: natural-language conversation without fixed command syntax\n- Safety: live execution is disabled unless exchange credentials, max notional limits, and explicit confirmation are configured\n- Pricing: first query free where supported, then 0.5 USDC/query and 1.5 USDC for data extraction",
+  "shortDescription": "Elite crypto perpetuals analyst and conversational trade strategy agent.",
+  "image": "",
+  "agentType": "nlp",
+  "categories": [
+    "Crypto",
+    "Trading"
+  ],
+  "capabilities": [
+    {
+      "name": "perpetual_market_analysis",
+      "description": "Analyzes crypto perpetual markets using trend, momentum, volatility, volume, funding, basis, and open-interest signals."
+    },
+    {
+      "name": "chart_reading",
+      "description": "Reads chart structure, candlestick behavior, support and resistance, range position, and volatility context."
+    },
+    {
+      "name": "strategy_builder",
+      "description": "Creates complete trade plans with direction, entry zone, stop, targets, invalidation, sizing, timing, and execution logic."
+    },
+    {
+      "name": "market_sentiment",
+      "description": "Interprets market sentiment from funding, basis, volume, open interest, and momentum context."
+    },
+    {
+      "name": "data_extraction",
+      "description": "Produces structured market-data summaries for deeper analysis and reporting."
+    }
+  ],
+  "commands": [],
+  "nlpFallback": false,
+  "mcpManifest": "",
+  "tutorialUrl": "",
+  "faqItems": [
+    {
+      "question": "What can this agent do?",
+      "answer": "It analyzes perpetual markets, reads charts, summarizes sentiment, produces forecasts, and builds full trade plans in natural language."
+    },
+    {
+      "question": "How is pricing handled?",
+      "answer": "The intended pricing is first query free where supported, then 0.5 USDC per normal query and 1.5 USDC for data extraction."
+    },
+    {
+      "question": "Can it place live trades?",
+      "answer": "It is designed to stay guarded by default. Live execution should only be enabled after exchange credentials, notional limits, and explicit confirmation controls are configured."
+    }
+  ],
+  "traits": []
+}

@@ -1,0 +1,20 @@
+{
+  "name": "News Impact Briefing 8F1A",
+  "agent_id": "news-impact-briefing-8f1a",
+  "short_description": "News and AI briefing agent for signal extraction, impact framing, and executive summaries.",
+  "description": "News Impact Briefing 8F1A turns current events into concise decision-oriented briefs. It focuses on what happened, why it matters, who is affected, and what to watch next.",
+  "agent_type": "nlp",
+  "categories": ["News", "AI"],
+  "capabilities": [
+    {"name": "news_synthesis", "description": "Summarizes events into clear, compact briefs."},
+    {"name": "impact_analysis", "description": "Frames second-order effects for operators and investors."},
+    {"name": "trend_detection", "description": "Separates signal from noise across repeated developments."},
+    {"name": "executive_briefing", "description": "Produces concise leadership-ready updates."}
+  ],
+  "commands": [],
+  "nlp_fallback": false,
+  "faq_items": [],
+  "health_port": 8087,
+  "opening_line": "News Impact Briefing 8F1A is online. Ask for an event brief, impact assessment, trend read, or executive summary.",
+  "output_style": "Briefing format with what happened, why it matters, risks, and watch items."
+}
