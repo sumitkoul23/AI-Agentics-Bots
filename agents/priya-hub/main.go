@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,6 +11,9 @@ import (
 	"os"
 	"strings"
 )
+
+//go:embed static/index.html
+var indexHTML []byte
 
 func main() {
 	port := os.Getenv("PORT")
@@ -38,7 +42,8 @@ func main() {
 	mux := http.NewServeMux()
 	registerRoutes(mux, router, registry, mem, swarm, mesh)
 
-	log.Printf("Endpoints: POST /chat  GET /status  GET /agents  GET /memory  GET /mesh  GET /peers")
+	log.Printf("UI:        http://localhost:%s", port)
+	log.Printf("API:       POST /chat  GET /status /agents /memory /mesh /peers")
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
@@ -125,9 +130,14 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 		})
 	}
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprint(w, hubGreeting(swarm))
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Write(indexHTML)
 	})
 }
 
