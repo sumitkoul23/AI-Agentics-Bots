@@ -1,243 +1,237 @@
 package main
 
 import (
-	"context"
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"strings"
-
-	"github.com/TeneoProtocolAI/teneo-agent-sdk/pkg/agent"
-	"github.com/TeneoProtocolAI/teneo-agent-sdk/pkg/deploy"
-	"github.com/TeneoProtocolAI/teneo-agent-sdk/pkg/types"
-	"github.com/joho/godotenv"
 )
 
-// HubAgent is the single Teneo entry point that routes to all specialized agents.
-type HubAgent struct {
-	router   *Router
-	registry *Registry
-	mem      *HubMemory
-}
-
-type Metadata struct {
-	Name             string             `json:"name"`
-	AgentID          string             `json:"agent_id"`
-	ShortDescription string             `json:"short_description"`
-	Description      string             `json:"description"`
-	AgentType        string             `json:"agent_type"`
-	Categories       []string           `json:"categories"`
-	Capabilities     []types.Capability `json:"capabilities"`
-	Commands         json.RawMessage    `json:"commands"`
-	NLPFallback      bool               `json:"nlp_fallback"`
-	FAQItems         json.RawMessage    `json:"faq_items"`
-}
-
-// ProcessTask is called by the Teneo SDK for every incoming message.
-func (h *HubAgent) ProcessTask(ctx context.Context, task string) (string, error) {
-	input := strings.TrimSpace(task)
-	if input == "" {
-		return h.greeting(), nil
+func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	lower := strings.ToLower(input)
+	mem := NewMemory(".priya-hub-memory.json")
+	registry := NewRegistry(mem)
+	swarm := NewSwarm(registry, mem)
+	router := NewRouter(registry, swarm)
 
-	// ── Built-in hub commands ─────────────────────────────────────────────────
+	swarm.Start()
+	defer swarm.Stop()
+
+	log.Printf("Priya Hub — %d agents | port %s", len(swarm.agents), port)
+
+	if os.Getenv("CLI") == "1" {
+		runCLI(router, registry, mem, swarm)
+		return
+	}
+
+	mux := http.NewServeMux()
+	registerRoutes(mux, router, registry, mem, swarm)
+
+	log.Printf("Endpoints: POST /chat  GET /status  GET /agents  GET /memory")
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
+		log.Fatal(err)
+	}
+}
+
+// ── HTTP handlers ─────────────────────────────────────────────────────────────
+
+func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem *Memory, swarm *Swarm) {
+	mux.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "POST only", http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(io.LimitReader(r.Body, 64*1024))
+		if err != nil {
+			http.Error(w, "bad request", http.StatusBadRequest)
+			return
+		}
+
+		var req struct {
+			Message string `json:"message"`
+			Agent   string `json:"agent"`
+		}
+		if err := json.Unmarshal(body, &req); err != nil {
+			req.Message = strings.TrimSpace(string(body))
+		}
+
+		input := strings.TrimSpace(req.Message)
+		if input == "" {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]string{"reply": hubGreeting(swarm)})
+			return
+		}
+
+		var reply string
+		if req.Agent != "" {
+			var ok bool
+			reply, ok = router.Dispatch(req.Agent, input)
+			if !ok {
+				reply = fmt.Sprintf("Unknown agent %q. GET /agents to see available agents.", req.Agent)
+			}
+		} else {
+			reply = handleInput(input, router, registry, mem, swarm)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"reply": reply})
+	})
+
+	mux.HandleFunc("/status", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprint(w, swarm.Status())
+	})
+
+	mux.HandleFunc("/agents", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprint(w, registry.Catalog())
+	})
+
+	mux.HandleFunc("/memory", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		mem.mu.RLock()
+		json.NewEncoder(w).Encode(mem.Data)
+		mem.mu.RUnlock()
+	})
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprint(w, hubGreeting(swarm))
+	})
+}
+
+// ── CLI mode ──────────────────────────────────────────────────────────────────
+
+func runCLI(router *Router, registry *Registry, mem *Memory, swarm *Swarm) {
+	fmt.Println(hubGreeting(swarm))
+	fmt.Println()
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Print("You: ")
+		if !scanner.Scan() {
+			break
+		}
+		input := strings.TrimSpace(scanner.Text())
+		if input == "" {
+			continue
+		}
+		reply := handleInput(input, router, registry, mem, swarm)
+		fmt.Printf("\nPriya: %s\n\n", reply)
+	}
+}
+
+// ── Input dispatcher ──────────────────────────────────────────────────────────
+
+func handleInput(input string, router *Router, registry *Registry, mem *Memory, swarm *Swarm) string {
+	lower := strings.ToLower(input)
 
 	switch {
 	case lower == "/help":
-		return helpText(), nil
+		return helpText()
 
 	case lower == "/agents" || lower == "/list":
-		return h.registry.Catalog(), nil
+		return registry.Catalog()
+
+	case lower == "/status" || lower == "/swarm":
+		return swarm.Status()
 
 	case strings.HasPrefix(lower, "/learn voice "):
 		sample := strings.TrimSpace(input[len("/learn voice "):])
-		h.mem.AddVoiceSample(sample)
-		_ = h.mem.Save()
-		return "Got it — I'll write in your voice from now on.", nil
+		mem.AddVoice(sample)
+		mem.Save()
+		return "Got it — I'll write in your voice from now on."
 
 	case strings.HasPrefix(lower, "/set "):
 		parts := strings.SplitN(strings.TrimSpace(input[len("/set "):]), "=", 2)
 		if len(parts) == 2 {
-			h.mem.SetPreference(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
-			_ = h.mem.Save()
-			return "Saved.", nil
+			mem.Set(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+			mem.Save()
+			return "Saved."
 		}
-		return "Usage: /set key=value", nil
+		return "Usage: /set key=value"
 
 	case strings.HasPrefix(lower, "/learn "):
 		parts := strings.SplitN(strings.TrimSpace(input[len("/learn "):]), "=", 2)
 		if len(parts) == 2 {
-			h.mem.Learn(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
-			_ = h.mem.Save()
-			return "Learned.", nil
+			mem.Learn(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+			mem.Save()
+			return "Learned."
 		}
-		return "Usage: /learn key=value", nil
+		return "Usage: /learn key=value"
 
-	// Explicit agent routing — user can force a specific agent
 	case strings.HasPrefix(lower, "/use "):
 		rest := strings.TrimSpace(input[len("/use "):])
 		parts := strings.SplitN(rest, " ", 2)
 		if len(parts) < 2 {
-			return fmt.Sprintf("Usage: /use <agent-id> <your message>\n\nAgents: %s",
-				h.agentIDs()), nil
+			return "Usage: /use <agent-id> <your message>"
 		}
-		agentID := parts[0]
-		if h.registry.Get(agentID) == nil {
-			return fmt.Sprintf("Unknown agent %q. Available: %s", agentID, h.agentIDs()), nil
+		reply, ok := router.Dispatch(parts[0], parts[1])
+		if !ok {
+			return fmt.Sprintf("Unknown agent %q. Type /agents for the full list.", parts[0])
 		}
-		return h.router.dispatch(ctx, agentID, parts[1])
+		return reply
 	}
 
-	// ── Auto-route via keyword + Claude classifier ────────────────────────────
-	return h.router.Route(ctx, input)
+	return router.Route(input)
 }
 
-func (h *HubAgent) greeting() string {
-	ready := "✅ All agents online."
-	if !h.router.IsReady() {
-		ready = "⚠️  Set ANTHROPIC_API_KEY for full AI capability (keyword routing active)."
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+func hubGreeting(swarm *Swarm) string {
+	engine := "Template mode (start Ollama for on-device AI)"
+	if swarm.ollama != nil {
+		engine = fmt.Sprintf("Ollama — %s (100%% on-device, no API keys)", swarm.ollama.Model)
 	}
-	return fmt.Sprintf(`Namaste! I'm Priya Hub 🌸
+	return fmt.Sprintf(`Namaste! I'm Priya — your autonomous self-learning AI swarm 🌸
 
-One chat. Every expert. I route your message to the right specialist automatically.
+AI Engine : %s
+Agents    : %d specialist agents active
+Learning  : Every conversation makes me smarter
 
-%s
-
-Specialists available:
-  📈 Perpetual Markets Strategist  — crypto perp analysis + trade plans
-  💼 Portfolio Strategist          — allocation, rebalancing, risk
-  📣 Social Media Expert           — content for all 7 platforms
-  💬 Communication Specialist      — emails, DMs, proposals, negotiation
-  🗂  Personal Organizer            — tasks, plans, focus, delegation
-  💰 Finance & Crypto Analyst      — markets, DeFi, macro, explainers
-  🔍 Freelance & Jobs Advisor      — job search, proposals, rates
-  🌸 Priya (General)               — everything else
-
-Commands:
-  /agents                Show all agents
-  /use <id> <message>    Force a specific agent
-  /set key=value         Save a preference
-  /learn voice <sample>  Teach me your writing style
-  /help                  Full command reference
-
-Or just talk naturally — I'll figure out the rest.`, ready)
-}
-
-func (h *HubAgent) agentIDs() string {
-	ids := []string{"perp-markets", "portfolio", "social", "comms", "organizer", "finance", "freelance", "priya"}
-	return strings.Join(ids, ", ")
+Just talk naturally — I'll route to the right specialist automatically.
+Type /agents to see all specialists, /status for swarm health, /help for commands.`,
+		engine, len(swarm.agents))
 }
 
 func helpText() string {
-	return `Priya Hub — Command Reference
+	return `Priya Swarm — Command Reference
 
-━━ ROUTING ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━ ROUTING ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 (automatic — just talk naturally)
 
-/agents                   List all available agents
-/use <id> <message>       Force a specific agent:
-                            perp-markets, portfolio, social,
-                            comms, organizer, finance, freelance, priya
+/agents               List all specialist agents
+/use <id> <message>   Force a specific agent
+                        IDs: perp-markets, portfolio, social,
+                             comms, organizer, finance, freelance, priya
 
-━━ EXAMPLES (auto-routed) ━━━━━━━━━━━━━━━━━━━━━━
-"BTC trade plan long"           → Perpetual Markets Strategist
-"Rebalance my portfolio"        → Portfolio Strategist
-"Draft a LinkedIn post about AI"→ Social Media Expert
-"Write email to my client"      → Communication Specialist
-"Brain dump: [your tasks]"      → Personal Organizer
-"DeFi yields this week"         → Finance & Crypto Analyst
-"Find Upwork jobs for Go dev"   → Freelance & Jobs Advisor
-"Anything else"                 → Priya (General)
+━━ SWARM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/status               Show swarm health + Ollama status
 
-━━ MEMORY & SETTINGS ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-/set niche=AI development       Save your niche
-/set skills=Go, Python          Save your skills
-/set holdings=BTC 0.5, ETH 2   Save portfolio holdings
-/learn voice <writing sample>   Teach Priya your voice
-/learn key=value                Save any fact about you
+━━ MEMORY & LEARNING ━━━━━━━━━━━━━━━━━━━━━━━━
+/set key=value        Save a preference
+/learn key=value      Teach a fact
+/learn voice <text>   Feed your writing style
 
-━━ GENERAL ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-/help                           This menu`
-}
+━━ QUICK EXAMPLES ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"BTC trade plan long"            → Perp Markets
+"Rebalance my portfolio"         → Portfolio
+"Draft a LinkedIn post about AI" → Social Media
+"Write email to my client"       → Comms
+"Brain dump all my tasks"        → Organizer
+"Explain DeFi yields"            → Finance
+"Find Upwork gigs for Go dev"    → Freelance
 
-// ── Main ──────────────────────────────────────────────────────────────────────
-
-func main() {
-	_ = godotenv.Load()
-
-	raw, err := os.ReadFile("hub-metadata.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-	var meta Metadata
-	if err := json.Unmarshal(raw, &meta); err != nil {
-		log.Fatal(err)
-	}
-
-	mem := NewHubMemory(".priya-hub-memory.json")
-	registry := NewRegistry(mem)
-	router := NewRouter(registry, mem)
-
-	hub := &HubAgent{
-		router:   router,
-		registry: registry,
-		mem:      mem,
-	}
-
-	log.Printf("Priya Hub starting — %d agents registered", len(registry.agents))
-
-	capabilitiesJSON, _ := json.Marshal(meta.Capabilities)
-	categoriesJSON, _ := json.Marshal(meta.Categories)
-
-	result, err := deploy.DeployAgent(deploy.DeployConfig{
-		PrivateKey:       os.Getenv("PRIVATE_KEY"),
-		AgentID:          meta.AgentID,
-		AgentName:        meta.Name,
-		Description:      meta.Description,
-		AgentType:        meta.AgentType,
-		Capabilities:     capabilitiesJSON,
-		Commands:         meta.Commands,
-		NlpFallback:      meta.NLPFallback,
-		Categories:       categoriesJSON,
-		ShortDescription: meta.ShortDescription,
-		FAQItems:         meta.FAQItems,
-		MetadataVersion:  "2.4.0",
-		StateFilePath:    ".teneo-deploy-state-hub.json",
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("Priya Hub deployed — token_id=%d", result.TokenID)
-
-	cfg := agent.DefaultConfig()
-	if err := cfg.LoadFromEnv(); err != nil {
-		log.Fatal(err)
-	}
-	cfg.AgentID = meta.AgentID
-	cfg.Name = meta.Name
-	cfg.Description = meta.Description
-	cfg.ShortDescription = meta.ShortDescription
-	cfg.CapabilityDetails = meta.Capabilities
-	cfg.Capabilities = make([]string, 0, len(meta.Capabilities))
-	for _, cap := range meta.Capabilities {
-		cfg.Capabilities = append(cfg.Capabilities, cap.Name)
-	}
-
-	a, err := agent.NewEnhancedAgent(&agent.EnhancedAgentConfig{
-		Config:          cfg,
-		AgentHandler:    hub,
-		AgentID:         meta.AgentID,
-		TokenID:         result.TokenID,
-		SubmitForReview: true,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := a.Run(); err != nil {
-		log.Fatal(err)
-	}
+━━ API ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+POST /chat   {"message": "your text", "agent": "optional-id"}
+GET  /status
+GET  /agents
+GET  /memory`
 }

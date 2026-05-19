@@ -7,106 +7,101 @@ import (
 	"time"
 )
 
-// HubMemory gives the hub persistent conversation state across restarts.
-type HubMemory struct {
+type Memory struct {
 	mu   sync.RWMutex
 	path string
-	Data HubMemoryData
+	Data MemoryData
 }
 
-type HubMemoryData struct {
-	UserVoiceSamples    []string          `json:"user_voice_samples"`
-	UserPreferences     map[string]string `json:"user_preferences"`
-	ConversationHistory []HubMessage      `json:"conversation_history"`
-	LearnedFacts        map[string]string `json:"learned_facts"`
-	LastUpdated         time.Time         `json:"last_updated"`
+type MemoryData struct {
+	VoiceSamples []string          `json:"voice_samples"`
+	Preferences  map[string]string `json:"preferences"`
+	Facts        map[string]string `json:"facts"`
+	History      []Turn            `json:"history"`
+	UpdatedAt    time.Time         `json:"updated_at"`
 }
 
-type HubMessage struct {
-	Role      string    `json:"role"`
-	Content   string    `json:"content"`
-	Timestamp time.Time `json:"timestamp"`
+type Turn struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
 }
 
-func NewHubMemory(path string) *HubMemory {
-	m := &HubMemory{
+func NewMemory(path string) *Memory {
+	m := &Memory{
 		path: path,
-		Data: HubMemoryData{
-			UserPreferences: make(map[string]string),
-			LearnedFacts:    make(map[string]string),
+		Data: MemoryData{
+			Preferences: make(map[string]string),
+			Facts:       make(map[string]string),
 		},
 	}
-	_ = m.load()
+	raw, err := os.ReadFile(path)
+	if err == nil {
+		json.Unmarshal(raw, &m.Data)
+	}
 	return m
 }
 
-func (m *HubMemory) load() error {
+func (m *Memory) Save() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	raw, err := os.ReadFile(m.path)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(raw, &m.Data)
+	m.Data.UpdatedAt = time.Now()
+	raw, _ := json.MarshalIndent(m.Data, "", "  ")
+	os.WriteFile(m.path, raw, 0600)
 }
 
-func (m *HubMemory) Save() error {
+func (m *Memory) Push(role, content string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.Data.LastUpdated = time.Now()
-	raw, err := json.MarshalIndent(m.Data, "", "  ")
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(m.path, raw, 0600)
-}
-
-func (m *HubMemory) AddMessage(role, content string) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.Data.ConversationHistory = append(m.Data.ConversationHistory, HubMessage{
-		Role:      role,
-		Content:   content,
-		Timestamp: time.Now(),
-	})
-	if len(m.Data.ConversationHistory) > 100 {
-		m.Data.ConversationHistory = m.Data.ConversationHistory[len(m.Data.ConversationHistory)-100:]
+	m.Data.History = append(m.Data.History, Turn{role, content})
+	if len(m.Data.History) > 80 {
+		m.Data.History = m.Data.History[len(m.Data.History)-80:]
 	}
 }
 
-func (m *HubMemory) AddVoiceSample(sample string) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.Data.UserVoiceSamples = append(m.Data.UserVoiceSamples, sample)
-	if len(m.Data.UserVoiceSamples) > 20 {
-		m.Data.UserVoiceSamples = m.Data.UserVoiceSamples[len(m.Data.UserVoiceSamples)-20:]
-	}
-}
-
-func (m *HubMemory) SetPreference(key, val string) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.Data.UserPreferences[key] = val
-}
-
-func (m *HubMemory) GetPreference(key string) string {
+func (m *Memory) Set(k, v string) { m.mu.Lock(); m.Data.Preferences[k] = v; m.mu.Unlock() }
+func (m *Memory) Get(k string) string {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	return m.Data.UserPreferences[key]
+	return m.Data.Preferences[k]
 }
-
-func (m *HubMemory) Learn(key, val string) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.Data.LearnedFacts[key] = val
-}
-
-func (m *HubMemory) RecentHistory(n int) []HubMessage {
+func (m *Memory) Learn(k, v string) { m.mu.Lock(); m.Data.Facts[k] = v; m.mu.Unlock() }
+func (m *Memory) RecentHistory(n int) []Turn {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	h := m.Data.ConversationHistory
-	if len(h) <= n {
-		return append([]HubMessage(nil), h...)
+	h := m.Data.History
+	if len(h) > n {
+		h = h[len(h)-n:]
 	}
-	return append([]HubMessage(nil), h[len(h)-n:]...)
+	result := make([]Turn, len(h))
+	copy(result, h)
+	return result
+}
+
+func (m *Memory) GetFacts() map[string]string {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	out := make(map[string]string, len(m.Data.Facts))
+	for k, v := range m.Data.Facts {
+		out[k] = v
+	}
+	return out
+}
+
+func (m *Memory) GetPreferences() map[string]string {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	out := make(map[string]string, len(m.Data.Preferences))
+	for k, v := range m.Data.Preferences {
+		out[k] = v
+	}
+	return out
+}
+
+func (m *Memory) AddVoice(s string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.Data.VoiceSamples = append(m.Data.VoiceSamples, s)
+	if len(m.Data.VoiceSamples) > 20 {
+		m.Data.VoiceSamples = m.Data.VoiceSamples[len(m.Data.VoiceSamples)-20:]
+	}
 }
