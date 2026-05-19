@@ -15,6 +15,18 @@ import (
 //go:embed static/index.html
 var indexHTML []byte
 
+//go:embed static/manifest.json
+var manifestJSON []byte
+
+//go:embed static/sw.js
+var swJS []byte
+
+//go:embed static/icon.svg
+var iconSVG []byte
+
+//go:embed static/icon-maskable.svg
+var iconMaskableSVG []byte
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -129,6 +141,27 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 			json.NewEncoder(w).Encode(m.Peers())
 		})
 	}
+
+	mux.HandleFunc("/manifest.json", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/manifest+json")
+		w.Header().Set("Cache-Control", "public, max-age=3600")
+		w.Write(manifestJSON)
+	})
+	mux.HandleFunc("/sw.js", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/javascript")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Write(swJS)
+	})
+	mux.HandleFunc("/icon.svg", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "image/svg+xml")
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		w.Write(iconSVG)
+	})
+	mux.HandleFunc("/icon-maskable.svg", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "image/svg+xml")
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		w.Write(iconMaskableSVG)
+	})
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
