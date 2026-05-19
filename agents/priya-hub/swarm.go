@@ -19,14 +19,16 @@ type SwarmMessage struct {
 
 // swarmAgent is a specialized goroutine — one per registered agent.
 type swarmAgent struct {
-	id      string
-	name    string
-	inbox   chan SwarmMessage
-	system  string
-	handler func(string, *Memory) string // template fallback
-	ollama  *OllamaClient
-	mem     *Memory
-	learner *Learner
+	id       string
+	name     string
+	inbox    chan SwarmMessage
+	system   string
+	handler  func(string, *Memory) string // template fallback
+	ollama   *OllamaClient
+	mem      *Memory
+	learner  *Learner
+	trainer  *Trainer
+	decision *DecisionEngine
 }
 
 func (a *swarmAgent) run(ctx context.Context) {
@@ -51,15 +53,23 @@ func (a *swarmAgent) process(ctx context.Context, input string) string {
 	genCtx, cancel := context.WithTimeout(ctx, 90*time.Second)
 	defer cancel()
 
+	// ── Decision layer ────────────────────────────────────────────────────────
+	// Decide what to do before generating: inject questions, lessons, guidance.
+	appendQ, question, sysAppend := a.decision.Decide(a.id, input)
+
+	// Build the full system prompt for this request
+	systemPrompt := a.system
+	if lctx := a.learner.BuildContext(a.id); lctx != "" {
+		systemPrompt += "\n\n" + lctx
+	}
+	if sysAppend != "" {
+		systemPrompt += "\n\n" + sysAppend
+	}
+
 	var response string
 
+	// ── Ollama (on-device LLM) ────────────────────────────────────────────────
 	if a.ollama != nil {
-		systemPrompt := a.system
-		if ctx := a.learner.BuildContext(a.id); ctx != "" {
-			systemPrompt += "\n\n" + ctx
-		}
-
-		// Inject recent conversation history
 		history := a.mem.RecentHistory(8)
 		var hb strings.Builder
 		for _, t := range history {
@@ -69,12 +79,10 @@ func (a *swarmAgent) process(ctx context.Context, input string) string {
 				hb.WriteString("Assistant: " + t.Content + "\n")
 			}
 		}
-
 		prompt := input
 		if hb.Len() > 0 {
 			prompt = "Recent conversation:\n" + hb.String() + "\nUser: " + input
 		}
-
 		var err error
 		response, err = a.ollama.Generate(genCtx, systemPrompt, prompt)
 		if err != nil {
@@ -82,15 +90,33 @@ func (a *swarmAgent) process(ctx context.Context, input string) string {
 		}
 	}
 
+	// ── Template fallback ─────────────────────────────────────────────────────
 	if response == "" {
 		response = a.handler(input, a.mem)
 	}
 
+	// ── Onboarding question injection ─────────────────────────────────────────
+	if appendQ && question != "" {
+		response = a.decision.AppendOnboardQ(response, question)
+		a.trainer.RecordOnboardAnswer()
+	}
+
+	// ── Training trail note (shown at low confidence) ─────────────────────────
+	if note := a.trainer.TrailNote(); note != "" {
+		response += note
+	}
+
+	// ── Persist ───────────────────────────────────────────────────────────────
 	a.mem.Push("user", input)
 	a.mem.Push("assistant", response)
 	a.mem.Save()
 
-	go a.learner.Learn(a.id, input, response)
+	// ── Async: learn, record, log decision ───────────────────────────────────
+	go func() {
+		a.learner.Learn(a.id, input, response)
+		a.trainer.Record(a.id, input, response)
+	}()
+	a.decision.Log(a.id, input)
 
 	return response
 }
@@ -101,6 +127,7 @@ type Swarm struct {
 	ollama  *OllamaClient
 	mem     *Memory
 	learner *Learner
+	trainer *Trainer
 	cancel  context.CancelFunc
 	wg      sync.WaitGroup
 	mu      sync.RWMutex
@@ -117,24 +144,29 @@ func NewSwarm(registry *Registry, mem *Memory) *Swarm {
 	}
 
 	learner := NewLearner(mem, ollama)
+	trainer := NewTrainer(mem, ollama)
+	decision := NewDecisionEngine(mem, trainer)
 
 	s := &Swarm{
 		agents:  make(map[string]*swarmAgent),
 		ollama:  ollama,
 		mem:     mem,
 		learner: learner,
+		trainer: trainer,
 	}
 
 	for _, a := range registry.list {
 		s.agents[a.ID] = &swarmAgent{
-			id:      a.ID,
-			name:    a.Name,
-			inbox:   make(chan SwarmMessage, 32),
-			system:  agentSystemPrompt(a.ID, a.Name, a.Desc),
-			handler: a.Handle,
-			ollama:  ollama,
-			mem:     mem,
-			learner: learner,
+			id:       a.ID,
+			name:     a.Name,
+			inbox:    make(chan SwarmMessage, 32),
+			system:   agentSystemPrompt(a.ID, a.Name, a.Desc),
+			handler:  a.Handle,
+			ollama:   ollama,
+			mem:      mem,
+			learner:  learner,
+			trainer:  trainer,
+			decision: decision,
 		}
 	}
 
@@ -260,10 +292,16 @@ func (s *Swarm) Status() string {
 
 	sb.WriteString(fmt.Sprintf("\nMemory    : %d facts | %d preferences | %d conversation turns\n",
 		len(facts), len(prefs), len(hist)))
-	sb.WriteString(fmt.Sprintf("\nAgents (%d):\n", len(s.agents)))
 
+	if s.trainer != nil {
+		sb.WriteString(fmt.Sprintf("\n%s\n", s.trainer.StatusLine()))
+	}
+
+	sb.WriteString(fmt.Sprintf("\nAgents (%d):\n", len(s.agents)))
 	for id, a := range s.agents {
-		sb.WriteString(fmt.Sprintf("  %-20s  queue: %d\n", id, len(a.inbox)))
+		conf := s.mem.AgentConfidence(id)
+		sb.WriteString(fmt.Sprintf("  %-20s  queue: %d  confidence: %.0f%%\n",
+			id, len(a.inbox), conf*100))
 	}
 	return sb.String()
 }

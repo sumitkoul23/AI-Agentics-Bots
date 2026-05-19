@@ -543,9 +543,33 @@ function renderStatus(){
   const model=(eng.match(/Ollama \(([^)]+)\)/)||[])[1]||null
   const ql=lines.filter(l=>l.includes('queue:'))
   const ml=lines.find(l=>l.includes('Memory'))
+  const tl=lines.find(l=>l.startsWith('Training:'))||''
+  // parse training score from "Training: 42/100 | 15 interactions | Onboarding: complete"
+  const tsm=tl.match(/Training:\s*([\d.]+)\/100/)
+  const score=tsm?parseFloat(tsm[1]):null
+  const onboard=tl.includes('Onboarding: complete')?'complete':tl.includes('Onboarding:')?'in progress':null
+  const interactions=(tl.match(/(\d+)\s+interactions/)||[])[1]||null
+  const phase=score==null?null:score<20?'Cold start':score<45?'Learning':score<70?'Familiar':'Expert'
+  const scoreColor=score==null?'var(--text3)':score<30?'#e05252':score<65?'#e09c52':'var(--green)'
   let h=`<div class="psec"><div class="psec-t">AI Engine</div><div class="scard"><div class="scard-l">Model</div><div class="scard-v" style="color:${model?'var(--green)':'var(--text3)'}"> ${model?'🟢 '+model:'⚪ Template mode'}</div></div></div>`
+  if(score!=null){
+    h+=`<div class="psec"><div class="psec-t">Training Intelligence</div>`
+    h+=`<div class="scard"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:.8rem;color:var(--text2)">Training score</span><span style="font-size:.85rem;font-weight:600;color:${scoreColor}">${Math.round(score)}/100 — ${phase}</span></div>`
+    h+=`<div style="height:6px;border-radius:3px;background:var(--bg3);overflow:hidden"><div style="height:100%;width:${score}%;background:${scoreColor};border-radius:3px;transition:width .4s"></div></div>`
+    if(onboard)h+=`<div style="margin-top:8px;font-size:.76rem;color:var(--text3)">Onboarding: <span style="color:${onboard==='complete'?'var(--green)':'var(--accent)'}">${onboard}</span>${interactions?` · ${interactions} interactions`:''}</div>`
+    h+=`</div></div>`
+  }
   h+=`<div class="psec"><div class="psec-t">Agents</div>`
-  if(ql.length){ql.forEach(ln=>{const m=ln.trim().match(/(\S+)\s+queue:\s*(\d+)/);if(!m)return;const id=m[1],q=+m[2],a=AGENTS.find(x=>x.id===id);h+=`<div class="aq"><div class="aq-n" style="color:${a?.color||'var(--text2)'}">${a?.icon||'•'} ${id}</div><div class="qbg"><div class="qfill" style="width:${Math.min(q/32*100,100)}%;background:${a?.color||'var(--accent)'}"></div></div><div class="qnum">${q}</div></div>`})}else{h+='<div style="font-size:.78rem;color:var(--text3)">All agents idle ✓</div>'}
+  if(ql.length){ql.forEach(ln=>{
+    const m=ln.trim().match(/^(\S+)\s+queue:\s*(\d+)\s+confidence:\s*([\d.]+)%/)
+    if(!m){const m2=ln.trim().match(/(\S+)\s+queue:\s*(\d+)/);if(!m2)return;const id=m2[1],q=+m2[2],a=AGENTS.find(x=>x.id===id);h+=`<div class="aq"><div class="aq-n" style="color:${a?.color||'var(--text2)'}">${a?.icon||'•'} ${id}</div><div class="qbg"><div class="qfill" style="width:${Math.min(q/32*100,100)}%;background:${a?.color||'var(--accent)'}"></div></div><div class="qnum">${q}</div></div>`;return}
+    const id=m[1],q=+m[2],conf=parseFloat(m[3]),a=AGENTS.find(x=>x.id===id)
+    const cc=conf<30?'#e05252':conf<65?'#e09c52':'var(--green)'
+    h+=`<div class="aq" style="flex-direction:column;align-items:stretch;gap:4px;padding:6px 8px">`
+    h+=`<div style="display:flex;justify-content:space-between;align-items:center"><div class="aq-n" style="color:${a?.color||'var(--text2)'}">${a?.icon||'•'} ${id}</div><div style="display:flex;gap:8px;font-size:.72rem;color:var(--text3)"><span>queue: ${q}</span><span style="color:${cc}">${conf.toFixed(0)}%</span></div></div>`
+    h+=`<div style="height:3px;border-radius:2px;background:var(--bg3)"><div style="height:100%;width:${conf}%;background:${cc};border-radius:2px"></div></div>`
+    h+=`</div>`
+  })}else{h+='<div style="font-size:.78rem;color:var(--text3)">All agents idle ✓</div>'}
   h+=`</div>`
   if(ml)h+=`<div class="psec"><div class="psec-t">Memory</div><div class="scard"><div class="scard-v" style="font-size:.79rem;color:var(--text2)">${ml.replace('Memory    :','').trim()}</div></div></div>`
   return h
