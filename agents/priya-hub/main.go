@@ -21,21 +21,24 @@ func main() {
 	registry := NewRegistry(mem)
 	swarm := NewSwarm(registry, mem)
 	router := NewRouter(registry, swarm)
+	mesh := NewMesh(port, mem, swarm)
 
 	swarm.Start()
+	mesh.Start()
 	defer swarm.Stop()
+	defer mesh.Stop()
 
-	log.Printf("Priya Hub — %d agents | port %s", len(swarm.agents), port)
+	log.Printf("Priya Hub — %d agents | port %s | mesh discovery active", len(swarm.agents), port)
 
 	if os.Getenv("CLI") == "1" {
-		runCLI(router, registry, mem, swarm)
+		runCLI(router, registry, mem, swarm, mesh)
 		return
 	}
 
 	mux := http.NewServeMux()
-	registerRoutes(mux, router, registry, mem, swarm)
+	registerRoutes(mux, router, registry, mem, swarm, mesh)
 
-	log.Printf("Endpoints: POST /chat  GET /status  GET /agents  GET /memory")
+	log.Printf("Endpoints: POST /chat  GET /status  GET /agents  GET /memory  GET /mesh  GET /peers")
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
@@ -43,7 +46,7 @@ func main() {
 
 // ── HTTP handlers ─────────────────────────────────────────────────────────────
 
-func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem *Memory, swarm *Swarm) {
+func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem *Memory, swarm *Swarm, mesh ...*Mesh) {
 	mux.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "POST only", http.StatusMethodNotAllowed)
@@ -78,7 +81,11 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 				reply = fmt.Sprintf("Unknown agent %q. GET /agents to see available agents.", req.Agent)
 			}
 		} else {
-			reply = handleInput(input, router, registry, mem, swarm)
+			var m *Mesh
+			if len(mesh) > 0 {
+				m = mesh[0]
+			}
+			reply = handleInput(input, router, registry, mem, swarm, m)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -87,7 +94,11 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 
 	mux.HandleFunc("/status", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprint(w, swarm.Status())
+		s := swarm.Status()
+		if len(mesh) > 0 && mesh[0] != nil {
+			s += "\n" + mesh[0].Status()
+		}
+		fmt.Fprint(w, s)
 	})
 
 	mux.HandleFunc("/agents", func(w http.ResponseWriter, _ *http.Request) {
@@ -102,6 +113,18 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 		mem.mu.RUnlock()
 	})
 
+	if len(mesh) > 0 && mesh[0] != nil {
+		m := mesh[0]
+		mux.HandleFunc("/mesh", func(w http.ResponseWriter, _ *http.Request) {
+			w.Header().Set("Content-Type", "text/plain")
+			fmt.Fprint(w, m.Status())
+		})
+		mux.HandleFunc("/peers", func(w http.ResponseWriter, _ *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(m.Peers())
+		})
+	}
+
 	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprint(w, hubGreeting(swarm))
@@ -110,7 +133,7 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 
 // ── CLI mode ──────────────────────────────────────────────────────────────────
 
-func runCLI(router *Router, registry *Registry, mem *Memory, swarm *Swarm) {
+func runCLI(router *Router, registry *Registry, mem *Memory, swarm *Swarm, mesh *Mesh) {
 	fmt.Println(hubGreeting(swarm))
 	fmt.Println()
 	scanner := bufio.NewScanner(os.Stdin)
@@ -123,14 +146,14 @@ func runCLI(router *Router, registry *Registry, mem *Memory, swarm *Swarm) {
 		if input == "" {
 			continue
 		}
-		reply := handleInput(input, router, registry, mem, swarm)
+		reply := handleInput(input, router, registry, mem, swarm, mesh)
 		fmt.Printf("\nPriya: %s\n\n", reply)
 	}
 }
 
 // ── Input dispatcher ──────────────────────────────────────────────────────────
 
-func handleInput(input string, router *Router, registry *Registry, mem *Memory, swarm *Swarm) string {
+func handleInput(input string, router *Router, registry *Registry, mem *Memory, swarm *Swarm, mesh *Mesh) string {
 	lower := strings.ToLower(input)
 
 	switch {
@@ -141,7 +164,17 @@ func handleInput(input string, router *Router, registry *Registry, mem *Memory, 
 		return registry.Catalog()
 
 	case lower == "/status" || lower == "/swarm":
-		return swarm.Status()
+		s := swarm.Status()
+		if mesh != nil {
+			s += "\n" + mesh.Status()
+		}
+		return s
+
+	case lower == "/mesh" || lower == "/peers":
+		if mesh != nil {
+			return mesh.Status()
+		}
+		return "Mesh not initialised."
 
 	case strings.HasPrefix(lower, "/learn voice "):
 		sample := strings.TrimSpace(input[len("/learn voice "):])
@@ -229,9 +262,15 @@ func helpText() string {
 "Explain DeFi yields"            → Finance
 "Find Upwork gigs for Go dev"    → Freelance
 
+━━ MESH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/mesh                 Show connected device peers
+/peers                (same)
+
 ━━ API ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 POST /chat   {"message": "your text", "agent": "optional-id"}
-GET  /status
+GET  /status  (swarm + mesh)
 GET  /agents
-GET  /memory`
+GET  /memory
+GET  /mesh
+GET  /peers`
 }
