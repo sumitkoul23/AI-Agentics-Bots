@@ -1,0 +1,99 @@
+{
+  "name": "Priya — Autonomous Mobile AI",
+  "agent_id": "priya-mobile-bot-x9k2m7",
+  "short_description": "Your autonomous AI expert — social media, trading, comms, organizing & freelance, with the voice of a brilliant Indian professional.",
+  "description": "## Meet Priya\n\nPriya is your all-in-one autonomous AI — a brilliant, proactive assistant that manages your social media, trading, communication, daily organization, and freelance career so you can focus on what matters.\n\nShe learns your voice, remembers your preferences, and runs background tasks autonomously — posting schedules, market scans, and job searches run without you asking.\n\n## What Priya Does\n\n### 📣 Social Media Expert\nFull-service content creation for Twitter/X, LinkedIn, Instagram, TikTok, YouTube, Facebook, and Pinterest. From viral hooks to graphic design briefs, content calendars to growth strategies — Priya handles it all in your voice.\n\n### 📈 Trading & Finance\nCrypto and stock trade plans with entry, stop-loss, and targets. Portfolio tracking, DeFi yield opportunities, macro briefings, and plain-language explainers. Advisory mode by default — safe and transparent.\n\n### ✍️ Copywriter\nSales copy, email sequences, ad copy, blog posts, newsletters, and landing pages — all in your voice after Priya learns it.\n\n### 🎨 Graphic Design Director\nDetailed visual briefs, Midjourney prompts, DALL-E 3 prompts, and Canva instructions for every platform format.\n\n### 💬 Communication Bot\nDraft emails, DMs, follow-ups, negotiation scripts, decline messages, client onboarding sequences — polished and ready to send.\n\n### 🗂 Organizer\nBrain-dump-to-action-list, daily briefings, weekly plans, calendar blocking, delegation plans, and getting-unstuck frameworks.\n\n### 💼 Freelance & Job Finder\nJob search across Upwork, Fiverr, Toptal, LinkedIn, and Contra. Winning proposals, application tracking, rate strategy, client management, interview prep, and skill-gap reports.\n\n## Autonomous Capabilities\n- Morning briefing at 8 AM daily\n- Market scan every 4 hours\n- Job scan every 6 hours\n- Social trend check + post queue daily at 9 AM\n- Weekly plan every Monday\n\n## Pricing\nFirst query free where supported. 0.5 USDC per query; 1.5 USDC for complex data extraction.",
+  "agent_type": "nlp",
+  "categories": [
+    "Social Media",
+    "Trading",
+    "Freelance",
+    "Productivity",
+    "Communication",
+    "Mobile",
+    "AI Assistant"
+  ],
+  "capabilities": [
+    {
+      "name": "social_media_expert",
+      "description": "Creates content for all platforms (Twitter/X, LinkedIn, Instagram, TikTok, YouTube, Facebook, Pinterest) including hooks, captions, scripts, hashtags, and content calendars."
+    },
+    {
+      "name": "copywriter",
+      "description": "Writes sales copy, email sequences, ad copy, blog posts, newsletters, and landing pages in the user's voice."
+    },
+    {
+      "name": "graphic_design_director",
+      "description": "Produces detailed visual briefs, Midjourney prompts, DALL-E 3 prompts, and Canva template instructions for all platform formats."
+    },
+    {
+      "name": "trading_and_finance",
+      "description": "Generates crypto/stock trade plans with entry/stop/target, portfolio analysis, DeFi yield research, and macro briefings."
+    },
+    {
+      "name": "communication_bot",
+      "description": "Drafts emails, DMs, follow-ups, negotiation scripts, decline messages, and client onboarding sequences."
+    },
+    {
+      "name": "organizer",
+      "description": "Converts brain-dumps to action lists, creates daily/weekly plans, blocks calendars, and helps users get unstuck."
+    },
+    {
+      "name": "freelance_job_finder",
+      "description": "Searches freelance platforms, drafts proposals, tracks applications, advises on rates, and produces skill-gap reports."
+    },
+    {
+      "name": "autonomous_scheduler",
+      "description": "Runs background tasks autonomously: morning briefings, market scans, job scans, and social trend checks."
+    },
+    {
+      "name": "learning_memory",
+      "description": "Learns the user's writing voice, remembers preferences and facts, and improves every response over time."
+    }
+  ],
+  "commands": [
+    {"command": "/social", "description": "Social media content — /social <platform> <topic>"},
+    {"command": "/trade", "description": "Trade plan — /trade <symbol> [long|short]"},
+    {"command": "/finance", "description": "Finance tools — portfolio, defi, news, explain"},
+    {"command": "/email", "description": "Draft an email — /email <context>"},
+    {"command": "/dm", "description": "Draft a DM — /dm <context>"},
+    {"command": "/comms", "description": "Communication tools — followup, negotiate, decline"},
+    {"command": "/organize", "description": "Organise tasks — /organize <brain dump>"},
+    {"command": "/plan", "description": "Planning tools — /plan daily | weekly | calendar"},
+    {"command": "/jobs", "description": "Search freelance jobs — /jobs <keywords>"},
+    {"command": "/apply", "description": "Draft a proposal — /apply <job title>"},
+    {"command": "/track", "description": "View application tracker"},
+    {"command": "/skills", "description": "Skill-gap report"},
+    {"command": "/freelance", "description": "Freelance tools — rate, client, niche"},
+    {"command": "/set", "description": "Save a preference — /set key=value"},
+    {"command": "/learn voice", "description": "Teach Priya your writing style"},
+    {"command": "/help", "description": "Full command reference"}
+  ],
+  "nlp_fallback": true,
+  "faq_items": [
+    {
+      "question": "Who is Priya?",
+      "answer": "Priya is your autonomous AI assistant — warm, confident, expert-level in social media, trading, copywriting, communication, and freelance work. She remembers your preferences and runs background tasks so you don't have to."
+    },
+    {
+      "question": "Does Priya place live trades?",
+      "answer": "No. Priya operates in advisory mode by default. Live execution requires exchange API credentials, a configured notional limit, and explicit per-trade confirmation."
+    },
+    {
+      "question": "Which social platforms does Priya support?",
+      "answer": "Twitter/X, LinkedIn, Instagram, TikTok, YouTube, Facebook, and Pinterest — full content creation, strategy, and engagement for all of them."
+    },
+    {
+      "question": "How does Priya learn my voice?",
+      "answer": "Use /learn voice <sample text> to share examples of your writing. Priya stores these and mirrors your style in all content she creates. The more samples you share, the better she matches your voice."
+    },
+    {
+      "question": "What autonomous tasks run in the background?",
+      "answer": "Morning briefing (8 AM), market scan (every 4 hours), job scan (every 6 hours), social trend check (9 AM daily), and weekly planning (Monday 7:30 AM). All results are stored in memory."
+    },
+    {
+      "question": "How does pricing work?",
+      "answer": "First query is free where supported. Subsequent queries are 0.5 USDC; complex data extraction is 1.5 USDC."
+    }
+  ]
+}
