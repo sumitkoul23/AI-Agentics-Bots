@@ -1,10 +1,10 @@
 # Priya — Autonomous Mobile AI
 
-> Your autonomous AI expert — social media, trading, comms, organizing & freelance, with the warmth and confidence of a brilliant Indian professional.
+> Your autonomous AI — social media expert, finance analyst, copywriter, organizer, and freelance specialist. Powered entirely by Claude (Anthropic).
 
 ## Avatar
 
-Priya's image generation prompt (use in Midjourney or DALL-E 3):
+Use this prompt in Midjourney or DALL-E 3 to generate Priya's avatar:
 
 ```
 professional Indian woman AI assistant, warm confident smile, modern business casual,
@@ -16,9 +16,11 @@ clean gradient background, photorealistic, 8k, friendly and approachable
 ```bash
 cd agents/priya-bot
 
-# 1. Set up environment
+# 1. Configure keys (only two required)
 cp .env.example .env
-# Edit .env — at minimum set PRIVATE_KEY and ANTHROPIC_API_KEY
+# Edit .env:
+#   PRIVATE_KEY=<your Teneo wallet key>
+#   ANTHROPIC_API_KEY=<your key from console.anthropic.com>
 
 # 2. Fetch dependencies and build
 go mod tidy
@@ -27,7 +29,7 @@ go build -o priya-bot .
 # 3. Run
 ./priya-bot
 
-# Windows
+# Windows PowerShell
 .\run-agent.ps1
 ```
 
@@ -35,19 +37,29 @@ go build -o priya-bot .
 
 ```
 priya-bot/
-├── main.go          # Teneo SDK entry + intent router
-├── persona.go       # Priya's personality + system prompt
-├── ai_core.go       # Claude API wrapper with conversation memory
-├── memory.go        # Persistent JSON state (preferences, history, jobs)
-├── social.go        # All social media platforms
-├── finance.go       # Trading, crypto, stocks, portfolio
-├── comms.go         # Email, DM, negotiation, inbox triage
-├── organizer.go     # Task management, planning, getting unstuck
-├── freelance.go     # Job search, proposals, application tracker
-└── scheduler.go     # Autonomous background tasks (cron)
+├── main.go          — Teneo SDK entry + NLP intent router + nil-safe guards
+├── persona.go       — Priya's personality, expertise, and system prompt
+├── ai_core.go       — Claude API wrapper with enriched context + conversation memory
+├── memory.go        — Persistent JSON state (preferences, history, jobs, posts)
+├── social.go        — All 7 social platforms + calendar, strategy, image briefs
+├── finance.go       — Trade plans, portfolio, DeFi, macro briefings, explainers
+├── comms.go         — Email, DMs, negotiation, decline, onboarding, inbox triage
+├── organizer.go     — Brain-dump→action list, daily/weekly plans, calendar blocking
+├── freelance.go     — Job search, proposals (auto-tracked), rates, skills, clients
+└── scheduler.go     — Autonomous cron: morning briefing, market scan, job scan, weekly plan
 ```
 
-## Autonomous Tasks (no user action needed)
+## How Priya Learns
+
+Every interaction is stored in `.priya-memory.json`. Priya automatically loads:
+- Your writing voice samples (`/learn voice`)
+- Your preferences (`/set key=value`)
+- Learned facts about you
+- Conversation history (last 100 messages)
+
+She gets smarter and more personalised with every conversation.
+
+## Autonomous Background Tasks
 
 | Task | Schedule |
 |---|---|
@@ -55,54 +67,45 @@ priya-bot/
 | Social trend check + post queue | Daily 9:00 AM |
 | Market scan (crypto/stocks) | Every 4 hours |
 | Freelance job scan | Every 6 hours |
-| Weekly plan | Monday 7:30 AM |
+| Weekly planning | Monday 7:30 AM |
 
-## Key Commands
+All results are stored in memory and available on your next interaction.
+
+## Commands
 
 | Command | Description |
 |---|---|
 | `/social <platform> <topic>` | Content for any platform |
 | `/social all <topic>` | Full cross-platform content pack |
 | `/social calendar` | 7-day content calendar |
-| `/trade <symbol> [long\|short]` | Trade plan with entry/stop/target |
+| `/social strategy` | Growth playbook |
+| `/social image <brief>` | Midjourney / DALL-E visual brief |
+| `/trade <symbol> [long\|short]` | Trade plan with entry / stop / target |
 | `/finance portfolio` | Portfolio analysis |
+| `/finance defi` | DeFi yield opportunities |
+| `/finance news` | Macro + market briefing |
+| `/finance explain <concept>` | Plain-language explainer |
 | `/email <context>` | Draft a professional email |
 | `/dm <context>` | Draft a direct message |
-| `/organize <brain dump>` | Turn chaos into action list |
+| `/comms negotiate <context>` | Negotiation scripts |
+| `/comms inbox` | Inbox triage plan |
+| `/organize <brain dump>` | Turn chaos into an action list |
 | `/plan daily` | Morning briefing |
 | `/plan weekly` | Weekly work plan |
-| `/jobs <keywords>` | Search freelance opportunities |
+| `/jobs <keywords>` | Find freelance opportunities |
 | `/apply <job title>` | Draft proposal (auto-tracked) |
 | `/track` | Application tracker |
 | `/skills` | Skill-gap report |
+| `/freelance rate` | Pricing strategy |
 | `/set key=value` | Save a preference |
 | `/learn voice <sample>` | Teach Priya your writing style |
-
-## Teaching Priya Your Voice
-
-```
-/learn voice Here's how I write: "I spent 3 months building this feature and 
-almost gave up twice. Here's what I learned..."
-```
-
-The more samples you share, the more accurately Priya mirrors your style.
+| `/help` | Full command reference |
 
 ## Environment Variables
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `PRIVATE_KEY` | Yes | Teneo wallet key |
-| `ANTHROPIC_API_KEY` | Yes | Claude API (Priya's brain) |
-| `MARKET_DATA_KEY` | No | Live price data |
-| `EXCHANGE_API_KEY/SECRET` | No | Live order execution |
-| `JOBS_API_KEY` | No | Live job search |
-| `TWITTER_*` | No | Direct Twitter posting |
-| `LINKEDIN_ACCESS_TOKEN` | No | Direct LinkedIn posting |
-| `INSTAGRAM_*` | No | Direct Instagram posting |
-| `GMAIL_*` | No | Direct email sending |
+| `PRIVATE_KEY` | Yes | Teneo wallet key for agent deployment |
+| `ANTHROPIC_API_KEY` | Yes | Claude API — Priya's intelligence engine |
 
-## Safety
-
-- **Trading**: advisory-only by default. Live execution requires exchange credentials + explicit per-trade confirmation.
-- **Social posting**: Priya drafts content; you approve before it goes live (unless posting tokens are set and you explicitly ask her to post).
-- **No device access**: Priya is a conversational agent — she does not access your phone hardware, contacts, camera, or messages without a companion app you install separately.
+No other keys needed. Priya is fully self-contained using Claude.

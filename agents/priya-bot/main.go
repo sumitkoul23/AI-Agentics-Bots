@@ -38,24 +38,36 @@ type Metadata struct {
 	FAQItems         json.RawMessage    `json:"faq_items"`
 }
 
-// ProcessTask is the main entry point called by the Teneo SDK for every message.
+// ProcessTask is the entry point called by the Teneo SDK for every incoming message.
 func (p *PriyaBot) ProcessTask(ctx context.Context, task string) (string, error) {
 	input := strings.TrimSpace(task)
 	if input == "" {
 		return p.greeting(), nil
 	}
 
-	lower := strings.ToLower(input)
-
-	// Learn user voice if flagged
-	if strings.HasPrefix(lower, "/learn voice") {
-		sample := extractArgs(input, "/learn voice")
-		p.mem.AddVoiceSample(sample)
-		_ = p.mem.Save()
-		return "Got it, Priya will write in your voice from now on. Keep sharing samples any time.", nil
+	// If AI core is not available, return a setup message.
+	if p.ai == nil {
+		return "Priya is not fully initialised yet. Please set ANTHROPIC_API_KEY in your .env file and restart.", nil
 	}
 
-	// Set preference
+	lower := strings.ToLower(input)
+
+	// ── Built-in commands that don't need module routing ──────────────────────
+
+	if strings.HasPrefix(lower, "/help") {
+		return p.helpText(), nil
+	}
+
+	if strings.HasPrefix(lower, "/learn voice") {
+		sample := extractArgs(input, "/learn voice")
+		if sample == "" {
+			return "Usage: /learn voice <sample of your writing>", nil
+		}
+		p.mem.AddVoiceSample(sample)
+		_ = p.mem.Save()
+		return "Got it — I'll write in your voice from now on. The more samples you share, the more accurate I get.", nil
+	}
+
 	if strings.HasPrefix(lower, "/set ") {
 		parts := strings.SplitN(extractArgs(input, "/set"), "=", 2)
 		if len(parts) == 2 {
@@ -63,124 +75,144 @@ func (p *PriyaBot) ProcessTask(ctx context.Context, task string) (string, error)
 			_ = p.mem.Save()
 			return "Saved. I'll remember that.", nil
 		}
+		return "Usage: /set key=value  (e.g. /set niche=AI development)", nil
 	}
 
-	// Help
-	if strings.HasPrefix(lower, "/help") {
-		return p.helpText(), nil
-	}
+	// ── Domain routing ────────────────────────────────────────────────────────
 
-	// Route by domain
 	switch {
+
 	// Social media
 	case strings.HasPrefix(lower, "/social") ||
-		containsAny(lower, "tweet", "linkedin post", "instagram", "tiktok", "youtube video", "facebook post", "pinterest", "reel", "carousel", "content calendar", "hashtag", "caption"):
+		containsAny(lower,
+			"tweet", "thread", "linkedin post", "instagram", "tiktok", "youtube",
+			"facebook post", "pinterest", "reel", "carousel", "content calendar",
+			"hashtag", "caption", "social media", "post about", "content for"):
 		return p.social.Handle(ctx, input)
 
 	// Trading & finance
 	case strings.HasPrefix(lower, "/trade") || strings.HasPrefix(lower, "/finance") ||
-		containsAny(lower, "btc", "eth", "sol", "bitcoin", "crypto", "stock", "forex", "trade plan", "portfolio", "defi", "yield", "market analysis"):
+		containsAny(lower,
+			"btc", "eth", "sol", "bitcoin", "ethereum", "crypto", "stock", "forex",
+			"trade plan", "trade idea", "portfolio", "defi", "yield", "market analysis",
+			"price of", "market cap", "technical analysis", "chart", "rsi", "macd"):
 		return p.finance.Handle(ctx, input)
 
 	// Communication
 	case strings.HasPrefix(lower, "/comms") || strings.HasPrefix(lower, "/email") || strings.HasPrefix(lower, "/dm") ||
-		containsAny(lower, "draft email", "write email", "send message", "follow up", "follow-up", "direct message", "inbox", "triage", "negotiat", "decline offer"):
+		containsAny(lower,
+			"draft email", "write email", "write a message", "send message",
+			"follow up", "follow-up", "direct message", "inbox", "triage",
+			"negotiat", "decline offer", "onboarding message", "write to client"):
 		return p.comms.Handle(ctx, input)
 
-	// Organizer
+	// Organizer / planner
 	case strings.HasPrefix(lower, "/organise") || strings.HasPrefix(lower, "/organize") || strings.HasPrefix(lower, "/plan") ||
-		containsAny(lower, "brain dump", "my mess", "prioritise", "todo list", "daily plan", "weekly plan", "calendar block", "stuck", "procrastinat", "morning brief"):
+		containsAny(lower,
+			"brain dump", "my mess", "prioritis", "todo list", "to-do", "daily plan",
+			"weekly plan", "calendar block", "stuck", "procrastinat", "morning brief",
+			"time block", "delegate", "what should i work on"):
 		return p.organizer.Handle(ctx, input)
 
 	// Freelance & jobs
-	case strings.HasPrefix(lower, "/jobs") || strings.HasPrefix(lower, "/apply") || strings.HasPrefix(lower, "/track") || strings.HasPrefix(lower, "/skills") ||
-		containsAny(lower, "freelance", "upwork", "fiverr", "toptal", "proposal", "cover letter", "job search", "skill gap", "client rate", "interview prep"):
+	case strings.HasPrefix(lower, "/jobs") || strings.HasPrefix(lower, "/apply") ||
+		strings.HasPrefix(lower, "/track") || strings.HasPrefix(lower, "/skills") ||
+		strings.HasPrefix(lower, "/freelance") ||
+		containsAny(lower,
+			"freelance", "upwork", "fiverr", "toptal", "proposal", "cover letter",
+			"job search", "skill gap", "client rate", "interview prep", "find work",
+			"find a job", "gig", "contract work"):
 		return p.freelance.Handle(ctx, input)
 
+	// Pure NLP — let Priya think freely
 	default:
-		// Pure NLP — let Priya decide and respond intelligently
 		return p.ai.Think(ctx, input)
 	}
 }
 
+// ── Greeting & help ───────────────────────────────────────────────────────────
+
 func (p *PriyaBot) greeting() string {
-	return `Namaste! I'm Priya 🌸
+	return `Namaste! I'm Priya.
 
-Your autonomous AI expert — social media, trading, comms, organizing & freelance.
+Your autonomous AI — social media expert, finance analyst, copywriter, organizer, and freelance specialist. All in one.
 
-What can I do for you today?
+Quick start:
+  /social <platform> <topic>   Content for any platform
+  /trade <symbol>              Trade plan + market analysis
+  /email <context>             Draft any email or message
+  /organize <brain dump>       Turn chaos into action
+  /jobs <keywords>             Find freelance work
+  /apply <job title>           Draft a winning proposal
+  /plan daily                  Morning briefing
+  /help                        Full command list
 
-  📣 /social <platform> <topic>  — content creation for any platform
-  📈 /trade <symbol>             — trade plan + market analysis
-  💬 /email or /dm               — draft any message or communication
-  🗂  /organize or /plan         — clear the chaos, set priorities
-  💼 /jobs <keywords>            — find freelance opportunities
-  ✍️  /apply <job title>         — draft a winning proposal
-  📊 /skills                     — skill-gap analysis
-  🌅 /plan daily                 — morning briefing
-  ❓  /help                       — full command list
-
-Or just talk to me naturally — I'll figure out what you need.`
+Or just talk to me — I understand plain language.`
 }
 
 func (p *PriyaBot) helpText() string {
 	return `Priya — Full Command Reference
 
-━━━ SOCIAL MEDIA ━━━
-/social twitter <topic>       Draft a tweet or thread
-/social linkedin <topic>      Draft a LinkedIn post
+━━ SOCIAL MEDIA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/social twitter <topic>       Tweet or thread
+/social linkedin <topic>      LinkedIn post
 /social instagram <topic>     Caption + reel script
-/social tiktok <topic>        TikTok hook + script
-/social youtube <topic>       Title, description, tags
+/social tiktok <topic>        Hook + TikTok script
+/social youtube <topic>       Title, description, SEO tags
 /social facebook <topic>      Facebook post
 /social all <topic>           Full cross-platform content pack
 /social trends                Trending topics in your niche
 /social calendar              7-day content calendar
-/social strategy              Growth strategy + content pillars
-/social image <brief>         Visual design brief (Midjourney/DALL-E)
+/social strategy              Growth playbook + content pillars
+/social image <brief>         Visual brief (Midjourney / DALL-E)
+/social reply <comment>       Engagement reply options
 
-━━━ TRADING & FINANCE ━━━
+━━ TRADING & FINANCE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /trade <symbol>               Full trade plan (e.g. /trade BTC long)
-/finance portfolio            Portfolio analysis + recommendations
+/trade <symbol> short         Bearish trade plan
+/finance portfolio            Portfolio analysis + rebalancing
 /finance defi                 DeFi yield opportunities
 /finance news                 Macro + crypto market briefing
-/finance explain <concept>    Plain-language explainer
+/finance explain <concept>    Plain-language financial explainer
 /finance screen <criteria>    Find investment opportunities
 
-━━━ COMMUNICATION ━━━
-/email <context>              Draft a professional email
-/dm <context>                 Draft a direct message (LinkedIn, Twitter)
-/comms followup <context>     Write a follow-up message
+━━ COMMUNICATION ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/email <context>              Professional email draft
+/dm <context>                 Direct message (LinkedIn, Twitter, Upwork)
+/comms followup <context>     Follow-up message
 /comms negotiate <context>    Negotiation scripts
-/comms decline <context>      Polite decline message
+/comms decline <context>      Polite decline
 /comms onboard <context>      Client onboarding sequence
-/comms inbox                  Inbox triage + clean-up plan
+/comms inbox                  Inbox triage plan
 
-━━━ ORGANIZER ━━━
+━━ ORGANIZER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /organize <brain dump>        Turn chaos into action list
 /plan daily                   Morning briefing
 /plan weekly                  Weekly work plan
 /plan calendar <details>      Time-block schedule
-/organize delegate <tasks>    What to outsource + briefing template
-/organize stuck <situation>   Help me get unstuck
+/organize delegate <tasks>    What to outsource + brief template
+/organize stuck <situation>   Get unstuck
 
-━━━ FREELANCE & JOBS ━━━
-/jobs <keywords>              Search freelance opportunities
-/apply <job title>            Draft a winning proposal (auto-tracked)
-/track                        View application tracker
-/skills                       Skill-gap report + profile tips
-/freelance rate               Pricing strategy
+━━ FREELANCE & JOBS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/jobs <keywords>              Find freelance opportunities
+/apply <job title>            Draft proposal (auto-tracked)
+/track                        Application tracker
+/skills                       Skill-gap report
+/freelance rate               Pricing strategy + rate scripts
 /freelance client             Client management scripts
 /freelance niche              Niche strategy
 
-━━━ SETTINGS ━━━
-/set niche=<your niche>       e.g. /set niche=AI development
-/set skills=<your skills>     e.g. /set skills=Go, Python, React
-/set portfolio_holdings=<...> e.g. /set portfolio_holdings=BTC 0.5, ETH 2
-/learn voice <sample text>    Teach Priya your writing style
+━━ SETTINGS & LEARNING ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/set niche=AI development     Save your niche
+/set skills=Go, Python        Save your skills
+/set portfolio_holdings=...   Save your holdings
+/learn voice <sample>         Teach Priya your writing style
+/help                         This menu
 
-Type anything naturally — Priya understands plain language too.`
+Tip: Just talk naturally — no slash commands needed.`
 }
+
+// ── Main ──────────────────────────────────────────────────────────────────────
 
 func main() {
 	_ = godotenv.Load()
@@ -189,30 +221,27 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	var meta Metadata
 	if err := json.Unmarshal(raw, &meta); err != nil {
 		log.Fatal(err)
 	}
 
-	// Initialize persistent memory
 	mem := NewMemory(".priya-memory.json")
 
-	// Initialize AI core (Claude)
 	ai, err := NewAICore(mem)
 	if err != nil {
-		log.Printf("Warning: AI core unavailable (%v) — running in template mode", err)
+		log.Printf("Warning: AI core unavailable (%v) — set ANTHROPIC_API_KEY to enable full intelligence", err)
 	}
 
-	// Build modules
 	var priyaBot *PriyaBot
+
 	if ai != nil {
 		social := NewSocialModule(ai, mem)
 		finance := NewFinanceModule(ai, mem)
 		comms := NewCommsModule(ai, mem)
 		organizer := NewOrganizerModule(ai, mem)
 		freelance := NewFreelanceModule(ai, mem)
-		scheduler := NewScheduler(social, finance, freelance, organizer, mem)
+		sched := NewScheduler(social, finance, freelance, organizer, mem)
 
 		priyaBot = &PriyaBot{
 			ai:        ai,
@@ -221,18 +250,18 @@ func main() {
 			comms:     comms,
 			organizer: organizer,
 			freelance: freelance,
-			scheduler: scheduler,
+			scheduler: sched,
 			mem:       mem,
 		}
 
-		// Start autonomous background tasks
-		scheduler.Start()
-		defer scheduler.Stop()
+		sched.Start()
+		defer sched.Stop()
+		log.Println("Priya AI core is online. All modules active.")
 	} else {
 		priyaBot = &PriyaBot{mem: mem}
+		log.Println("Priya running without AI core — set ANTHROPIC_API_KEY for full capability.")
 	}
 
-	// Deploy to Teneo network
 	capabilitiesJSON, _ := json.Marshal(meta.Capabilities)
 	categoriesJSON, _ := json.Marshal(meta.Categories)
 
@@ -254,7 +283,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Priya is online — token_id=%d", result.TokenID)
+	log.Printf("Priya deployed — token_id=%d", result.TokenID)
 
 	cfg := agent.DefaultConfig()
 	if err := cfg.LoadFromEnv(); err != nil {
@@ -286,7 +315,9 @@ func main() {
 	}
 }
 
-// extractArgs strips the command prefix and returns remaining text.
+// ── Shared helpers (used across modules) ─────────────────────────────────────
+
+// extractArgs strips the command prefix and returns the remaining text.
 func extractArgs(input, cmd string) string {
 	idx := strings.Index(strings.ToLower(input), strings.ToLower(cmd))
 	if idx == -1 {
@@ -295,7 +326,7 @@ func extractArgs(input, cmd string) string {
 	return strings.TrimSpace(input[idx+len(cmd):])
 }
 
-// containsAny checks if s contains any of the keywords.
+// containsAny reports whether s contains any of the given keywords.
 func containsAny(s string, keywords ...string) bool {
 	for _, kw := range keywords {
 		if strings.Contains(s, kw) {
