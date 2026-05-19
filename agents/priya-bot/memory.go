@@ -15,14 +15,15 @@ type Memory struct {
 }
 
 type MemoryData struct {
-	UserVoiceSamples   []string            `json:"user_voice_samples"`
-	UserPreferences    map[string]string   `json:"user_preferences"`
-	KnownPlatforms     []string            `json:"known_platforms"`
-	TrackedJobs        []TrackedJob        `json:"tracked_jobs"`
-	ScheduledPosts     []ScheduledPost     `json:"scheduled_posts"`
-	ConversationHistory []Message          `json:"conversation_history"`
-	LearnedFacts       map[string]string   `json:"learned_facts"`
-	LastUpdated        time.Time           `json:"last_updated"`
+	UserVoiceSamples    []string            `json:"user_voice_samples"`
+	UserPreferences     map[string]string   `json:"user_preferences"`
+	KnownPlatforms      []string            `json:"known_platforms"`
+	TrackedJobs         []TrackedJob        `json:"tracked_jobs"`
+	ScheduledPosts      []ScheduledPost     `json:"scheduled_posts"`
+	ConversationHistory []Message           `json:"conversation_history"`
+	LearnedFacts        map[string]string   `json:"learned_facts"`
+	OAuthTokens         map[string]OAuthToken `json:"oauth_tokens"`
+	LastUpdated         time.Time           `json:"last_updated"`
 }
 
 type TrackedJob struct {

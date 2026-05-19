@@ -9,12 +9,13 @@ import (
 
 // SocialModule handles all social media domains.
 type SocialModule struct {
-	ai  *AICore
-	mem *Memory
+	ai     *AICore
+	mem    *Memory
+	poster *SocialPoster // nil when OAuth is not configured
 }
 
-func NewSocialModule(ai *AICore, mem *Memory) *SocialModule {
-	return &SocialModule{ai: ai, mem: mem}
+func NewSocialModule(ai *AICore, mem *Memory, oauth *OAuthManager) *SocialModule {
+	return &SocialModule{ai: ai, mem: mem, poster: NewSocialPoster(oauth)}
 }
 
 // Handle routes a social request to the right handler.
@@ -59,6 +60,8 @@ func (s *SocialModule) createContent(ctx context.Context, platform, topic string
 	if topic == "" {
 		topic = "general content about my niche"
 	}
+
+	// Generate content via Claude
 	prompt := fmt.Sprintf(`Create high-performing %s content about: %s
 
 Deliver:
@@ -69,7 +72,69 @@ Deliver:
 5. A matching image/graphic brief (Midjourney or DALL-E prompt)
 
 Make it feel authentic, not corporate. Use my voice.`, platform, topic)
-	return s.ai.Think(ctx, prompt)
+
+	draft, err := s.ai.Think(ctx, prompt)
+	if err != nil {
+		return "", err
+	}
+
+	// If connected, offer to post directly
+	lp := strings.ToLower(platform)
+	if s.poster != nil && s.poster.CanPost(lp) {
+		// Extract the first content block (before "Hashtag set:" or "2.")
+		postText := extractFirstBlock(draft)
+		posted, postErr := s.livePost(lp, postText)
+		if postErr == nil {
+			return draft + "\n\n" + posted, nil
+		}
+		return draft + fmt.Sprintf("\n\n⚠️ Auto-post failed: %v — content copied above.", postErr), nil
+	}
+
+	connected := s.poster != nil && s.poster.CanPost(lp)
+	if !connected {
+		draft += fmt.Sprintf("\n\n💡 Connect %s with /login %s to post directly.", platform, lp)
+	}
+	return draft, nil
+}
+
+// livePost routes a post to the right platform client.
+func (s *SocialModule) livePost(platform, text string) (string, error) {
+	switch platform {
+	case "twitter", "twitter/x", "x":
+		return s.poster.PostTweet(text)
+	case "linkedin":
+		return s.poster.PostLinkedIn(text)
+	case "instagram", "ig":
+		return s.poster.PostInstagram("", text) // image URL can be added separately
+	case "reddit":
+		parts := strings.SplitN(text, "\n", 2)
+		title, body := parts[0], ""
+		if len(parts) > 1 {
+			body = parts[1]
+		}
+		sub := s.mem.GetPreference("reddit_subreddit")
+		if sub == "" {
+			sub = "test"
+		}
+		return s.poster.PostReddit(sub, title, body)
+	}
+	return "", fmt.Errorf("live posting not supported for %s yet", platform)
+}
+
+// extractFirstBlock pulls the first content block out of a Claude-generated draft.
+func extractFirstBlock(draft string) string {
+	// Split on common delimiter lines like "2." or "Hashtag set:"
+	delimiters := []string{"\n2.", "\nHashtag", "\nBest time", "\nA/B", "\n2 "}
+	for _, d := range delimiters {
+		if idx := strings.Index(draft, d); idx > 0 {
+			return strings.TrimSpace(draft[:idx])
+		}
+	}
+	// Fallback: first 280 chars (tweet-safe)
+	if len(draft) > 280 {
+		return draft[:280]
+	}
+	return draft
 }
 
 func (s *SocialModule) createForAllPlatforms(ctx context.Context, topic string) (string, error) {
@@ -92,6 +157,17 @@ End with a unified image brief that works across all platforms.`, topic)
 }
 
 func (s *SocialModule) trends(ctx context.Context, niche string) (string, error) {
+	// If connected to Twitter, pull real trends first
+	if s.poster != nil && s.poster.CanPost("twitter") {
+		live, err := s.poster.GetTwitterTrends()
+		if err == nil {
+			prompt := fmt.Sprintf(`Here are live Twitter trends:\n%s\n\nBased on these, suggest the 3 best angles I should post about in my niche (%s) today, with a ready-to-use hook for each.`, live, niche)
+			reply, err := s.ai.Think(ctx, prompt)
+			if err == nil {
+				return live + "\n\n" + reply, nil
+			}
+		}
+	}
 	if niche == "" {
 		niche = s.mem.GetPreference("niche")
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -22,6 +23,7 @@ type PriyaBot struct {
 	organizer *OrganizerModule
 	freelance *FreelanceModule
 	scheduler *Scheduler
+	oauth     *OAuthManager
 	mem       *Memory
 }
 
@@ -56,6 +58,20 @@ func (p *PriyaBot) ProcessTask(ctx context.Context, task string) (string, error)
 
 	if strings.HasPrefix(lower, "/help") {
 		return p.helpText(), nil
+	}
+
+	// OAuth — login / logout / connection status
+	if strings.HasPrefix(lower, "/login ") {
+		platform := strings.TrimSpace(input[len("/login "):])
+		return p.oauth.Login(ctx, platform)
+	}
+	if strings.HasPrefix(lower, "/logout ") {
+		platform := strings.TrimSpace(input[len("/logout "):])
+		p.oauth.Logout(platform)
+		return fmt.Sprintf("Disconnected from %s.", platform), nil
+	}
+	if lower == "/connections" || lower == "/accounts" || lower == "/status" {
+		return p.oauth.StatusText(), nil
 	}
 
 	if strings.HasPrefix(lower, "/learn voice") {
@@ -145,6 +161,8 @@ Quick start:
   /jobs <keywords>             Find freelance work
   /apply <job title>           Draft a winning proposal
   /plan daily                  Morning briefing
+  /login twitter               Connect a social account (OAuth)
+  /connections                 See all connected accounts
   /help                        Full command list
 
 Or just talk to me — I understand plain language.`
@@ -202,6 +220,14 @@ func (p *PriyaBot) helpText() string {
 /freelance client             Client management scripts
 /freelance niche              Niche strategy
 
+━━ SOCIAL LOGINS (OAuth) ━━━━━━━━━━━━━━━━━━━━━━━━━━
+/login twitter                Connect Twitter/X (posts directly)
+/login linkedin               Connect LinkedIn (posts directly)
+/login instagram              Connect Instagram (posts directly)
+/login reddit                 Connect Reddit (posts directly)
+/logout <platform>            Disconnect a platform
+/connections                  Show all connected accounts
+
 ━━ SETTINGS & LEARNING ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /set niche=AI development     Save your niche
 /set skills=Go, Python        Save your skills
@@ -235,8 +261,11 @@ func main() {
 
 	var priyaBot *PriyaBot
 
+	// OAuth manager is always available (handles logins even without AI core)
+	oauth := NewOAuthManager(mem)
+
 	if ai != nil {
-		social := NewSocialModule(ai, mem)
+		social := NewSocialModule(ai, mem, oauth)
 		finance := NewFinanceModule(ai, mem)
 		comms := NewCommsModule(ai, mem)
 		organizer := NewOrganizerModule(ai, mem)
@@ -251,14 +280,18 @@ func main() {
 			organizer: organizer,
 			freelance: freelance,
 			scheduler: sched,
+			oauth:     oauth,
 			mem:       mem,
 		}
 
 		sched.Start()
 		defer sched.Stop()
 		log.Println("Priya AI core is online. All modules active.")
+		if len(oauth.ConnectedPlatforms()) > 0 {
+			log.Printf("OAuth connections restored: %v", oauth.ConnectedPlatforms())
+		}
 	} else {
-		priyaBot = &PriyaBot{mem: mem}
+		priyaBot = &PriyaBot{oauth: oauth, mem: mem}
 		log.Println("Priya running without AI core — set ANTHROPIC_API_KEY for full capability.")
 	}
 

@@ -101,11 +101,52 @@ All results are stored in memory and available on your next interaction.
 | `/learn voice <sample>` | Teach Priya your writing style |
 | `/help` | Full command reference |
 
+## Connecting Social Accounts (OAuth)
+
+Priya uses OAuth 2.0 — you log in with your real account in the browser, no API keys stored. Access tokens are saved in `.priya-memory.json` and restored on restart.
+
+### One-time app setup (5 minutes per platform)
+
+| Platform | Portal | Callback URL to register |
+|---|---|---|
+| Twitter/X | developer.twitter.com/en/portal/dashboard | `http://localhost:8080/callback/twitter` |
+| LinkedIn | linkedin.com/developers/apps | `http://localhost:8080/callback/linkedin` |
+| Instagram | developers.facebook.com/apps | `http://localhost:8080/callback/instagram` |
+| Reddit | reddit.com/prefs/apps | `http://localhost:8080/callback/reddit` |
+
+Add the **Client ID** (and **Client Secret** where required) to your `.env`. Then:
+
+```bash
+# Inside the running agent, just type:
+/login twitter
+# Browser opens → you log in → Priya is connected
+
+/connections        # see all connected platforms
+/logout twitter     # disconnect
+```
+
+Once connected, every `/social twitter ...` command generates content **and posts it directly**. Disconnected platforms still generate drafts for you to post manually.
+
+### Fallback behaviour
+
+| State | Behaviour |
+|---|---|
+| Connected | Generates content with Claude → posts directly |
+| Not connected | Generates draft content → shows "/login" hint |
+| No `ANTHROPIC_API_KEY` | OAuth logins still work; drafts unavailable |
+
 ## Environment Variables
 
 | Variable | Required | Purpose |
 |---|---|---|
 | `PRIVATE_KEY` | Yes | Teneo wallet key for agent deployment |
 | `ANTHROPIC_API_KEY` | Yes | Claude API — Priya's intelligence engine |
-
-No other keys needed. Priya is fully self-contained using Claude.
+| `TWITTER_CLIENT_ID` | For Twitter | OAuth app client ID |
+| `TWITTER_CLIENT_SECRET` | For Twitter | OAuth app client secret (optional for PKCE) |
+| `LINKEDIN_CLIENT_ID` | For LinkedIn | OAuth app client ID |
+| `LINKEDIN_CLIENT_SECRET` | For LinkedIn | OAuth app client secret |
+| `INSTAGRAM_CLIENT_ID` | For Instagram | Meta app client ID |
+| `INSTAGRAM_CLIENT_SECRET` | For Instagram | Meta app client secret |
+| `INSTAGRAM_BUSINESS_ACCOUNT_ID` | For Instagram | Your Instagram Business account ID |
+| `REDDIT_CLIENT_ID` | For Reddit | OAuth app client ID |
+| `REDDIT_CLIENT_SECRET` | For Reddit | OAuth app client secret |
