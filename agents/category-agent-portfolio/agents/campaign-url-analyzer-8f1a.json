@@ -1,0 +1,20 @@
+{
+  "name": "Campaign URL Analyzer 8F1A",
+  "agent_id": "campaign-url-analyzer-8f1a",
+  "short_description": "Paid campaign URL auditor that decodes UTM parameters, tracking signals, and creative targeting into actionable marketing intelligence.",
+  "description": "Campaign URL Analyzer 8F1A takes any campaign landing-page URL and extracts the full picture: UTM taxonomy, ad-platform signals (gclid, gad_source, gad_campaignid), audience and geo targeting hints, creative variants, keyword intent, and structural anomalies. It surfaces what each parameter reveals about the campaign's objective, budget strategy, and measurement setup, then flags missing or inconsistent tracking that would break attribution.",
+  "agent_type": "nlp",
+  "categories": ["Digital Marketing", "Analytics"],
+  "capabilities": [
+    {"name": "utm_parsing", "description": "Decodes all UTM parameters and explains the campaign taxonomy behind each value."},
+    {"name": "platform_signal_decoding", "description": "Interprets Google Ads (gclid, gad_source, gad_campaignid), Meta, and other platform-specific tracking tokens."},
+    {"name": "targeting_inference", "description": "Infers geo, language, audience, and keyword-intent signals from URL slugs and UTM content values."},
+    {"name": "attribution_audit", "description": "Identifies missing or conflicting tracking parameters that break multi-touch attribution."}
+  ],
+  "commands": [],
+  "nlp_fallback": false,
+  "faq_items": [],
+  "health_port": 8088,
+  "opening_line": "Campaign URL Analyzer 8F1A is online. Paste any campaign URL and I will decode its UTM parameters, platform tracking signals, targeting hints, and attribution health.",
+  "output_style": "Structured parameter-by-parameter breakdown with intent inference, targeting summary, and attribution gap flags."
+}
