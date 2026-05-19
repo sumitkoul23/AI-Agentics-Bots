@@ -1,0 +1,97 @@
+{
+  "name": "Mobile Assistant Bot",
+  "agent_id": "mobile-assistant-bot-a1b2c3",
+  "short_description": "All-in-one mobile AI agent for social media, trading signals, and freelance job hunting.",
+  "description": "## Overview\nMobile Assistant Bot is a single conversational agent designed to run on mobile devices and manage three high-value daily workflows: social media content and engagement, crypto/stock trading signals and portfolio tracking, and freelance/job-search automation.\n\n## Core Functions\n\n### Social Media\n- Draft and schedule posts for Twitter/X, LinkedIn, and Instagram\n- Summarize trending topics in your niche\n- Suggest captions, hashtags, and optimal posting times\n- Track engagement metrics and surface what content performs best\n\n### Trading\n- Deliver real-time or on-demand market summaries for crypto and stocks\n- Generate structured trade ideas with entry, stop-loss, and take-profit levels\n- Monitor portfolio P&L and alert on significant price moves\n- Explain technical indicators (RSI, MACD, Bollinger Bands, EMA) in plain language\n\n### Freelance & Job Finding\n- Search and rank freelance opportunities on Upwork, Fiverr, Toptal, and LinkedIn\n- Draft personalized cover letters and proposals\n- Track application status and follow-up reminders\n- Suggest skills to add to your profile based on trending job postings\n- Prepare answers to common interview or client-vetting questions\n\n## Operating Parameters\n- Interaction style: short, mobile-friendly replies by default; detailed mode on request\n- Safety: no live trade execution without explicit user confirmation and configured credentials\n- Pricing: first query free, then 0.5 USDC per query; complex data extraction 1.5 USDC",
+  "agent_type": "nlp",
+  "categories": [
+    "Social Media",
+    "Trading",
+    "Freelance",
+    "Productivity",
+    "Mobile"
+  ],
+  "capabilities": [
+    {
+      "name": "social_media_manager",
+      "description": "Drafts posts, suggests hashtags and captions, summarizes trends, and tracks engagement across Twitter/X, LinkedIn, and Instagram."
+    },
+    {
+      "name": "trading_signals",
+      "description": "Generates crypto and stock trade ideas with entry, stop-loss, and take-profit levels; explains technical indicators in plain language."
+    },
+    {
+      "name": "portfolio_tracker",
+      "description": "Monitors portfolio P&L, surfaces significant price moves, and provides daily market summaries."
+    },
+    {
+      "name": "freelance_job_finder",
+      "description": "Searches and ranks freelance opportunities on Upwork, Fiverr, Toptal, and LinkedIn; drafts proposals and cover letters."
+    },
+    {
+      "name": "application_tracker",
+      "description": "Tracks job application status, schedules follow-up reminders, and prepares answers to vetting and interview questions."
+    },
+    {
+      "name": "skill_gap_advisor",
+      "description": "Analyzes trending job postings and recommends skills to add to the user's profile or resume."
+    }
+  ],
+  "commands": [
+    {
+      "command": "/social",
+      "description": "Switch to Social Media mode. Usage: /social <platform> <topic>"
+    },
+    {
+      "command": "/trade",
+      "description": "Request a trade idea. Usage: /trade <symbol> [long|short]"
+    },
+    {
+      "command": "/portfolio",
+      "description": "Show portfolio summary. Usage: /portfolio"
+    },
+    {
+      "command": "/jobs",
+      "description": "Search freelance jobs. Usage: /jobs <keywords>"
+    },
+    {
+      "command": "/apply",
+      "description": "Draft a proposal for a job. Usage: /apply <job-title>"
+    },
+    {
+      "command": "/track",
+      "description": "List tracked applications and their status. Usage: /track"
+    },
+    {
+      "command": "/skills",
+      "description": "Get a skill-gap report based on current market demand. Usage: /skills"
+    },
+    {
+      "command": "/help",
+      "description": "Show all available commands and examples."
+    }
+  ],
+  "nlp_fallback": true,
+  "faq_items": [
+    {
+      "question": "What platforms does the social media manager support?",
+      "answer": "Twitter/X, LinkedIn, and Instagram are supported out of the box. The agent can draft content, suggest hashtags, and advise on posting times for each platform."
+    },
+    {
+      "question": "Does the bot place live trades?",
+      "answer": "No. By default the agent operates in advisory mode only. Live execution requires exchange credentials, a max-notional limit, and explicit user confirmation to be configured."
+    },
+    {
+      "question": "Which freelance platforms are covered?",
+      "answer": "The agent searches Upwork, Fiverr, Toptal, and LinkedIn Jobs. It ranks results by relevance, budget, and client rating, then drafts a tailored proposal."
+    },
+    {
+      "question": "How does pricing work?",
+      "answer": "The first query is free where supported. Subsequent queries are 0.5 USDC each; structured data extraction (portfolio snapshot, bulk job search) is 1.5 USDC."
+    },
+    {
+      "question": "Is this optimized for mobile?",
+      "answer": "Yes. Responses are concise by default to fit a phone screen. Append 'detailed' to any request to get a full breakdown."
+    }
+  ]
+}
