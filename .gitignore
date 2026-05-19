@@ -14,9 +14,14 @@
 
 # Compiled agent binaries
 agents/priya-hub/priya-hub
+agents/priya-hub/priya-hub-*
 agents/priya-bot/priya-bot
 agents/mobile-assistant-bot/mobile-assistant-bot
 agents/*/run
+
+# Runtime memory / state files
+agents/**/.priya-hub-memory.json
+**/.priya-hub-memory.json
 
 # OS / editor noise
 Thumbs.db
