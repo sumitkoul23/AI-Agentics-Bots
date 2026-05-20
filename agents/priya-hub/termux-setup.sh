@@ -51,40 +51,61 @@ else
   ok "Ollama downloaded: $OLLAMA_DIR/ollama"
 fi
 
-# ── 4. Download Bodhi Hub binary ──────────────────────────────────────────────
-BODHI_HUB_BIN="$HOME/bodhi-hub"
-if [ -f "$BODHI_HUB_BIN" ]; then
-  ok "bodhi-hub binary already present"
-else
-  info "Looking for bodhi-hub-android-arm64 in Downloads…"
-  if [ -f "/sdcard/Download/bodhi-hub-android-arm64" ]; then
-    cp /sdcard/Download/bodhi-hub-android-arm64 "$BODHI_HUB_BIN"
-    chmod +x "$BODHI_HUB_BIN"
-    ok "bodhi-hub copied from Downloads"
-  else
-    echo ""
-    echo "  ⚠️  bodhi-hub binary not found."
-    echo ""
-    echo "  Download from GitHub Releases:"
-    echo "    https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest"
-    echo "    → bodhi-hub-android-arm64.tar.gz"
-    echo ""
-    echo "  Or build on your laptop:"
-    echo "    cd agents/priya-hub && make android  # outputs dist/bodhi-hub-android-arm64"
-    echo "    adb push dist/bodhi-hub-android-arm64 /sdcard/Download/"
-    echo ""
-    echo "  Re-run this script after copying."
-    echo ""
-  fi
-fi
+# ── Helper: install binary from raw file or .tar.gz archive ──────────────────
+install_binary() {
+  local name="$1"      # e.g. bodhi-hub
+  local dest="$2"      # e.g. $HOME/bodhi-hub
+  local dl="/sdcard/Download"
 
-# Also check for bodhi-app
+  if [ -f "$dest" ]; then
+    ok "$name binary already present"
+    return 0
+  fi
+
+  info "Looking for $name in Downloads…"
+
+  # Prefer raw binary (manual build / adb push)
+  if [ -f "$dl/${name}-android-arm64" ]; then
+    cp "$dl/${name}-android-arm64" "$dest"
+    chmod +x "$dest"
+    ok "$name copied from Downloads (raw)"
+    return 0
+  fi
+
+  # Accept GitHub Release .tar.gz asset
+  if [ -f "$dl/${name}-android-arm64.tar.gz" ]; then
+    tar -xzf "$dl/${name}-android-arm64.tar.gz" -C "$HOME"
+    # Binary inside the archive has the same name as the file
+    if [ -f "$HOME/${name}-android-arm64" ]; then
+      mv "$HOME/${name}-android-arm64" "$dest"
+    fi
+    chmod +x "$dest"
+    ok "$name extracted from $dl/${name}-android-arm64.tar.gz"
+    return 0
+  fi
+
+  echo ""
+  echo "  ⚠️  $name binary not found in Downloads."
+  echo ""
+  echo "  Option 1 — Download from GitHub Releases (easiest):"
+  echo "    https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest"
+  echo "    → download ${name}-android-arm64.tar.gz to your phone's Downloads folder"
+  echo ""
+  echo "  Option 2 — Build on your laptop:"
+  echo "    cd agents/priya-hub && make android"
+  echo "    adb push dist/${name}-android-arm64 /sdcard/Download/"
+  echo ""
+  echo "  Then re-run this script."
+  echo ""
+  return 1
+}
+
+# ── 4. Install Bodhi Hub and App binaries ─────────────────────────────────────
+BODHI_HUB_BIN="$HOME/bodhi-hub"
 BODHI_APP_BIN="$HOME/bodhi-app"
-if [ -f "/sdcard/Download/bodhi-app-android-arm64" ] && [ ! -f "$BODHI_APP_BIN" ]; then
-  cp /sdcard/Download/bodhi-app-android-arm64 "$BODHI_APP_BIN"
-  chmod +x "$BODHI_APP_BIN"
-  ok "bodhi-app copied from Downloads"
-fi
+
+install_binary "bodhi-hub" "$BODHI_HUB_BIN"
+install_binary "bodhi-app" "$BODHI_APP_BIN"
 
 # ── 5. Pull a model (tiny for mobile) ────────────────────────────────────────
 echo ""

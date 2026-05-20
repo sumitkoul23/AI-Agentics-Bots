@@ -1673,15 +1673,19 @@ func handleBodhi(input string, mem *Memory) string {
 
 I can help you with any of these topics. Just ask naturally:
 
-  📈 Trading      — "BTC trade plan", "analyse ETH", "funding rate"
-  💼 Portfolio    — "review my portfolio", "rebalance", "DeFi yields"
-  📣 Social       — "draft a tweet", "LinkedIn post about AI", "content calendar"
-  💬 Comms        — "write email to client", "follow-up message", "negotiate my rate"
-  🗂  Organizer    — "brain dump", "daily plan", "I'm stuck on..."
-  💰 Finance      — "explain RSI", "macro briefing", "stock analysis"
-  🔍 Freelance    — "find Upwork jobs", "write proposal", "pricing strategy"
+  📈 Trading      — "BTC trade plan", "funding rate analysis"       (/use perp-markets)
+  💼 Portfolio    — "review my portfolio", "rebalance"               (/use portfolio)
+  📣 Social       — "draft a tweet", "LinkedIn post about AI"        (/use social)
+  💬 Comms        — "write email to client", "negotiate my rate"     (/use comms)
+  🗂  Organizer    — "brain dump", "daily plan", "I'm stuck"         (/use organizer)
+  💰 Finance      — "explain RSI", "macro briefing"                  (/use finance)
+  🔍 Freelance    — "find Upwork jobs", "write proposal"             (/use freelance)
+  💻 Code         — "debug this error", "review my code"             (/use code)
+  🏃 Health       — "create workout plan", "nutrition advice"        (/use health)
+  🔬 Research     — "deep dive on X", "compare A vs B"              (/use research)
+  📰 News         — "what's moving markets", "crypto signals"        (/use news)
 
-Or type /agents to see the full list.`, input)
+Type /help for all commands or /agents for the full agent list.`, input)
 }
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
@@ -1709,16 +1713,19 @@ func greeting() string {
 Your all-in-one AI assistant — running fully offline, no keys needed.
 
 What I can do for you:
-  📈 Crypto trade plans + technical analysis
-  💼 Portfolio strategy + DeFi yields
-  📣 Social media content (all platforms)
-  💬 Emails, DMs, proposals, negotiation
-  🗂  Daily/weekly planning + task management
-  💰 Finance explainers + market frameworks
-  🔍 Freelance job search + proposals + rates
+  📈 Crypto trade plans + technical analysis  (/use perp-markets)
+  💼 Portfolio strategy + DeFi yields          (/use portfolio)
+  📣 Social media content (all platforms)      (/use social)
+  💬 Emails, DMs, proposals, negotiation       (/use comms)
+  🗂  Daily/weekly planning + task management  (/use organizer)
+  💰 Finance explainers + market frameworks    (/use finance)
+  🔍 Freelance job search + proposals + rates  (/use freelance)
+  💻 Code debugging, review, architecture      (/use code)
+  🏃 Training, nutrition, sleep, recovery      (/use health)
+  🔬 Deep research + fact-checked analysis     (/use research)
+  📰 Market signals + news + trend analysis    (/use news)
 
-Type /agents to see all specialists.
-Or just ask anything — I'll route to the right expert.`
+Just ask naturally — I route automatically. Or /help to see all commands.`
 }
 
 func whoAmI() string {

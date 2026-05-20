@@ -335,8 +335,10 @@ func helpText() string {
 
 /agents               List all specialist agents
 /use <id> <message>   Force a specific agent
-                        IDs: perp-markets, portfolio, social,
-                             comms, organizer, finance, freelance, bodhi
+                        IDs: auto, bodhi,
+                             perp-markets, portfolio, finance,
+                             social, comms, organizer, freelance,
+                             code, health, research, news
 
 ━━ SWARM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /status               Show swarm health + Ollama status
@@ -347,13 +349,17 @@ func helpText() string {
 /learn voice <text>   Feed your writing style
 
 ━━ QUICK EXAMPLES ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-"BTC trade plan long"            → Perp Markets
-"Rebalance my portfolio"         → Portfolio
-"Draft a LinkedIn post about AI" → Social Media
-"Write email to my client"       → Comms
-"Brain dump all my tasks"        → Organizer
-"Explain DeFi yields"            → Finance
-"Find Upwork gigs for Go dev"    → Freelance
+"BTC trade plan long"            → perp-markets
+"Rebalance my portfolio"         → portfolio
+"Draft a LinkedIn post about AI" → social
+"Write email to my client"       → comms
+"Brain dump all my tasks"        → organizer
+"Explain DeFi yields"            → finance
+"Find Upwork gigs for Go dev"    → freelance
+"Debug this nil pointer"         → code
+"Create a workout plan"          → health
+"Research best LLM frameworks"   → research
+"What's moving crypto today"     → news
 
 ━━ MESH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /mesh                 Show connected device peers
