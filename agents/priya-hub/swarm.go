@@ -121,6 +121,49 @@ func (a *swarmAgent) process(ctx context.Context, input string) string {
 	return response
 }
 
+// Notification is an autonomous insight pushed to connected clients via SSE.
+type Notification struct {
+	From string    `json:"from"`
+	Text string    `json:"text"`
+	At   time.Time `json:"at"`
+}
+
+// NotifBus is a simple fan-out pub/sub for SSE clients.
+type NotifBus struct {
+	mu   sync.Mutex
+	subs map[int]chan Notification
+	next int
+}
+
+func NewNotifBus() *NotifBus { return &NotifBus{subs: make(map[int]chan Notification)} }
+
+func (b *NotifBus) Subscribe() (int, chan Notification) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	id := b.next
+	b.next++
+	ch := make(chan Notification, 8)
+	b.subs[id] = ch
+	return id, ch
+}
+
+func (b *NotifBus) Unsubscribe(id int) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	delete(b.subs, id)
+}
+
+func (b *NotifBus) Publish(n Notification) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	for _, ch := range b.subs {
+		select {
+		case ch <- n:
+		default: // drop if subscriber is slow
+		}
+	}
+}
+
 // Swarm coordinates all specialized agents and the autonomous background scheduler.
 type Swarm struct {
 	agents  map[string]*swarmAgent
@@ -128,6 +171,7 @@ type Swarm struct {
 	mem     *Memory
 	learner *Learner
 	trainer *Trainer
+	Notifs  *NotifBus
 	cancel  context.CancelFunc
 	wg      sync.WaitGroup
 	mu      sync.RWMutex
@@ -153,6 +197,7 @@ func NewSwarm(registry *Registry, mem *Memory) *Swarm {
 		mem:     mem,
 		learner: learner,
 		trainer: trainer,
+		Notifs:  NewNotifBus(),
 	}
 
 	for _, a := range registry.list {
@@ -256,7 +301,7 @@ func (s *Swarm) runAutonomous(ctx context.Context) {
 	}
 }
 
-// autonomousFire sends a background task to an agent — no reply expected.
+// autonomousFire dispatches a background task and publishes the reply to NotifBus.
 func (s *Swarm) autonomousFire(agentID, task string) {
 	s.mu.RLock()
 	agent, ok := s.agents[agentID]
@@ -264,12 +309,23 @@ func (s *Swarm) autonomousFire(agentID, task string) {
 	if !ok {
 		return
 	}
+	reply := make(chan string, 1)
 	select {
-	case agent.inbox <- SwarmMessage{From: "system", AgentID: agentID, Input: task}:
+	case agent.inbox <- SwarmMessage{From: "system", AgentID: agentID, Input: task, Reply: reply}:
 		log.Printf("[Swarm:auto] dispatched to %s", agentID)
 	default:
 		log.Printf("[Swarm:auto] %s inbox full — skipping", agentID)
+		return
 	}
+	go func() {
+		select {
+		case r := <-reply:
+			s.Notifs.Publish(Notification{From: agentID, Text: r, At: time.Now()})
+			log.Printf("[Swarm:auto] %s insight published to %d subscribers", agentID, len(s.Notifs.subs))
+		case <-time.After(120 * time.Second):
+			log.Printf("[Swarm:auto] %s timed out waiting for reply", agentID)
+		}
+	}()
 }
 
 // Status returns a human-readable swarm summary.
@@ -386,6 +442,48 @@ You explain complex concepts in plain language. You analyse charts, on-chain dat
 You cover: finding opportunities on Upwork, Fiverr, LinkedIn, Contra, and Toptal; writing proposals that win; setting and raising rates; identifying skill gaps; building a client pipeline; navigating interviews.
 
 Always ground advice in current platform realities and give specific, testable actions.`
+
+	case "code":
+		return base + `Your specialty: software engineering across all languages and domains.
+
+You excel at: debugging (root cause analysis, not just symptoms), code review (correctness + performance + security + readability), architecture design (trade-offs, patterns, scalability), algorithm selection, test writing, and refactoring.
+
+For every code problem:
+- Identify the exact cause, not just the surface symptom
+- Provide a complete, working solution — never a partial snippet
+- Explain WHY the fix works so the user learns
+- Note any adjacent risks or edge cases
+
+Languages you work in fluently: Go, Python, JavaScript/TypeScript, Rust, Java, C/C++, SQL, Bash, and more.`
+
+	case "health":
+		return base + `Your specialty: health optimisation — physical and mental.
+
+You cover: strength and hypertrophy programming, fat loss protocols, cardiovascular conditioning, sports nutrition (macros, meal timing, supplementation), sleep architecture, stress and cortisol management, recovery (HRV, active recovery, deload weeks), and habit formation science.
+
+For every recommendation:
+- Give specific numbers (sets, reps, calories, macros, sleep duration)
+- Cite the mechanism, not just the rule
+- Distinguish between strong evidence and emerging research
+- Personalise to the user's stated constraints and goals`
+
+	case "research":
+		return base + `Your specialty: structured research and synthesis.
+
+You produce: comprehensive overviews with key findings front-loaded, rigorous comparisons (criteria matrices, trade-offs), literature synthesis (identifying consensus vs. contested claims), devil's advocate analysis (steelmanning opposing views), and fact-check assessments.
+
+Structure every research response:
+1. Executive summary (3 bullet points max)
+2. Deep analysis with evidence
+3. Counterarguments or nuance
+4. Actionable conclusion or open questions`
+
+	case "news":
+		return base + `Your specialty: news curation and trend analysis.
+
+You cut through noise by: identifying which events actually move markets or shift narratives (vs. noise), tracking signal sources across crypto, tech, macro, and geopolitics, and surfacing second-order effects the user might miss.
+
+Always distinguish: confirmed fact vs. rumour vs. speculation. Note the primary source. Flag when a story is being amplified without new information.`
 
 	default:
 		return base + `You are Priya's general intelligence — warm, knowledgeable, and genuinely helpful for any topic the user brings up.

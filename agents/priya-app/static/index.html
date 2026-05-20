@@ -171,7 +171,9 @@ body{
   letter-spacing:.04em;transition:color .15s;
   height:var(--nav-h);
 }
-.nav-item .ni{font-size:20px;line-height:1}
+.nav-item .ni{font-size:20px;line-height:1;position:relative;display:inline-block}
+.nav-badge{position:absolute;top:-4px;right:-6px;min-width:16px;height:16px;background:var(--red);color:#fff;border-radius:99px;font-size:.58rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px;pointer-events:none;opacity:0;transform:scale(.5);transition:all .2s}
+.nav-badge.show{opacity:1;transform:scale(1)}
 .nav-item.active{color:var(--accent)}
 .nav-item:hover{color:var(--text2)}
 
@@ -377,6 +379,15 @@ body{
         </div>
         <div class="s-arrow">›</div>
       </div>
+      <div class="s-section">Notifications</div>
+      <div class="s-row" onclick="requestNotifPermission()">
+        <div class="s-icon">🔔</div>
+        <div class="s-info">
+          <div class="s-name">Enable Notifications</div>
+          <div class="s-sub" id="notif-status">Allow Priya to notify you of autonomous insights</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
       <div class="s-section">Install</div>
       <div class="s-row" id="install-row" onclick="installPWA()" style="display:none">
         <div class="s-icon">📲</div>
@@ -401,8 +412,8 @@ body{
 
 <!-- Bottom nav -->
 <nav class="nav">
-  <button class="nav-item active" id="nav-chat" onclick="setScreen('chat')">
-    <span class="ni">💬</span>Chat
+  <button class="nav-item active" id="nav-chat" onclick="setScreen('chat');clearNotifBadge()">
+    <span class="ni">💬<span class="nav-badge" id="notif-badge"></span></span>Chat
   </button>
   <button class="nav-item" id="nav-agents" onclick="setScreen('agents')">
     <span class="ni">👥</span>Agents
@@ -433,14 +444,18 @@ body{
 <script>
 // ── Agent definitions ──────────────────────────────────────────────────────
 const AGENTS = [
-  {id:'priya',     name:'Priya',         icon:'🌸', color:'#8b5cf6', desc:'General assistant'},
-  {id:'finance',   name:'Finance',       icon:'📊', color:'#10b981', desc:'Crypto & markets'},
-  {id:'perp-markets',name:'Perp Markets',icon:'⚡', color:'#f59e0b', desc:'Futures & perpetuals'},
-  {id:'portfolio', name:'Portfolio',     icon:'💼', color:'#3b82f6', desc:'Asset allocation'},
-  {id:'social',    name:'Social',        icon:'📣', color:'#ec4899', desc:'Content creation'},
-  {id:'comms',     name:'Comms',         icon:'💬', color:'#06b6d4', desc:'Emails & messages'},
-  {id:'organizer', name:'Organizer',     icon:'🗂️', color:'#f97316', desc:'Productivity'},
-  {id:'freelance', name:'Freelance',     icon:'🔍', color:'#a855f7', desc:'Jobs & proposals'},
+  {id:'priya',       name:'Priya',          icon:'🌸', color:'#8b5cf6', desc:'General assistant'},
+  {id:'finance',     name:'Finance',        icon:'📊', color:'#10b981', desc:'Crypto & markets'},
+  {id:'perp-markets',name:'Perp Markets',   icon:'⚡', color:'#f59e0b', desc:'Futures & perpetuals'},
+  {id:'portfolio',   name:'Portfolio',      icon:'💼', color:'#3b82f6', desc:'Asset allocation'},
+  {id:'social',      name:'Social',         icon:'📣', color:'#ec4899', desc:'Content creation'},
+  {id:'comms',       name:'Comms',          icon:'💬', color:'#06b6d4', desc:'Emails & messages'},
+  {id:'organizer',   name:'Organizer',      icon:'🗂️', color:'#f97316', desc:'Productivity'},
+  {id:'freelance',   name:'Freelance',      icon:'🔍', color:'#a855f7', desc:'Jobs & proposals'},
+  {id:'code',        name:'Code',           icon:'💻', color:'#22d3ee', desc:'Debugging & architecture'},
+  {id:'health',      name:'Health',         icon:'💪', color:'#4ade80', desc:'Fitness & nutrition'},
+  {id:'research',    name:'Research',       icon:'🔬', color:'#818cf8', desc:'Deep dives & analysis'},
+  {id:'news',        name:'News',           icon:'📰', color:'#fb923c', desc:'Trends & current events'},
 ]
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -498,6 +513,7 @@ function init() {
   }
 
   pingHub()
+  connectEvents()
 }
 
 function onViewportResize() {
@@ -805,6 +821,64 @@ function renderTraining(statusTxt, mem) {
 
   h += '<div style="height:16px"></div>'
   body.innerHTML = h
+}
+
+// ── Push notifications (SSE) ───────────────────────────────────────────────
+let notifCount = 0
+function connectEvents() {
+  const url = '/api/events' + (S.hubURL ? '?hub=' + encodeURIComponent(S.hubURL) : '')
+  const es = new EventSource(url)
+  es.onmessage = e => {
+    try {
+      const d = JSON.parse(e.data)
+      if (d.type === 'notification' && d.from && d.text) {
+        onNotification(d)
+      }
+    } catch {}
+  }
+  es.onerror = () => {
+    // Reconnect after 10s on error
+    es.close()
+    setTimeout(connectEvents, 10000)
+  }
+}
+
+function onNotification(n) {
+  const a = AGENTS.find(x => x.id === n.from) || {icon:'🌸', name:'Priya', color:'#8b5cf6'}
+  // Inject as a bot message in chat
+  pushMsg('bot', n.text, n.from)
+
+  // If user is not on chat screen, show badge
+  if (S.screen !== 'chat') {
+    notifCount++
+    const badge = document.getElementById('notif-badge')
+    badge.textContent = notifCount > 9 ? '9+' : notifCount
+    badge.classList.add('show')
+  }
+
+  // System notification (if permission granted)
+  if (Notification?.permission === 'granted') {
+    new Notification(a.icon + ' ' + a.name, {
+      body: n.text.slice(0, 120),
+      icon: '/icon.svg',
+      tag: 'priya-auto',
+    })
+  }
+
+  toast(a.icon + ' ' + a.name + ' has an update')
+}
+
+function clearNotifBadge() {
+  notifCount = 0
+  const badge = document.getElementById('notif-badge')
+  badge.textContent = ''
+  badge.classList.remove('show')
+}
+
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission()
+  }
 }
 
 // ── Hub connectivity ───────────────────────────────────────────────────────

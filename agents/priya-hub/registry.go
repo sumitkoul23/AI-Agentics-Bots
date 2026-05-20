@@ -61,6 +61,10 @@ func agents(mem *Memory) []*Agent {
 		organizerAgent(),
 		financeAgent(),
 		freelanceAgent(mem),
+		codeAgent(),
+		healthAgent(),
+		researchAgent(),
+		newsAgent(),
 		priyaAgent(),
 	}
 }
@@ -171,6 +175,68 @@ func freelanceAgent(mem *Memory) *Agent {
 			"interview prep",
 		},
 		Handle: func(input string, m *Memory) string { return handleFreelance(input, m) },
+	}
+}
+
+func codeAgent() *Agent {
+	return &Agent{
+		ID:   "code",
+		Name: "Code Assistant",
+		Desc: "Programming, debugging, architecture, code review — any language",
+		Keywords: []string{
+			"debug ", "debugging", "code review", "review my code", "fix this code",
+			"function ", "refactor", "architecture", "implement", "write a script",
+			"golang", "python", "javascript", "typescript", "rust", "java", "sql",
+			"api endpoint", "algorithm", "data structure", "unit test", "ci/cd",
+			"docker", "kubernetes", "bash script", "regex", "parsing",
+		},
+		Handle: handleCode,
+	}
+}
+
+func healthAgent() *Agent {
+	return &Agent{
+		ID:   "health",
+		Name: "Health & Fitness",
+		Desc: "Workouts, nutrition, sleep, recovery, wellness habits",
+		Keywords: []string{
+			"workout", "exercise", "gym ", "training plan", "muscle", "cardio",
+			"weight loss", "bulk", "cut ", "calories", "macros", "protein",
+			"nutrition", "diet plan", "meal plan", "healthy eating",
+			"sleep quality", "recovery", "stretching", "mobility", "injury",
+			"mental health", "stress", "burnout", "meditation",
+		},
+		Handle: handleHealth,
+	}
+}
+
+func researchAgent() *Agent {
+	return &Agent{
+		ID:   "research",
+		Name: "Research Analyst",
+		Desc: "Deep dives, synthesis, comparisons, structured analysis on any topic",
+		Keywords: []string{
+			"research ", "deep dive", "breakdown ", "analyse ", "analyze ",
+			"compare ", "pros and cons", "versus ", " vs ", "trade-off",
+			"synthesize", "summarize", "summarise", "literature ",
+			"how does it work", "explain in depth", "detailed overview",
+		},
+		Handle: handleResearch,
+	}
+}
+
+func newsAgent() *Agent {
+	return &Agent{
+		ID:   "news",
+		Name: "News & Trends",
+		Desc: "Current events, market news, tech trends, what's happening",
+		Keywords: []string{
+			"latest news", "what happened", "trending", "breaking",
+			"this week ", "today in ", "recent ", "current events",
+			"market update", "tech news", "ai news", "crypto news",
+			"what's new", "whats new",
+		},
+		Handle: handleNews,
 	}
 }
 

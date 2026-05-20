@@ -1727,7 +1727,7 @@ func whoAmI() string {
 No API keys. No internet connection required. No data sent anywhere.
 All intelligence is built directly into the bot.
 
-I have 8 specialist agents inside me:
+I have 12 specialist agents inside me:
   perp-markets  — Perpetual Markets Strategist
   portfolio     — Portfolio Strategist
   social        — Social Media Expert (all 7 platforms)
@@ -1735,10 +1735,89 @@ I have 8 specialist agents inside me:
   organizer     — Personal Organizer
   finance       — Finance & Crypto Analyst
   freelance     — Freelance & Jobs Advisor
+  code          — Code Assistant (any language)
+  health        — Health & Fitness
+  research      — Research Analyst
+  news          — News & Trends
   priya         — General (that's me, the fallback)
 
 I route your messages automatically. You can also force a specific agent:
 /use perp-markets BTC trade plan long`
+}
+
+// ── Code Assistant ────────────────────────────────────────────────────────────
+
+func handleCode(input string, mem *Memory) string {
+	lower := strings.ToLower(input)
+	switch {
+	case strings.Contains(lower, "debug") || strings.Contains(lower, "error") || strings.Contains(lower, "bug "):
+		return "Share the error message and the relevant code. I'll identify the root cause and give you a tested fix."
+	case strings.Contains(lower, "review"):
+		return "Paste the code you want reviewed. I'll assess: correctness, edge cases, performance, security, and readability."
+	case strings.Contains(lower, "refactor"):
+		return "Share the code to refactor. Tell me the goal (readability, performance, testability) and I'll rewrite it cleanly."
+	case strings.Contains(lower, "architect") || strings.Contains(lower, "design") || strings.Contains(lower, "structure"):
+		return "Describe what you're building — language, scale, constraints, team size. I'll outline the architecture with trade-offs."
+	case strings.Contains(lower, "test") || strings.Contains(lower, "unit test"):
+		return "Share the function or module. I'll write unit tests with edge cases, table-driven where appropriate."
+	case strings.Contains(lower, "algorithm") || strings.Contains(lower, "data structure"):
+		return "Describe the problem: input, output, constraints, scale. I'll pick the right algorithm and explain the complexity."
+	default:
+		return "Share your code or describe what you're building. I handle debugging, reviews, architecture, testing, and implementation in any language."
+	}
+}
+
+// ── Health & Fitness ──────────────────────────────────────────────────────────
+
+func handleHealth(input string, mem *Memory) string {
+	lower := strings.ToLower(input)
+	switch {
+	case strings.Contains(lower, "workout") || strings.Contains(lower, "gym") || strings.Contains(lower, "exercise") || strings.Contains(lower, "training"):
+		return "Tell me: goal (strength / muscle / fat loss / endurance), days per week, equipment access, and any injuries. I'll build a specific programme."
+	case strings.Contains(lower, "diet") || strings.Contains(lower, "nutrition") || strings.Contains(lower, "calorie") || strings.Contains(lower, "meal") || strings.Contains(lower, "macro"):
+		return "Share your goal, current eating habits, and any restrictions. I'll give you a practical nutrition framework with macro targets — no fad diets."
+	case strings.Contains(lower, "sleep"):
+		return "Key sleep levers: fixed wake time (anchors circadian rhythm), no screens 60 min before bed, room at 18–19°C, no caffeine after 1pm. What's your specific issue?"
+	case strings.Contains(lower, "stress") || strings.Contains(lower, "burnout") || strings.Contains(lower, "mental"):
+		return "Quick tools: box breathing (4-4-4-4), 20-min walk, single-tasking. Long-term: what's the source of the stress? Let's identify it."
+	case strings.Contains(lower, "weight loss") || strings.Contains(lower, "lose weight") || strings.Contains(lower, "cut "):
+		return "Sustainable fat loss: 300–500 kcal deficit, high protein (2g/kg body weight), resistance training to preserve muscle, 7–8h sleep. Tell me your stats and I'll calculate your numbers."
+	default:
+		return "Tell me your health goal and current routine. I give specific, evidence-based guidance — workout plans, nutrition targets, recovery protocols, and mental performance."
+	}
+}
+
+// ── Research Analyst ──────────────────────────────────────────────────────────
+
+func handleResearch(input string, mem *Memory) string {
+	lower := strings.ToLower(input)
+	topic := truncate(input, 80)
+	switch {
+	case strings.Contains(lower, "compare") || strings.Contains(lower, " vs ") || strings.Contains(lower, "versus"):
+		return fmt.Sprintf("Comparison: %q — I'll structure this as a criteria table → key differences → use-case recommendation. What criteria matter most?", topic)
+	case strings.Contains(lower, "pros and cons") || strings.Contains(lower, "trade-off") || strings.Contains(lower, "tradeoff"):
+		return fmt.Sprintf("Trade-off analysis: %q — I'll cover benefits, risks, hidden costs, and which context each option wins in.", topic)
+	case strings.Contains(lower, "summarize") || strings.Contains(lower, "summarise") || strings.Contains(lower, "breakdown"):
+		return fmt.Sprintf("Summary: %q — paste the source text and I'll produce a structured breakdown with key takeaways front-loaded.", topic)
+	default:
+		return fmt.Sprintf("Research: %q — I'll generate a structured deep-dive: background, key findings, competing perspectives, open questions. What angle interests you most?", topic)
+	}
+}
+
+// ── News & Trends ─────────────────────────────────────────────────────────────
+
+func handleNews(input string, mem *Memory) string {
+	lower := strings.ToLower(input)
+	switch {
+	case strings.Contains(lower, "crypto") || strings.Contains(lower, "bitcoin") || strings.Contains(lower, "btc") || strings.Contains(lower, "eth"):
+		return "Crypto news sources worth tracking: The Block, CoinDesk, Decrypt (news) · Glassnode, CryptoQuant (on-chain) · @WatcherGuru, @lookonchain (Twitter/X). What event are you following?"
+	case strings.Contains(lower, "ai") || strings.Contains(lower, "tech"):
+		return "AI & tech signal sources: Hacker News, arXiv cs.AI, Anthropic/OpenAI/Google DeepMind blogs, GitHub Trending. What area — models, infrastructure, products, or policy?"
+	case strings.Contains(lower, "market") || strings.Contains(lower, "stock") || strings.Contains(lower, "equity"):
+		return "Key market catalysts to watch: Fed statements, CPI/PCE, earnings surprises, DXY moves. Which market or sector? I can route deeper analysis to the Finance agent."
+	default:
+		return "What topic or sector are you tracking? I'll cut through the noise and flag what actually matters versus what's just headlines."
+	}
 }
 
 // handlePerpMarketsAgent wraps handlePerpMarkets to match Agent.Handle signature.

@@ -44,6 +44,7 @@ func main() {
 	mux.HandleFunc("/api/status", proxy.status)
 	mux.HandleFunc("/api/agents", proxy.agents)
 	mux.HandleFunc("/api/memory", proxy.memory)
+	mux.HandleFunc("/api/events", proxy.events)
 
 	// ── Static assets ─────────────────────────────────────────────────────────
 	mux.HandleFunc("/manifest.json", staticHandler(manifestJSON, "application/manifest+json", "public, max-age=3600"))
@@ -126,6 +127,57 @@ func (p *hubProxy) agents(w http.ResponseWriter, r *http.Request) {
 
 func (p *hubProxy) memory(w http.ResponseWriter, r *http.Request) {
 	p.proxyGET(w, r, "/memory", "application/json")
+}
+
+// events proxies the hub's SSE /events stream — must flush line-by-line.
+func (p *hubProxy) events(w http.ResponseWriter, r *http.Request) {
+	target := r.Header.Get("X-Hub-URL")
+	if target == "" {
+		target = p.baseURL
+	}
+	if _, err := url.ParseRequestURI(target); err != nil {
+		target = p.baseURL
+	}
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+		return
+	}
+
+	// Use a long-lived client — no timeout for SSE
+	req, err := http.NewRequestWithContext(r.Context(), http.MethodGet, target+"/events", nil)
+	if err != nil {
+		http.Error(w, "bad request", http.StatusBadRequest)
+		return
+	}
+
+	resp, err := (&http.Client{}).Do(req)
+	if err != nil {
+		// Hub unavailable — send a synthetic disconnected event
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		fmt.Fprintf(w, "data: {\"type\":\"disconnected\"}\n\n")
+		flusher.Flush()
+		return
+	}
+	defer resp.Body.Close()
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+
+	buf := make([]byte, 4096)
+	for {
+		n, err := resp.Body.Read(buf)
+		if n > 0 {
+			w.Write(buf[:n])
+			flusher.Flush()
+		}
+		if err != nil {
+			return
+		}
+	}
 }
 
 func (p *hubProxy) proxyGET(w http.ResponseWriter, r *http.Request, path, ct string) {

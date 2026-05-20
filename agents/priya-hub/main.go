@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 //go:embed static/index.html
@@ -141,6 +142,48 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 			json.NewEncoder(w).Encode(m.Peers())
 		})
 	}
+
+	// SSE — real-time push notifications from autonomous agents
+	mux.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Header().Set("Connection", "keep-alive")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		flusher, ok := w.(http.Flusher)
+		if !ok {
+			http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Fprintf(w, "data: {\"type\":\"connected\"}\n\n")
+		flusher.Flush()
+
+		subID, ch := swarm.Notifs.Subscribe()
+		defer swarm.Notifs.Unsubscribe(subID)
+
+		tick := time.NewTicker(25 * time.Second)
+		defer tick.Stop()
+
+		for {
+			select {
+			case <-r.Context().Done():
+				return
+			case n := <-ch:
+				payload, _ := json.Marshal(map[string]string{
+					"type": "notification",
+					"from": n.From,
+					"text": n.Text,
+					"at":   n.At.Format(time.RFC3339),
+				})
+				fmt.Fprintf(w, "data: %s\n\n", payload)
+				flusher.Flush()
+			case <-tick.C:
+				fmt.Fprintf(w, ": heartbeat\n\n")
+				flusher.Flush()
+			}
+		}
+	})
 
 	mux.HandleFunc("/manifest.json", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/manifest+json")
