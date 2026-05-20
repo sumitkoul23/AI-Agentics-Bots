@@ -131,6 +131,12 @@ func (m *Memory) Get(k string) string {
 }
 func (m *Memory) Learn(k, v string) { m.mu.Lock(); m.Data.Facts[k] = v; m.mu.Unlock() }
 
+func (m *Memory) GetFact(k string) string {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.Data.Facts[k]
+}
+
 func (m *Memory) GetFacts() map[string]string {
 	m.mu.RLock()
 	defer m.mu.RUnlock()

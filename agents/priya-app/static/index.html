@@ -470,10 +470,16 @@ const S = {
   sending: false,
 }
 
+// Legacy agent ID map — renames from old installs
+const AGENT_REMAP = { priya: 'bodhi' }
+
 function load() {
   try {
     const d = JSON.parse(localStorage.getItem('priya-app-state') || '{}')
-    if (d.agent) S.agent = d.agent
+    if (d.agent) {
+      const remapped = AGENT_REMAP[d.agent] || d.agent
+      S.agent = AGENTS.find(a => a.id === remapped) ? remapped : 'bodhi'
+    }
     if (d.messages) S.messages = d.messages
     if (d.hubURL) S.hubURL = d.hubURL
     if (d.theme) S.theme = d.theme

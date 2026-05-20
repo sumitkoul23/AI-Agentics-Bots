@@ -123,7 +123,11 @@ if [ -f "\$OLLAMA_DIR/ollama" ]; then
 
 $(if [ -n "$MODEL" ]; then
 echo "  # Pull model if not already present"
-echo "  \"\$OLLAMA_DIR/ollama\" pull $MODEL 2>&1 | tail -3"
+echo "  echo '→ Pulling model $MODEL (this may take a while on first run)…'"
+echo "  if ! \"\$OLLAMA_DIR/ollama\" pull $MODEL; then"
+echo "    echo '✗ Failed to pull model $MODEL — check network and try again with: ollama pull $MODEL'"
+echo "    exit 1"
+echo "  fi"
 fi)
   echo "✓ Ollama ready"
 fi

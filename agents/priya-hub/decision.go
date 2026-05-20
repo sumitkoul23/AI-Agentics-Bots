@@ -31,7 +31,7 @@ func NewDecisionEngine(mem *Memory, trainer *Trainer) *DecisionEngine {
 //	question   — the question text (empty if appendQ is false)
 //	sysAppend  — extra text to append to the agent's system prompt
 func (d *DecisionEngine) Decide(agentID, input string) (appendQ bool, question, sysAppend string) {
-	appendQ, question = d.trainer.ShouldAsk()
+	appendQ, question = d.trainer.ShouldAsk(agentID)
 
 	var parts []string
 
