@@ -164,6 +164,12 @@ func (b *NotifBus) Publish(n Notification) {
 	}
 }
 
+func (b *NotifBus) Count() int {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return len(b.subs)
+}
+
 // Swarm coordinates all specialized agents and the autonomous background scheduler.
 type Swarm struct {
 	agents  map[string]*swarmAgent
@@ -321,7 +327,7 @@ func (s *Swarm) autonomousFire(agentID, task string) {
 		select {
 		case r := <-reply:
 			s.Notifs.Publish(Notification{From: agentID, Text: r, At: time.Now()})
-			log.Printf("[Swarm:auto] %s insight published to %d subscribers", agentID, len(s.Notifs.subs))
+			log.Printf("[Swarm:auto] %s insight published to %d subscribers", agentID, s.Notifs.Count())
 		case <-time.After(120 * time.Second):
 			log.Printf("[Swarm:auto] %s timed out waiting for reply", agentID)
 		}

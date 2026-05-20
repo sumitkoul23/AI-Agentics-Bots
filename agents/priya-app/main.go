@@ -130,8 +130,12 @@ func (p *hubProxy) memory(w http.ResponseWriter, r *http.Request) {
 }
 
 // events proxies the hub's SSE /events stream — must flush line-by-line.
+// EventSource cannot set custom headers, so hub URL also accepted via ?hub= query param.
 func (p *hubProxy) events(w http.ResponseWriter, r *http.Request) {
 	target := r.Header.Get("X-Hub-URL")
+	if target == "" {
+		target = r.URL.Query().Get("hub")
+	}
 	if target == "" {
 		target = p.baseURL
 	}
