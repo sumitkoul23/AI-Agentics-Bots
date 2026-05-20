@@ -28,6 +28,9 @@ var iconSVG []byte
 //go:embed static/icon-maskable.svg
 var iconMaskableSVG []byte
 
+//go:embed static/icon-192.png
+var icon192PNG []byte
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -204,6 +207,11 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 		w.Header().Set("Content-Type", "image/svg+xml")
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		w.Write(iconMaskableSVG)
+	})
+	mux.HandleFunc("/icon-192.png", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		w.Write(icon192PNG)
 	})
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

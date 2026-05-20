@@ -25,6 +25,9 @@ var swJS []byte
 //go:embed static/icon.svg
 var iconSVG []byte
 
+//go:embed static/icon-192.png
+var icon192PNG []byte
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -50,6 +53,7 @@ func main() {
 	mux.HandleFunc("/manifest.json", staticHandler(manifestJSON, "application/manifest+json", "public, max-age=3600"))
 	mux.HandleFunc("/sw.js", staticHandler(swJS, "application/javascript", "no-cache"))
 	mux.HandleFunc("/icon.svg", staticHandler(iconSVG, "image/svg+xml", "public, max-age=86400"))
+	mux.HandleFunc("/icon-192.png", staticHandler(icon192PNG, "image/png", "public, max-age=86400"))
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
