@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>FusionAI — Multi-Model Intelligence</title>
+<meta name="description" content="Claude + Gemini + Codex capabilities in one free interface"/>
+<meta name="theme-color" content="#6366f1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FusionAI"/>
+<link rel="manifest" href="/manifest.json"/>
+<link rel="icon" type="image/svg+xml" href="/icon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<style>
+:root {
+  --bg:#09090f; --surface:#111128; --surface2:#1a1a38; --surface3:#22223f;
+  --border:rgba(99,102,241,.15); --border2:rgba(99,102,241,.35);
+  --violet:#6366f1; --pink:#ec4899; --blue:#3b82f6; --green:#10b981;
+  --orange:#f97316; --yellow:#f59e0b; --red:#f43f5e; --cyan:#06b6d4;
+  --text:#f1f5f9; --text2:#94a3b8; --text3:#475569;
+  --r:12px; --r-sm:8px; --r-lg:20px;
+  --shadow:0 4px 28px rgba(0,0,0,.45);
+  /* model colors */
+  --gemini:#4285f4; --groq:#f97316; --claude:#f59e0b; --openai:#10b981; --ollama:#6366f1;
+}
+[data-theme=light]{
+  --bg:#f0f0fa; --surface:#fff; --surface2:#f4f4fd; --surface3:#eaeaf7;
+  --border:rgba(99,102,241,.14); --border2:rgba(99,102,241,.35);
+  --text:#0f172a; --text2:#475569; --text3:#94a3b8;
+  --shadow:0 4px 28px rgba(0,0,0,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:9px}
+
+/* ── Header ── */
+.hdr{height:54px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:100}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.05rem;letter-spacing:-.02em;text-decoration:none;color:var(--text)}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--violet),var(--pink));border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:20px;height:20px}
+.hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.model-pills{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;overflow:hidden}
+.pill{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:.7rem;font-weight:600;border:1px solid transparent;white-space:nowrap;opacity:.45;transition:opacity .2s}
+.pill.on{opacity:1}
+.pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.icon-btn{width:32px;height:32px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;font-size:14px;color:var(--text2);flex-shrink:0}
+.icon-btn:hover{background:var(--surface3);color:var(--text);border-color:var(--border2)}
+
+/* ── Body ── */
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 12px;gap:8px;flex-shrink:0;overflow-y:auto}
+.sidebar-title{font-size:.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:0 4px;margin-bottom:4px}
+.model-card{border-radius:var(--r);padding:11px 12px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .15s;user-select:none}
+.model-card:hover{border-color:var(--border2);background:var(--surface3)}
+.model-card.selected{border-color:var(--violet);background:rgba(99,102,241,.1)}
+.model-card.unavailable{opacity:.4;cursor:not-allowed}
+.mc-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.mc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.mc-name{font-size:.82rem;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-badge{font-size:.6rem;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.mc-badge.paid{background:rgba(99,102,241,.12);color:var(--text2);border-color:var(--border)}
+.mc-note{font-size:.7rem;color:var(--text3);line-height:1.4}
+.sidebar-divider{height:1px;background:var(--border);margin:6px 0}
+.tip-box{background:rgba(99,102,241,.07);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:.72rem;color:var(--text2);line-height:1.5}
+.tip-box a{color:var(--violet);text-decoration:none}
+.tip-box a:hover{text-decoration:underline}
+@media(max-width:900px){.sidebar{display:none}}
+
+/* ── Chat area ── */
+.chat-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.chat{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+@media(max-width:600px){.chat{padding:12px 14px;gap:12px}}
+
+/* ── Messages ── */
+.msg{display:flex;gap:12px;max-width:820px;align-self:flex-start;width:100%}
+.msg.user{align-self:flex-end;flex-direction:row-reverse;max-width:680px}
+.msg-avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+.msg.user .msg-avatar{background:linear-gradient(135deg,var(--violet),var(--pink))}
+.msg.ai .msg-avatar{background:var(--surface2);border:1px solid var(--border)}
+.msg-body{flex:1;min-width:0}
+.msg-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.msg.user .msg-meta{flex-direction:row-reverse}
+.msg-author{font-size:.72rem;font-weight:600;color:var(--text2)}
+.model-tag{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:5px;border:1px solid transparent}
+.msg-content{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 15px;font-size:.9rem;line-height:1.65;word-break:break-word}
+.msg.user .msg-content{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(236,72,153,.12));border-color:rgba(99,102,241,.3)}
+.msg.system .msg-content{background:rgba(99,102,241,.06);border-color:var(--border)}
+/* markdown */
+.msg-content h1,.msg-content h2,.msg-content h3{margin:1em 0 .4em;font-weight:700;line-height:1.3}
+.msg-content h1{font-size:1.2em}.msg-content h2{font-size:1.05em}.msg-content h3{font-size:.95em}
+.msg-content p{margin:.45em 0}
+.msg-content p:first-child{margin-top:0}.msg-content p:last-child{margin-bottom:0}
+.msg-content ul,.msg-content ol{padding-left:1.4em;margin:.45em 0}
+.msg-content li{margin:.2em 0}
+.msg-content code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:rgba(99,102,241,.1);padding:1px 5px;border-radius:4px;border:1px solid rgba(99,102,241,.15)}
+.msg-content pre{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;overflow-x:auto;margin:.6em 0}
+[data-theme=light] .msg-content pre{background:#1e1e3f}
+.msg-content pre code{background:none;border:none;padding:0;font-size:.82em;color:#e2e8f0}
+.msg-content blockquote{border-left:3px solid var(--violet);padding-left:12px;color:var(--text2);margin:.5em 0}
+.msg-content strong{font-weight:700}
+.msg-content em{font-style:italic;color:var(--text2)}
+.msg-content table{border-collapse:collapse;width:100%;margin:.5em 0;font-size:.85em}
+.msg-content th,.msg-content td{border:1px solid var(--border);padding:6px 10px;text-align:left}
+.msg-content th{background:var(--surface2);font-weight:600}
+.msg-content a{color:var(--violet);text-decoration:underline}
+/* typing indicator */
+.typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+.typing span{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:bounce .9s ease-in-out infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+
+/* ── Input ── */
+.input-wrap{padding:14px 24px 20px;flex-shrink:0;background:var(--bg);border-top:1px solid var(--border)}
+@media(max-width:600px){.input-wrap{padding:10px 12px 16px}}
+.input-row{display:flex;gap:10px;align-items:flex-end}
+.model-sel-wrap{position:relative;flex-shrink:0}
+.model-sel{appearance:none;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:var(--r-sm);padding:8px 28px 8px 10px;font-size:.8rem;font-family:inherit;cursor:pointer;outline:none;transition:border-color .15s;min-width:130px}
+.model-sel:hover,.model-sel:focus{border-color:var(--border2)}
+.model-sel-wrap::after{content:'▾';position:absolute;right:9px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3);font-size:.75rem}
+.input-box{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:.9rem;font-family:inherit;color:var(--text);resize:none;outline:none;max-height:180px;min-height:44px;overflow-y:auto;line-height:1.5;transition:border-color .15s}
+.input-box:focus{border-color:var(--border2)}
+.input-box::placeholder{color:var(--text3)}
+.send-btn{width:42px;height:42px;background:linear-gradient(135deg,var(--violet),var(--pink));border:none;border-radius:var(--r-sm);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:16px}
+.send-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(99,102,241,.4)}
+.send-btn:active{transform:translateY(0);box-shadow:none}
+.send-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.input-hint{font-size:.7rem;color:var(--text3);margin-top:7px;text-align:center}
+</style>
+</head>
+<body data-theme="dark">
+
+<!-- ── Header ── -->
+<header class="hdr">
+  <a href="/" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="6" fill="white" opacity=".95"/>
+        <circle cx="32" cy="13" r="4" fill="white" opacity=".8"/>
+        <circle cx="51" cy="32" r="4" fill="white" opacity=".8"/>
+        <circle cx="32" cy="51" r="4" fill="white" opacity=".8"/>
+        <circle cx="13" cy="32" r="4" fill="white" opacity=".8"/>
+        <line x1="32" y1="17" x2="32" y2="26" stroke="white" stroke-width="1.5" opacity=".5"/>
+        <line x1="47" y1="32" x2="38" y2="32" stroke="white" stroke-width="1.5" opacity=".5"/>
+        <line x1="32" y1="47" x2="32" y2="38" stroke="white" stroke-width="1.5" opacity=".5"/>
+        <line x1="17" y1="32" x2="26" y2="32" stroke="white" stroke-width="1.5" opacity=".5"/>
+      </svg>
+    </div>
+    FusionAI
+  </a>
+  <div class="model-pills" id="headerPills"></div>
+  <div class="hdr-right">
+    <button class="icon-btn" onclick="clearChat()" title="Clear chat">🗑</button>
+    <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">☀️</button>
+  </div>
+</header>
+
+<!-- ── Body ── -->
+<div class="body">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-title">Models</div>
+    <div id="modelCards"></div>
+    <div class="sidebar-divider"></div>
+    <div class="tip-box">
+      <strong>Free models:</strong><br>
+      🔵 <a href="https://aistudio.google.com/app/apikey" target="_blank">Gemini</a> — free API key<br>
+      🟠 <a href="https://console.groq.com" target="_blank">Groq</a> — free API key<br>
+      🟣 <a href="https://ollama.ai" target="_blank">Ollama</a> — local, no key<br><br>
+      Add keys to <code>.env</code> and restart.
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="tip-box">
+      <strong>Smart routing:</strong><br>
+      Code → Gemini or GPT<br>
+      Analysis → Claude or Gemini<br>
+      Fast Q&amp;A → Groq<br>
+      Local → Ollama
+    </div>
+  </aside>
+
+  <!-- ── Chat ── -->
+  <div class="chat-wrap">
+    <div class="chat" id="chat"></div>
+    <div class="input-wrap">
+      <div class="input-row">
+        <div class="model-sel-wrap">
+          <select class="model-sel" id="modelSelect">
+            <option value="auto">⚡ Auto route</option>
+          </select>
+        </div>
+        <textarea
+          class="input-box"
+          id="input"
+          placeholder="Ask anything — code, analysis, writing, math…"
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="send()" title="Send (Enter)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <div class="input-hint">Enter to send · Shift+Enter for new line · Auto-routes to best free model</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+const MODEL_COLORS = {
+  gemini: '#4285f4', groq: '#f97316', claude: '#f59e0b',
+  openai: '#10b981', ollama: '#6366f1', system: '#6366f1', none: '#64748b'
+};
+const MODEL_ICONS = {
+  gemini: '🔵', groq: '🟠', claude: '🟡', openai: '🟢', ollama: '🟣', system: '⚡', none: '❌'
+};
+
+let models = [];
+let selectedModel = 'auto';
+let busy = false;
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  await loadModels();
+  await loadGreeting();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+}
+
+async function loadModels() {
+  try {
+    const res = await fetch('/models');
+    models = await res.json();
+  } catch(e) {
+    models = [];
+  }
+  renderModelPills();
+  renderModelCards();
+  renderModelSelect();
+}
+
+function renderModelPills() {
+  const el = document.getElementById('headerPills');
+  el.innerHTML = models.map(m => `
+    <div class="pill ${m.available ? 'on' : ''}" style="background:${m.available ? m.color+'18' : 'var(--surface2)'};border-color:${m.available ? m.color+'44' : 'var(--border)'}">
+      <div class="pill-dot" style="background:${m.available ? m.color : 'var(--text3)'}"></div>
+      ${m.name.split(' ')[0]}
+    </div>
+  `).join('');
+}
+
+function renderModelCards() {
+  const el = document.getElementById('modelCards');
+  const autoCard = `
+    <div class="model-card selected" data-id="auto" onclick="selectModel('auto')" id="card-auto">
+      <div class="mc-top">
+        <div class="mc-dot" style="background:linear-gradient(135deg,#6366f1,#ec4899)"></div>
+        <div class="mc-name">⚡ Auto (smart route)</div>
+      </div>
+      <div class="mc-note">Picks the best model for your query</div>
+    </div>
+  `;
+  const cards = models.map(m => `
+    <div class="model-card ${m.available ? '' : 'unavailable'}" data-id="${m.id}" onclick="${m.available ? `selectModel('${m.id}')` : ''}" id="card-${m.id}">
+      <div class="mc-top">
+        <div class="mc-dot" style="background:${m.color}"></div>
+        <div class="mc-name">${m.name}</div>
+        <span class="mc-badge ${m.free ? '' : 'paid'}">${m.free ? 'FREE' : 'PAID'}</span>
+      </div>
+      <div class="mc-note">${m.note}${!m.available ? ' — not configured' : ''}</div>
+    </div>
+  `).join('');
+  el.innerHTML = autoCard + cards;
+}
+
+function renderModelSelect() {
+  const sel = document.getElementById('modelSelect');
+  const avail = models.filter(m => m.available);
+  const opts = avail.map(m =>
+    `<option value="${m.id}">${MODEL_ICONS[m.id] || '○'} ${m.name}${m.free ? ' (free)' : ''}</option>`
+  ).join('');
+  sel.innerHTML = `<option value="auto">⚡ Auto route</option>` + opts;
+}
+
+function selectModel(id) {
+  selectedModel = id;
+  document.getElementById('modelSelect').value = id;
+  document.querySelectorAll('.model-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.id === id);
+  });
+}
+
+// ── Greeting ─────────────────────────────────────────────────────────────────
+async function loadGreeting() {
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: '', model: 'auto'})
+    });
+    const data = await res.json();
+    appendMsg('ai', data.reply, data.model_id, data.model_name);
+  } catch(e) {
+    appendMsg('system', 'FusionAI ready. Ask anything!', 'system', 'FusionAI');
+  }
+}
+
+// ── Send ─────────────────────────────────────────────────────────────────────
+async function send() {
+  const input = document.getElementById('input');
+  const msg = input.value.trim();
+  if (!msg || busy) return;
+
+  busy = true;
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+
+  appendMsg('user', msg, 'user', 'You');
+  input.value = '';
+  autoResize(input);
+
+  const typingId = appendTyping();
+
+  try {
+    const model = document.getElementById('modelSelect').value;
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: msg, model})
+    });
+    const data = await res.json();
+    removeTyping(typingId);
+    appendMsg('ai', data.reply, data.model_id, data.model_name);
+  } catch(e) {
+    removeTyping(typingId);
+    appendMsg('ai', '❌ Network error — is the server running?', 'none', 'Error');
+  }
+
+  busy = false;
+  btn.disabled = false;
+  input.focus();
+}
+
+// ── Message rendering ─────────────────────────────────────────────────────────
+let msgCounter = 0;
+
+function appendMsg(role, text, modelId, modelName) {
+  const chat = document.getElementById('chat');
+  const color = MODEL_COLORS[modelId] || '#6366f1';
+  const icon = MODEL_ICONS[modelId] || '○';
+  const isUser = role === 'user';
+  const isAI = role === 'ai';
+
+  const id = 'msg-' + (++msgCounter);
+  const div = document.createElement('div');
+  div.className = `msg ${isUser ? 'user' : isAI ? 'ai' : 'system'}`;
+  div.id = id;
+
+  const modelTag = (!isUser && modelId && modelId !== 'user') ? `
+    <span class="model-tag" style="background:${color}18;color:${color};border-color:${color}33">
+      ${icon} ${modelName || modelId}
+    </span>
+  ` : '';
+
+  const avatar = isUser ? '👤' : isAI ? '⚡' : '⚙';
+  const authorLabel = isUser ? 'You' : (modelName || 'FusionAI');
+  const rendered = isUser ? escapeHtml(text) : marked.parse(text || '');
+
+  div.innerHTML = `
+    <div class="msg-avatar">${avatar}</div>
+    <div class="msg-body">
+      <div class="msg-meta">
+        <span class="msg-author">${authorLabel}</span>
+        ${modelTag}
+      </div>
+      <div class="msg-content">${rendered}</div>
+    </div>
+  `;
+
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return id;
+}
+
+function appendTyping() {
+  const chat = document.getElementById('chat');
+  const id = 'typing-' + Date.now();
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.id = id;
+  div.innerHTML = `
+    <div class="msg-avatar">⚡</div>
+    <div class="msg-body">
+      <div class="msg-meta"><span class="msg-author">FusionAI</span></div>
+      <div class="msg-content"><div class="typing"><span></span><span></span><span></span></div></div>
+    </div>
+  `;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return id;
+}
+
+function removeTyping(id) {
+  document.getElementById(id)?.remove();
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+}
+
+// ── Controls ─────────────────────────────────────────────────────────────────
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 180) + 'px';
+}
+
+function clearChat() {
+  document.getElementById('chat').innerHTML = '';
+  loadGreeting();
+}
+
+function toggleTheme() {
+  const body = document.body;
+  const isDark = body.dataset.theme === 'dark';
+  body.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+}
+
+// Sync sidebar card with select dropdown
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('modelSelect').addEventListener('change', e => {
+    selectModel(e.target.value);
+  });
+});
+
+init();
+</script>
+</body>
+</html>
