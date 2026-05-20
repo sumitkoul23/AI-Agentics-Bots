@@ -1,0 +1,93 @@
+syntax = "proto3";
+package agentic.v1;
+
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/sumitkoul23/agentic-chain/x/agentic/types";
+
+// Msg defines the agentic module's tx surface.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // RegisterAgent escrows the minimum stake and creates an AgentRecord.
+  rpc RegisterAgent     (MsgRegisterAgent)     returns (MsgRegisterAgentResponse);
+
+  // CreateTask escrows a bounty and assigns it to a chosen agent.
+  rpc CreateTask        (MsgCreateTask)        returns (MsgCreateTaskResponse);
+
+  // SubmitResponse posts the IPFS / Arweave CID of the agent's response.
+  rpc SubmitResponse    (MsgSubmitResponse)    returns (MsgSubmitResponseResponse);
+
+  // SettleTask splits the escrow (50/30/20 agent/val/burn) and bumps
+  // the agent's reputation.
+  rpc SettleTask        (MsgSettleTask)        returns (MsgSettleTaskResponse);
+
+  // SubmitFraudProof is the slashing trigger; reaching `FraudProofQuorum`
+  // signatures burns the agent's stake and resets its reputation.
+  rpc SubmitFraudProof  (MsgSubmitFraudProof)  returns (MsgSubmitFraudProofResponse);
+
+  // UpdateParams is gov-only.
+  rpc UpdateParams      (MsgUpdateParams)      returns (MsgUpdateParamsResponse);
+}
+
+message MsgRegisterAgent {
+  option (cosmos.msg.v1.signer) = "operator";
+  string operator  = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string moniker   = 2;
+  string endpoint  = 3;
+  string stake     = 4 [(cosmos_proto.scalar) = "cosmos.Int"];
+}
+message MsgRegisterAgentResponse {}
+
+message MsgCreateTask {
+  option (cosmos.msg.v1.signer) = "requester";
+  string requester = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string agent     = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string bounty    = 3 [(cosmos_proto.scalar) = "cosmos.Int"];
+  string spec      = 4;
+}
+message MsgCreateTaskResponse {
+  uint64 task_id = 1;
+}
+
+message MsgSubmitResponse {
+  option (cosmos.msg.v1.signer) = "agent";
+  string agent        = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 task_id      = 2;
+  string response_cid = 3;
+}
+message MsgSubmitResponseResponse {}
+
+message MsgSettleTask {
+  option (cosmos.msg.v1.signer) = "requester";
+  string requester = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 task_id   = 2;
+}
+message MsgSettleTaskResponse {}
+
+message MsgSubmitFraudProof {
+  option (cosmos.msg.v1.signer) = "attestor";
+  string attestor = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 task_id  = 2;
+  string evidence = 3; // ipfs CID or inline hash of evidence
+}
+message MsgSubmitFraudProofResponse {}
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  Params params    = 2 [(gogoproto.nullable) = false];
+}
+message MsgUpdateParamsResponse {}
+
+message Params {
+  string min_agent_stake          = 1 [(cosmos_proto.scalar) = "cosmos.Int"];
+  string min_agent_stake_floor    = 2 [(cosmos_proto.scalar) = "cosmos.Int"];
+  string split_agent              = 3 [(cosmos_proto.scalar) = "cosmos.Dec"];
+  string split_validators         = 4 [(cosmos_proto.scalar) = "cosmos.Dec"];
+  string split_burn               = 5 [(cosmos_proto.scalar) = "cosmos.Dec"];
+  uint32 fraud_proof_quorum       = 6;
+  uint64 reputation_gain_per_task = 7;
+}

@@ -1,0 +1,54 @@
+{
+  "_comment": "Applied via jq onto the genesis.json that `agenticd init` produces. Encodes the AGENTIC tokenomics parameters from docs/02-tokenomics.md.",
+  "app_state": {
+    "staking": {
+      "params": {
+        "unbonding_time": "1209600s",
+        "max_validators": 100,
+        "bond_denom": "ugen",
+        "min_commission_rate": "0.050000000000000000"
+      }
+    },
+    "mint": {
+      "params": {
+        "mint_denom": "ugen",
+        "inflation_rate_change": "0.010000000000000000",
+        "inflation_max": "0.070000000000000000",
+        "inflation_min": "0.010000000000000000",
+        "goal_bonded": "0.670000000000000000",
+        "blocks_per_year": "10512000"
+      }
+    },
+    "gov": {
+      "params": {
+        "min_deposit": [{"denom": "ugen", "amount": "10000000"}],
+        "max_deposit_period": "172800s",
+        "voting_period": "172800s"
+      }
+    },
+    "slashing": {
+      "params": {
+        "signed_blocks_window": "10000",
+        "min_signed_per_window": "0.050000000000000000",
+        "downtime_jail_duration": "600s",
+        "slash_fraction_double_sign": "0.050000000000000000",
+        "slash_fraction_downtime": "0.000100000000000000"
+      }
+    },
+    "agentic": {
+      "params": {
+        "min_agent_stake": "100000000",
+        "min_agent_stake_floor": "10000000",
+        "split_agent": "0.500000000000000000",
+        "split_validators": "0.300000000000000000",
+        "split_burn": "0.200000000000000000",
+        "fraud_proof_quorum": 3,
+        "reputation_gain_per_task": 1
+      },
+      "agent_records": [],
+      "tasks": [],
+      "task_counter": 0,
+      "burned_total": "0"
+    }
+  }
+}

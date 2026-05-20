@@ -1,0 +1,35 @@
+syntax = "proto3";
+package agentic.v1;
+
+import "gogoproto/gogo.proto";
+import "agentic/v1/tx.proto";
+
+option go_package = "github.com/sumitkoul23/agentic-chain/x/agentic/types";
+
+message AgentRecord {
+  string operator   = 1;
+  string moniker    = 2;
+  string endpoint   = 3;
+  string stake_ugen = 4;
+  uint64 reputation = 5;
+  bool   jailed     = 6;
+}
+
+message Task {
+  uint64 id           = 1;
+  string requester    = 2;
+  string agent        = 3;
+  string bounty_ugen  = 4;
+  string spec         = 5;
+  string response_cid = 6;
+  bool   settled      = 7;
+  bool   slashed      = 8;
+}
+
+message GenesisState {
+  Params              params         = 1 [(gogoproto.nullable) = false];
+  repeated AgentRecord agent_records = 2 [(gogoproto.nullable) = false];
+  repeated Task        tasks         = 3 [(gogoproto.nullable) = false];
+  uint64              task_counter   = 4;
+  string              burned_total   = 5;
+}
