@@ -41,7 +41,7 @@ func (a *swarmAgent) run(ctx context.Context) {
 			if !ok {
 				return
 			}
-			reply := a.process(ctx, msg.Input)
+			reply := a.process(ctx, msg.Input, msg.From == "system")
 			if msg.Reply != nil {
 				msg.Reply <- reply
 			}
@@ -49,13 +49,21 @@ func (a *swarmAgent) run(ctx context.Context) {
 	}
 }
 
-func (a *swarmAgent) process(ctx context.Context, input string) string {
+func (a *swarmAgent) process(ctx context.Context, input string, systemTask bool) string {
 	genCtx, cancel := context.WithTimeout(ctx, 90*time.Second)
 	defer cancel()
 
 	// ── Decision layer ────────────────────────────────────────────────────────
 	// Decide what to do before generating: inject questions, lessons, guidance.
-	appendQ, question, sysAppend := a.decision.Decide(a.id, input)
+	// Skip onboarding for system-originated tasks — they have no user to answer.
+	var appendQ bool
+	var question, sysAppend string
+	if !systemTask {
+		appendQ, question, sysAppend = a.decision.Decide(a.id, input)
+	} else {
+		// For autonomous tasks: still inject lessons + behaviour guidance, skip onboarding
+		_, _, sysAppend = a.decision.Decide(a.id, input)
+	}
 
 	// Build the full system prompt for this request
 	systemPrompt := a.system
@@ -95,28 +103,33 @@ func (a *swarmAgent) process(ctx context.Context, input string) string {
 		response = a.handler(input, a.mem)
 	}
 
-	// ── Onboarding question injection ─────────────────────────────────────────
-	if appendQ && question != "" {
-		response = a.decision.AppendOnboardQ(response, question)
-		a.trainer.RecordOnboardAnswer(a.id)
-	}
-
-	// ── Training trail note (shown at low confidence) ─────────────────────────
-	if note := a.trainer.TrailNote(); note != "" {
-		response += note
+	// ── Onboarding + trail note (user messages only) ──────────────────────────
+	if !systemTask {
+		if appendQ && question != "" {
+			response = a.decision.AppendOnboardQ(response, question)
+			a.trainer.RecordOnboardAnswer(a.id)
+		}
+		if note := a.trainer.TrailNote(); note != "" {
+			response += note
+		}
 	}
 
 	// ── Persist ───────────────────────────────────────────────────────────────
-	a.mem.Push("user", input)
-	a.mem.Push("assistant", response)
-	a.mem.Save()
+	// System tasks don't touch conversation history or training counters —
+	// they would pollute the user's context and falsely advance onboarding.
+	if !systemTask {
+		a.mem.Push("user", input)
+		a.mem.Push("assistant", response)
+		a.mem.Save()
 
-	// ── Async: learn, record, log decision ───────────────────────────────────
-	go func() {
-		a.learner.Learn(a.id, input, response)
-		a.trainer.Record(a.id, input, response)
-	}()
-	a.decision.Log(a.id, input)
+		go func() {
+			a.learner.Learn(a.id, input, response)
+			a.trainer.Record(a.id, input, response)
+		}()
+		a.decision.Log(a.id, input)
+	} else {
+		a.mem.Save()
+	}
 
 	return response
 }
