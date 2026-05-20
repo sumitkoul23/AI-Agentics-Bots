@@ -286,7 +286,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div class="welcome" id="welcome">
         <div class="w-icon">🌸</div>
         <div class="w-title">Namaste, I'm Bodhi</div>
-        <div class="w-sub">Autonomous AI swarm — 8 specialists, one conversation. Running 100% on your device with Ollama.</div>
+        <div class="w-sub">Autonomous AI swarm — 12 specialists, one conversation. Running 100% on your device with Ollama.</div>
         <div class="w-chips" id="wchips"></div>
       </div>
     </div>
@@ -372,7 +372,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   <div class="modal">
     <div class="mhdr"><div class="mtitle">🌸 About Bodhi</div><div class="mclose" onclick="cm('about-ov')">×</div></div>
     <p style="font-size:.85rem;color:var(--text2);line-height:1.7">
-      Bodhi is an <strong style="color:var(--text)">autonomous, self-learning AI swarm</strong> — 8 specialist agents running as concurrent goroutines, powered by your local Ollama model.
+      Bodhi is an <strong style="color:var(--text)">autonomous, self-learning AI swarm</strong> — 12 specialist agents running as concurrent goroutines, powered by your local Ollama model.
     </p>
     <p style="font-size:.85rem;color:var(--text2);line-height:1.7;margin-top:10px">
       Every conversation teaches her. Learned facts are injected into future responses, making each interaction smarter than the last.
@@ -402,6 +402,10 @@ const AGENTS=[
   {id:'organizer',  name:'Organizer',    icon:'🗂',color:'#8b5cf6', desc:'Tasks, plans, focus, delegation'},
   {id:'finance',    name:'Finance',      icon:'💰',color:'#f97316', desc:'Crypto, stocks, forex, DeFi, macro'},
   {id:'freelance',  name:'Freelance',    icon:'🔍',color:'#06b6d4', desc:'Jobs, proposals, rates, clients'},
+  {id:'code',       name:'Code',         icon:'💻',color:'#22d3ee', desc:'Debugging, review, architecture, any language'},
+  {id:'health',     name:'Health',       icon:'🏃',color:'#4ade80', desc:'Workouts, nutrition, sleep, recovery'},
+  {id:'research',   name:'Research',     icon:'🔬',color:'#fb923c', desc:'Deep dives, comparisons, fact-checking'},
+  {id:'news',       name:'News',         icon:'📰',color:'#e879f9', desc:'Current events, market news, tech trends'},
   {id:'bodhi',      name:'Bodhi General',icon:'🌸',color:'#a855f7', desc:'General assistant for anything'},
 ]
 const QUICK=[
@@ -812,7 +816,7 @@ function init(){
   // Welcome greeting delay
   if(S.msgs.length===0){
     setTimeout(()=>{
-      push({role:'bot',text:'Namaste! 🌸 I\'m Bodhi — your autonomous AI swarm.\n\nI have **8 specialist agents** available. Just talk naturally and I\'ll route your message to the right expert automatically.\n\nOr tap a quick action below, or use `/agents` to see all specialists.',agent:'bodhi'})
+      push({role:'bot',text:'Namaste! 🌸 I\'m Bodhi — your autonomous AI swarm.\n\nI have **12 specialist agents** available. Just talk naturally and I\'ll route your message to the right expert automatically.\n\nOr tap a quick action below, or use `/agents` to see all specialists.',agent:'bodhi'})
     },800)
   }
 }

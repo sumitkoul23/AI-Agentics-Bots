@@ -65,6 +65,12 @@ func NewMemory(path string) *Memory {
 			AgentConf:   make(map[string]float64),
 		},
 	}
+	// Migrate from legacy file name if new path doesn't exist yet
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		if data, err2 := os.ReadFile(".priya-hub-memory.json"); err2 == nil {
+			os.WriteFile(path, data, 0600)
+		}
+	}
 	raw, err := os.ReadFile(path)
 	if err == nil {
 		json.Unmarshal(raw, &m.Data)

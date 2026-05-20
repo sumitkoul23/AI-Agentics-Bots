@@ -352,7 +352,7 @@ body{
       <div class="s-section">Connection</div>
       <div class="s-row" style="flex-direction:column;align-items:stretch;gap:8px;cursor:default">
         <div class="s-name">Bodhi Hub URL</div>
-        <input class="fi" id="hub-url" placeholder="http://localhost:8080" oninput="S.hubURL=this.value;save()"/>
+        <input class="fi" id="hub-url" placeholder="http://localhost:8080" oninput="S.hubURL=this.value;save();connectEvents()"/>
         <div style="font-size:.72rem;color:var(--text3)">The running <code style="font-family:monospace">priya-hub</code> server address. Same device = leave blank.</div>
       </div>
       <div class="s-section">Appearance</div>
@@ -827,9 +827,20 @@ function renderTraining(statusTxt, mem) {
 
 // ── Push notifications (SSE) ───────────────────────────────────────────────
 let notifCount = 0
+let _es = null
+let _esHub = ''
 function connectEvents() {
-  const url = '/api/events' + (S.hubURL ? '?hub=' + encodeURIComponent(S.hubURL) : '')
+  const hub = S.hubURL || ''
+  // Close existing connection if hub URL changed
+  if (_es) {
+    if (_esHub === hub) return
+    _es.close()
+    _es = null
+  }
+  _esHub = hub
+  const url = '/api/events' + (hub ? '?hub=' + encodeURIComponent(hub) : '')
   const es = new EventSource(url)
+  _es = es
   es.onmessage = e => {
     try {
       const d = JSON.parse(e.data)
@@ -839,8 +850,8 @@ function connectEvents() {
     } catch {}
   }
   es.onerror = () => {
-    // Reconnect after 10s on error
     es.close()
+    if (_es === es) _es = null
     setTimeout(connectEvents, 10000)
   }
 }
