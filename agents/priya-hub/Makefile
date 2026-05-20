@@ -1,52 +1,46 @@
-.PHONY: build android android-arm linux darwin windows clean run
+.PHONY: build android android-arm linux darwin darwin-intel windows all clean run help
 
 build: ## Build for current platform
-	CGO_ENABLED=0 go build -o priya-hub .
+	CGO_ENABLED=0 go build -ldflags="-s -w" -o bodhi-hub .
 
 run: build ## Build and run
-	./priya-hub
+	./bodhi-hub
 
 # ── Android ──────────────────────────────────────────────────────────────────
-android: ## ARM64 — modern Android phones (Pixel, Samsung S-series, etc.) via Termux
-	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o priya-hub-android-arm64 .
-	@echo ""
-	@echo "✅  Built: priya-hub-android-arm64"
-	@echo ""
-	@echo "── Deploy to Android ──────────────────────────────────────────────"
-	@echo "1. Install Termux from F-Droid (https://f-droid.org)"
-	@echo "2. adb push priya-hub-android-arm64 /sdcard/Download/"
-	@echo "   (or share via any file manager)"
-	@echo "3. In Termux:"
-	@echo "   cp /sdcard/Download/priya-hub-android-arm64 ~/priya-hub"
-	@echo "   chmod +x ~/priya-hub"
-	@echo "   ./priya-hub"
-	@echo "4. Open Chrome → http://localhost:8080"
-	@echo "5. Tap ⋮ → 'Add to Home screen' to install as PWA"
-	@echo "──────────────────────────────────────────────────────────────────"
+android: ## ARM64 — modern Android phones via Termux
+	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-android-arm64 .
+	@echo "✅  dist/bodhi-hub-android-arm64"
 
 android-arm: ## ARM 32-bit — older Android devices
-	GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -o priya-hub-android-arm .
-	@echo "✅  Built: priya-hub-android-arm (32-bit)"
+	GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-android-arm32 .
+	@echo "✅  dist/bodhi-hub-android-arm32"
 
-# ── Desktop platforms ─────────────────────────────────────────────────────────
-linux: ## Linux AMD64
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o priya-hub-linux .
+# ── Desktop ───────────────────────────────────────────────────────────────────
+linux: ## Linux x86_64
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-linux-amd64 .
+
+linux-arm: ## Linux ARM64 (Raspberry Pi, ARM server)
+	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-linux-arm64 .
 
 darwin: ## macOS Apple Silicon
-	GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -o priya-hub-macos .
+	GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-macos-arm64 .
 
 darwin-intel: ## macOS Intel
-	GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -o priya-hub-macos-intel .
+	GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-macos-amd64 .
 
-windows: ## Windows AMD64
-	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o priya-hub.exe .
+windows: ## Windows 64-bit
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-windows-amd64.exe .
 
 # ── All platforms ─────────────────────────────────────────────────────────────
-all: ## Build all targets
-	$(MAKE) build android android-arm linux darwin windows
+all: ## Build all targets into dist/
+	mkdir -p dist
+	$(MAKE) linux linux-arm darwin darwin-intel windows android android-arm
+	@echo ""
+	@echo "Built $(shell ls dist/ | wc -l | tr -d ' ') binaries in dist/"
+	@ls -lh dist/
 
-clean: ## Remove all build artifacts
-	rm -f priya-hub priya-hub-* *.exe
+clean: ## Remove build artifacts
+	rm -f bodhi-hub dist/bodhi-hub-* dist/*.exe
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-16s %s\n",$$1,$$2}'

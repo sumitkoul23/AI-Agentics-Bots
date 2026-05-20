@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build all platforms and publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: agents/priya-hub/go.mod
+          cache-dependency-path: |
+            agents/priya-hub/go.sum
+            agents/priya-app/go.sum
+
+      - name: Build bodhi-hub (all platforms)
+        working-directory: agents/priya-hub
+        run: |
+          mkdir -p dist
+          GOOS=linux   GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-linux-amd64       .
+          GOOS=linux   GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-linux-arm64       .
+          GOOS=darwin  GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-macos-arm64       .
+          GOOS=darwin  GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-macos-amd64       .
+          GOOS=windows GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-windows-amd64.exe .
+          GOOS=linux   GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-android-arm64     .
+          GOOS=linux   GOARCH=arm    GOARM=7 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-android-arm32 .
+
+      - name: Build bodhi-app (all platforms)
+        working-directory: agents/priya-app
+        run: |
+          mkdir -p dist
+          GOOS=linux   GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-linux-amd64       .
+          GOOS=linux   GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-linux-arm64       .
+          GOOS=darwin  GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-macos-arm64       .
+          GOOS=darwin  GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-macos-amd64       .
+          GOOS=windows GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-windows-amd64.exe .
+          GOOS=linux   GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-android-arm64     .
+          GOOS=linux   GOARCH=arm    GOARM=7 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-android-arm32 .
+
+      - name: Compress binaries
+        run: |
+          cd agents/priya-hub/dist
+          for f in bodhi-hub-linux-* bodhi-hub-macos-* bodhi-hub-android-*; do
+            tar -czf "${f}.tar.gz" "$f" && rm "$f"
+          done
+          zip bodhi-hub-windows-amd64.zip bodhi-hub-windows-amd64.exe && rm bodhi-hub-windows-amd64.exe
+          cd ../../../agents/priya-app/dist
+          for f in bodhi-app-linux-* bodhi-app-macos-* bodhi-app-android-*; do
+            tar -czf "${f}.tar.gz" "$f" && rm "$f"
+          done
+          zip bodhi-app-windows-amd64.zip bodhi-app-windows-amd64.exe && rm bodhi-app-windows-amd64.exe
+
+      - name: Compute SHA256 checksums
+        run: |
+          cd agents/priya-hub/dist && sha256sum * > ../../../hub-checksums.txt
+          cd agents/priya-app/dist && sha256sum * >> ../../../hub-checksums.txt
+          cat hub-checksums.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Bodhi ${{ github.ref_name }}"
+          body: |
+            ## Bodhi ${{ github.ref_name }} — On-device Autonomous AI Swarm
+
+            Single-binary install. No cloud. No API keys. Runs entirely on your device using [Ollama](https://ollama.ai).
+
+            ### Quick start
+            Download the binaries for your platform below, then follow the [README](https://github.com/sumitkoul23/AI-Agentics-Bots#readme) for setup instructions.
+
+            ### What's included
+            | Binary | Role |
+            |--------|------|
+            | `bodhi-hub` | AI swarm coordinator — 12 specialist agents, self-learning, SSE push |
+            | `bodhi-app` | Mobile-optimised chat UI (PWA, works as Android/iOS app) |
+
+            ### Checksums
+            ```
+            ${{ steps.checksums.outputs.content }}
+            ```
+          files: |
+            agents/priya-hub/dist/*
+            agents/priya-app/dist/*
+            hub-checksums.txt
+          draft: false
+          prerelease: false
