@@ -63,9 +63,15 @@ jobs:
           zip bodhi-app-windows-amd64.zip bodhi-app-windows-amd64.exe && rm bodhi-app-windows-amd64.exe
 
       - name: Compute SHA256 checksums
+        id: checksums
         run: |
           sha256sum agents/priya-hub/dist/* agents/priya-app/dist/* > hub-checksums.txt
           cat hub-checksums.txt
+          {
+            echo 'content<<EOF'
+            cat hub-checksums.txt
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

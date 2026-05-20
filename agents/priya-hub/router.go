@@ -25,7 +25,11 @@ func (r *Router) Route(input string) string {
 }
 
 // Dispatch forces a specific agent by ID. Returns (response, true) or ("", false).
+// "auto" is a special value that falls through to natural-language routing.
 func (r *Router) Dispatch(agentID, input string) (string, bool) {
+	if agentID == "auto" || agentID == "" {
+		return r.Route(input), true
+	}
 	if r.registry.Get(agentID) == nil {
 		return "", false
 	}

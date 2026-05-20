@@ -335,10 +335,10 @@ func helpText() string {
 
 /agents               List all specialist agents
 /use <id> <message>   Force a specific agent
-                        IDs: auto, bodhi,
-                             perp-markets, portfolio, finance,
+                        IDs: bodhi, perp-markets, portfolio, finance,
                              social, comms, organizer, freelance,
                              code, health, research, news
+                        (omit id or use "auto" to auto-route)
 
 ━━ SWARM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /status               Show swarm health + Ollama status
