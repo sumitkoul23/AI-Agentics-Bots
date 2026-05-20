@@ -857,7 +857,7 @@ function onNotification(n) {
   }
 
   // System notification (if permission granted)
-  if (Notification?.permission === 'granted') {
+  if ('Notification' in window && Notification.permission === 'granted') {
     new Notification(a.icon + ' ' + a.name, {
       body: n.text.slice(0, 120),
       icon: '/icon.svg',
