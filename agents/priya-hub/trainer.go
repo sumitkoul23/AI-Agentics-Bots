@@ -11,7 +11,7 @@ import (
 )
 
 // onboardQuestions is the ordered cold-start interview.
-// Priya asks these one at a time at the start of each response until done.
+// Bodhi asks these one at a time at the start of each response until done.
 var onboardQuestions = []string{
 	"What's your main focus — developer, trader, freelancer, marketer, or something else?",
 	"What specific tools, languages, or markets do you work with most?",
@@ -20,7 +20,7 @@ var onboardQuestions = []string{
 	"What's the single biggest challenge you want me to help you with regularly?",
 }
 
-// Trainer manages Priya's progressive self-improvement cycle:
+// Trainer manages Bodhi's progressive self-improvement cycle:
 //   - Onboarding (cold start questions → user profile)
 //   - Confidence scoring (how well she knows this user)
 //   - Self-evaluation (review her own outputs, extract lessons)
@@ -44,7 +44,7 @@ func NewTrainer(mem *Memory, ollama *OllamaClient) *Trainer {
 
 // ── Onboarding ─────────────────────────────────────────────────────────────────
 
-// NextOnboardQuestion returns the next question Priya should ask, or "".
+// NextOnboardQuestion returns the next question Bodhi should ask, or "".
 func (t *Trainer) NextOnboardQuestion() string {
 	if t.mem.IsOnboardDone() {
 		return ""
@@ -72,7 +72,7 @@ func (t *Trainer) RecordOnboardAnswer() {
 	t.mem.Save()
 }
 
-// ShouldAsk decides whether Priya should append an onboarding question.
+// ShouldAsk decides whether Bodhi should append an onboarding question.
 // Returns (inject bool, question string).
 // Early on: every other exchange. Later: never.
 func (t *Trainer) ShouldAsk() (bool, string) {
@@ -143,11 +143,11 @@ func (t *Trainer) runSelfEval() {
 	// Build transcript
 	var sb strings.Builder
 	for _, e := range batch {
-		sb.WriteString(fmt.Sprintf("User: %s\nPriya: %s\n\n",
+		sb.WriteString(fmt.Sprintf("User: %s\nBodhi: %s\n\n",
 			truncate(e.input, 120), truncate(e.response, 250)))
 	}
 
-	system := `You are evaluating an AI assistant named Priya. Review the conversation batch.
+	system := `You are evaluating an AI assistant named Bodhi. Review the conversation batch.
 
 Output EXACTLY in this format (no extra text):
 SCORE: <1-10>

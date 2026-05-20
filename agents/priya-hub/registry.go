@@ -35,7 +35,7 @@ func (r *Registry) Route(lower string) *Agent {
 			}
 		}
 	}
-	return r.index["priya"] // default
+	return r.index["bodhi"] // default
 }
 
 func (r *Registry) Get(id string) *Agent { return r.index[id] }
@@ -65,7 +65,7 @@ func agents(mem *Memory) []*Agent {
 		healthAgent(),
 		researchAgent(),
 		newsAgent(),
-		priyaAgent(),
+		bodhiAgent(),
 	}
 }
 
@@ -240,12 +240,12 @@ func newsAgent() *Agent {
 	}
 }
 
-func priyaAgent() *Agent {
+func bodhiAgent() *Agent {
 	return &Agent{
-		ID:       "priya",
-		Name:     "Priya (General)",
+		ID:       "bodhi",
+		Name:     "Bodhi (General)",
 		Desc:     "Default — warm, knowledgeable assistant for any topic",
 		Keywords: []string{},
-		Handle:   handlePriya,
+		Handle:   handleBodhi,
 	}
 }

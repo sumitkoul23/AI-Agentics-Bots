@@ -1,6 +1,6 @@
 {
-  "name": "Priya — Autonomous AI Swarm",
-  "short_name": "Priya",
+  "name": "Bodhi — Autonomous AI Swarm",
+  "short_name": "Bodhi",
   "description": "On-device self-learning AI assistant. No cloud. No API keys.",
   "start_url": "/",
   "scope": "/",
@@ -33,7 +33,7 @@
     {
       "name": "New Chat",
       "short_name": "Chat",
-      "description": "Start a new conversation with Priya",
+      "description": "Start a new conversation with Bodhi",
       "url": "/",
       "icons": [{"src": "/icon.svg", "sizes": "any"}]
     }

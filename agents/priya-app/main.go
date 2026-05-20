@@ -40,7 +40,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// ── Proxy to Priya Hub ────────────────────────────────────────────────────
+	// ── Proxy to Bodhi Hub ────────────────────────────────────────────────────
 	proxy := &hubProxy{baseURL: hubURL, client: &http.Client{Timeout: 100 * time.Second}}
 
 	mux.HandleFunc("/api/chat", proxy.chat)
@@ -65,7 +65,7 @@ func main() {
 		w.Write(appHTML)
 	})
 
-	log.Printf("Priya App — port %s  →  hub: %s", port, hubURL)
+	log.Printf("Bodhi App — port %s  →  hub: %s", port, hubURL)
 	log.Printf("Open: http://localhost:%s", port)
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
@@ -111,7 +111,7 @@ func (p *hubProxy) chat(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{
-			"reply": fmt.Sprintf("Cannot reach Priya Hub at %s — is it running?\n\nStart it with: `./priya-hub`\n\nOr update the Hub URL in ⚙️ Settings.", target),
+			"reply": fmt.Sprintf("Cannot reach Bodhi Hub at %s — is it running?\n\nStart it with: `./priya-hub`\n\nOr update the Hub URL in ⚙️ Settings.", target),
 		})
 		return
 	}

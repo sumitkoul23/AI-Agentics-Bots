@@ -1,6 +1,6 @@
 {
-  "name": "Priya",
-  "short_name": "Priya",
+  "name": "Bodhi",
+  "short_name": "Bodhi",
   "description": "On-device self-learning AI assistant. No cloud. No API keys.",
   "start_url": "/",
   "scope": "/",
@@ -31,7 +31,7 @@
   ],
   "shortcuts": [
     {
-      "name": "Chat with Priya",
+      "name": "Chat with Bodhi",
       "url": "/",
       "icons": [{"src": "/icon.svg", "sizes": "any"}]
     }

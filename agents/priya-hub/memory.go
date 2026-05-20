@@ -37,7 +37,7 @@ type Turn struct {
 	Content string `json:"content"`
 }
 
-// StoredDecision records why Priya decided what she decided.
+// StoredDecision records why Bodhi decided what she decided.
 type StoredDecision struct {
 	At         time.Time `json:"at"`
 	AgentID    string    `json:"agent_id"`
@@ -46,7 +46,7 @@ type StoredDecision struct {
 	Reasoning  string    `json:"reasoning,omitempty"`
 }
 
-// StoredLesson is a self-evaluation result that Priya learns from.
+// StoredLesson is a self-evaluation result that Bodhi learns from.
 type StoredLesson struct {
 	At      time.Time `json:"at"`
 	AgentID string    `json:"agent_id"`

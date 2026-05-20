@@ -37,7 +37,7 @@ func main() {
 		port = "8080"
 	}
 
-	mem := NewMemory(".priya-hub-memory.json")
+	mem := NewMemory(".bodhi-memory.json")
 	registry := NewRegistry(mem)
 	swarm := NewSwarm(registry, mem)
 	router := NewRouter(registry, swarm)
@@ -48,7 +48,7 @@ func main() {
 	defer swarm.Stop()
 	defer mesh.Stop()
 
-	log.Printf("Priya Hub — %d agents | port %s | mesh discovery active", len(swarm.agents), port)
+	log.Printf("Bodhi Hub — %d agents | port %s | mesh discovery active", len(swarm.agents), port)
 
 	if os.Getenv("CLI") == "1" {
 		runCLI(router, registry, mem, swarm, mesh)
@@ -241,7 +241,7 @@ func runCLI(router *Router, registry *Registry, mem *Memory, swarm *Swarm, mesh 
 			continue
 		}
 		reply := handleInput(input, router, registry, mem, swarm, mesh)
-		fmt.Printf("\nPriya: %s\n\n", reply)
+		fmt.Printf("\nBodhi: %s\n\n", reply)
 	}
 }
 
@@ -317,7 +317,7 @@ func hubGreeting(swarm *Swarm) string {
 	if swarm.ollama != nil {
 		engine = fmt.Sprintf("Ollama — %s (100%% on-device, no API keys)", swarm.ollama.Model)
 	}
-	return fmt.Sprintf(`Namaste! I'm Priya — your autonomous self-learning AI swarm 🌸
+	return fmt.Sprintf(`Namaste! I'm Bodhi — your autonomous self-learning AI swarm 🌸
 
 AI Engine : %s
 Agents    : %d specialist agents active
@@ -329,7 +329,7 @@ Type /agents to see all specialists, /status for swarm health, /help for command
 }
 
 func helpText() string {
-	return `Priya Swarm — Command Reference
+	return `Bodhi Swarm — Command Reference
 
 ━━ ROUTING ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 (automatic — just talk naturally)
@@ -337,7 +337,7 @@ func helpText() string {
 /agents               List all specialist agents
 /use <id> <message>   Force a specific agent
                         IDs: perp-markets, portfolio, social,
-                             comms, organizer, finance, freelance, priya
+                             comms, organizer, finance, freelance, bodhi
 
 ━━ SWARM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /status               Show swarm health + Ollama status

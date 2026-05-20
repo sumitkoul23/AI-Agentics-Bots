@@ -1655,9 +1655,9 @@ depending on scope. What budget have you allocated?"
 I'll send you a proposal by [tomorrow]. Does that work?"`
 }
 
-// ── Priya (General) ───────────────────────────────────────────────────────────
+// ── Bodhi (General) ───────────────────────────────────────────────────────────
 
-func handlePriya(input string, mem *Memory) string {
+func handleBodhi(input string, mem *Memory) string {
 	lower := strings.ToLower(input)
 
 	// Catch a few more patterns even in general mode
@@ -1667,7 +1667,7 @@ func handlePriya(input string, mem *Memory) string {
 	if strings.Contains(lower, "how are you") || strings.Contains(lower, "who are you") {
 		return whoAmI()
 	}
-	return fmt.Sprintf(`I'm Priya — I received your message:
+	return fmt.Sprintf(`I'm Bodhi — I received your message:
 
 "%s"
 
@@ -1704,7 +1704,7 @@ func extractTopic(input string) string {
 }
 
 func greeting() string {
-	return `Namaste! I'm Priya 🌸
+	return `Namaste! I'm Bodhi 🌸
 
 Your all-in-one AI assistant — running fully offline, no keys needed.
 
@@ -1722,7 +1722,7 @@ Or just ask anything — I'll route to the right expert.`
 }
 
 func whoAmI() string {
-	return `I'm Priya Hub — an autonomous AI assistant that runs entirely on your machine.
+	return `I'm Bodhi Hub — an autonomous AI assistant that runs entirely on your machine.
 
 No API keys. No internet connection required. No data sent anywhere.
 All intelligence is built directly into the bot.
@@ -1739,7 +1739,7 @@ I have 12 specialist agents inside me:
   health        — Health & Fitness
   research      — Research Analyst
   news          — News & Trends
-  priya         — General (that's me, the fallback)
+  bodhi         — General (that's me, the fallback)
 
 I route your messages automatically. You can also force a specific agent:
 /use perp-markets BTC trade plan long`

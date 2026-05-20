@@ -1,13 +1,13 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# ── Priya + Ollama setup for Android via Termux ───────────────────────────────
+# ── Bodhi + Ollama setup for Android via Termux ───────────────────────────────
 # Run this once after installing Termux from F-Droid.
 # https://f-droid.org/packages/com.termux/
 #
 # Usage:
 #   bash termux-setup.sh
 #
-# After setup, start Priya:
-#   ~/start-priya.sh
+# After setup, start Bodhi:
+#   ~/start-bodhi.sh
 
 set -e
 
@@ -17,7 +17,7 @@ info() { echo -e "${AMBER}→${NC} $1"; }
 fail() { echo -e "${RED}✗${NC} $1"; exit 1; }
 
 echo ""
-echo "  🌸  Priya — Android Setup"
+echo "  🌸  Bodhi — Android Setup"
 echo "  ─────────────────────────────────────"
 echo ""
 
@@ -51,7 +51,7 @@ else
   ok "Ollama downloaded: $OLLAMA_DIR/ollama"
 fi
 
-# ── 4. Download Priya Hub binary ──────────────────────────────────────────────
+# ── 4. Download Bodhi Hub binary ──────────────────────────────────────────────
 PRIYA_BIN="$HOME/priya-hub"
 if [ -f "$PRIYA_BIN" ]; then
   ok "priya-hub binary already present"
@@ -103,16 +103,16 @@ case "$MODEL_CHOICE" in
 esac
 
 # ── 6. Create start script ────────────────────────────────────────────────────
-START_SCRIPT="$HOME/start-priya.sh"
+START_SCRIPT="$HOME/start-bodhi.sh"
 cat > "$START_SCRIPT" <<SCRIPT
 #!/data/data/com.termux/files/usr/bin/bash
-# Priya startup script
+# Bodhi startup script
 
 OLLAMA_DIR="\$HOME/ollama"
 PRIYA_HUB="\$HOME/priya-hub"
 PRIYA_APP="\$HOME/priya-app"
 
-echo "🌸 Starting Priya…"
+echo "🌸 Starting Bodhi…"
 
 # Start Ollama in background
 if [ -f "\$OLLAMA_DIR/ollama" ]; then
@@ -128,17 +128,17 @@ fi)
   echo "✓ Ollama ready"
 fi
 
-# Start Priya Hub
+# Start Bodhi Hub
 if [ -f "\$PRIYA_HUB" ]; then
-  echo "→ Starting Priya Hub on :8080…"
+  echo "→ Starting Bodhi Hub on :8080…"
   OLLAMA_HOST=http://127.0.0.1:11434 "\$PRIYA_HUB" > "\$HOME/priya-hub.log" 2>&1 &
   sleep 1
   echo "✓ Hub running: http://localhost:8080"
 fi
 
-# Start Priya App (mobile UI)
+# Start Bodhi App (mobile UI)
 if [ -f "\$PRIYA_APP" ]; then
-  echo "→ Starting Priya App on :9090…"
+  echo "→ Starting Bodhi App on :9090…"
   PRIYA_HUB_URL=http://127.0.0.1:8080 "\$PRIYA_APP" > "\$HOME/priya-app.log" 2>&1 &
   sleep 1
   echo "✓ App running: http://localhost:9090"
@@ -162,7 +162,7 @@ echo "  ━━━━━━━━━━━━━━━━━━━━━━━━
 echo "  ✅  Setup complete!"
 echo ""
 echo "  Start everything with:"
-echo "    ~/start-priya.sh"
+echo "    ~/start-bodhi.sh"
 echo ""
 if [ -n "$MODEL" ]; then
   echo "  Model: $MODEL"

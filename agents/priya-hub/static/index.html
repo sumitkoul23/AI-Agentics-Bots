@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Priya — Autonomous AI Swarm</title>
+<title>Bodhi — Autonomous AI Swarm</title>
 <meta name="description" content="On-device self-learning AI assistant. No cloud. No API keys."/>
 <meta name="theme-color" content="#8b5cf6"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Priya"/>
+<meta name="apple-mobile-web-app-title" content="Bodhi"/>
 <link rel="manifest" href="/manifest.json"/>
 <link rel="icon" type="image/svg+xml" href="/icon.svg"/>
 <link rel="apple-touch-icon" href="/icon-192.png"/>
@@ -239,7 +239,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   <button class="icon-btn mob-menu" onclick="toggleSB()" title="Agents">☰</button>
   <div class="logo">
     <div class="logo-icon">🌸</div>
-    <span>Priya</span><span style="font-weight:300;color:var(--text3);font-size:.78rem;margin-left:2px">Swarm</span>
+    <span>Bodhi</span><span style="font-weight:300;color:var(--text3);font-size:.78rem;margin-left:2px">Swarm</span>
   </div>
   <div class="hdr-right">
     <div class="badge" title="AI Engine"><div class="dot" id="ai-dot"></div><span id="ai-txt">Connecting…</span></div>
@@ -263,7 +263,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div class="sb-act" onclick="clearChat()">🗑️ Clear chat</div>
       <div class="sb-act" onclick="exportChat()">📤 Export</div>
       <div class="sb-act" onclick="openMem()">🧠 View memory</div>
-      <div class="sb-act" onclick="openAbout()">ℹ️ About Priya</div>
+      <div class="sb-act" onclick="openAbout()">ℹ️ About Bodhi</div>
     </div>
   </aside>
 
@@ -285,7 +285,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="msgs" id="msgs">
       <div class="welcome" id="welcome">
         <div class="w-icon">🌸</div>
-        <div class="w-title">Namaste, I'm Priya</div>
+        <div class="w-title">Namaste, I'm Bodhi</div>
         <div class="w-sub">Autonomous AI swarm — 8 specialists, one conversation. Running 100% on your device with Ollama.</div>
         <div class="w-chips" id="wchips"></div>
       </div>
@@ -295,7 +295,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 
     <div class="inp-area">
       <div class="inp-row">
-        <textarea id="ci" placeholder="Ask Priya anything… (Enter to send, Shift+Enter for newline)" rows="1"></textarea>
+        <textarea id="ci" placeholder="Ask Bodhi anything… (Enter to send, Shift+Enter for newline)" rows="1"></textarea>
         <span class="ccount" id="cc"></span>
         <button class="ibtn vbtn" id="vbtn" onclick="toggleVoice()" title="Voice input (V)">🎤</button>
         <button class="ibtn sbtn" id="sbtn" onclick="doSend()" title="Send (Enter)">↑</button>
@@ -341,10 +341,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <button class="btn btn-p" onclick="saveFact()">Teach</button>
     </div>
     <div class="sec-hdr mt-2">🎤 Voice Sample</div>
-    <textarea class="fi" id="vs" placeholder="Paste a writing sample to teach Priya your style…" rows="3" style="resize:none"></textarea>
+    <textarea class="fi" id="vs" placeholder="Paste a writing sample to teach Bodhi your style…" rows="3" style="resize:none"></textarea>
     <button class="btn btn-s wf mt-2" onclick="saveVS()">Save Voice Sample</button>
     <hr class="div"/>
-    <button id="install-btn" class="btn btn-p wf" onclick="installPWA()" style="display:none">📲 Install Priya as App</button>
+    <button id="install-btn" class="btn btn-p wf" onclick="installPWA()" style="display:none">📲 Install Bodhi as App</button>
     <button class="btn btn-d wf" onclick="clearAll()">🗑️ Clear all memory &amp; history</button>
   </div>
 </div>
@@ -352,7 +352,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <!-- Memory modal -->
 <div class="ov" id="mm">
   <div class="modal">
-    <div class="mhdr"><div class="mtitle">🧠 Priya's Memory</div><div class="mclose" onclick="cm('mm')">×</div></div>
+    <div class="mhdr"><div class="mtitle">🧠 Bodhi's Memory</div><div class="mclose" onclick="cm('mm')">×</div></div>
     <div id="mem-body"><div class="empty"><div class="empty-i">🔄</div>Loading…</div></div>
   </div>
 </div>
@@ -370,9 +370,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <!-- About modal -->
 <div class="ov" id="about-ov">
   <div class="modal">
-    <div class="mhdr"><div class="mtitle">🌸 About Priya</div><div class="mclose" onclick="cm('about-ov')">×</div></div>
+    <div class="mhdr"><div class="mtitle">🌸 About Bodhi</div><div class="mclose" onclick="cm('about-ov')">×</div></div>
     <p style="font-size:.85rem;color:var(--text2);line-height:1.7">
-      Priya is an <strong style="color:var(--text)">autonomous, self-learning AI swarm</strong> — 8 specialist agents running as concurrent goroutines, powered by your local Ollama model.
+      Bodhi is an <strong style="color:var(--text)">autonomous, self-learning AI swarm</strong> — 8 specialist agents running as concurrent goroutines, powered by your local Ollama model.
     </p>
     <p style="font-size:.85rem;color:var(--text2);line-height:1.7;margin-top:10px">
       Every conversation teaches her. Learned facts are injected into future responses, making each interaction smarter than the last.
@@ -394,7 +394,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <script>
 // ═══════════════════════════ CONFIG ═══════════════════════════
 const AGENTS=[
-  {id:'auto',       name:'Auto-route',   icon:'🌸',color:'#f43f5e', desc:'Priya decides automatically'},
+  {id:'auto',       name:'Auto-route',   icon:'🌸',color:'#f43f5e', desc:'Bodhi decides automatically'},
   {id:'perp-markets',name:'Perp Markets',icon:'📈',color:'#f59e0b', desc:'Crypto perps: charts, trade plans, funding'},
   {id:'portfolio',  name:'Portfolio',    icon:'💼',color:'#10b981', desc:'Allocation, rebalancing, risk'},
   {id:'social',     name:'Social Media', icon:'📣',color:'#ec4899', desc:'Content for all 7 platforms'},
@@ -402,7 +402,7 @@ const AGENTS=[
   {id:'organizer',  name:'Organizer',    icon:'🗂',color:'#8b5cf6', desc:'Tasks, plans, focus, delegation'},
   {id:'finance',    name:'Finance',      icon:'💰',color:'#f97316', desc:'Crypto, stocks, forex, DeFi, macro'},
   {id:'freelance',  name:'Freelance',    icon:'🔍',color:'#06b6d4', desc:'Jobs, proposals, rates, clients'},
-  {id:'priya',      name:'Priya General',icon:'🌸',color:'#a855f7', desc:'General assistant for anything'},
+  {id:'bodhi',      name:'Bodhi General',icon:'🌸',color:'#a855f7', desc:'General assistant for anything'},
 ]
 const QUICK=[
   {l:'📈 BTC long plan', t:'Give me a detailed BTC trade plan for a long position'},
@@ -510,14 +510,14 @@ async function doSend(){
   el.value='';el.style.height='auto';document.getElementById('cc').textContent='';S.lastInput=txt
   push({role:'user',text:txt,agent:'user'})
   S.loading=true;document.getElementById('sbtn').disabled=true
-  document.getElementById('typing-label').textContent='Priya is thinking…'
+  document.getElementById('typing-label').textContent='Bodhi is thinking…'
   showTyping()
   const reply=await chat(txt)
   rmTyping();S.loading=false
   document.getElementById('sbtn').disabled=false
   document.getElementById('typing-label').textContent=''
   if(reply){push({role:'bot',text:reply,agent:guessAgent(reply)})}
-  else{push({role:'bot',text:'⚠️ Cannot reach Priya Hub. Make sure the server is running: `./priya-hub` or check the backend URL in settings.',agent:'priya'})}
+  else{push({role:'bot',text:'⚠️ Cannot reach Bodhi Hub. Make sure the server is running: `./priya-hub` or check the backend URL in settings.',agent:'bodhi'})}
 }
 function guessAgent(t){
   const l=t.toLowerCase().substring(0,200)
@@ -528,7 +528,7 @@ function guessAgent(t){
   if(l.includes('brain dump')||l.includes('priorit')||l.includes('time block'))return'organizer'
   if(l.includes('bitcoin')||l.includes('defi')||l.includes('market analysis'))return'finance'
   if(l.includes('freelance')||l.includes('upwork')||l.includes('proposal template'))return'freelance'
-  return S.activeAgent!=='auto'?S.activeAgent:'priya'
+  return S.activeAgent!=='auto'?S.activeAgent:'bodhi'
 }
 async function regen(){
   if(!S.lastInput||S.loading)return
@@ -620,7 +620,7 @@ function renderMemModal(){
   else h+='<div style="font-size:.78rem;color:var(--text3);margin-bottom:8px">None — use /set key=value to save.</div>'
   h+=`<div class="sec-hdr mt-2">Learned Facts (${fa.length})</div>`
   if(fa.length)fa.forEach(([k,v])=>h+=`<div class="fitem"><div class="fkey">${esc(k)}</div><div class="fval">${esc(v)}</div></div>`)
-  else h+='<div style="font-size:.78rem;color:var(--text3);margin-bottom:8px">Priya learns facts automatically.</div>'
+  else h+='<div style="font-size:.78rem;color:var(--text3);margin-bottom:8px">Bodhi learns facts automatically.</div>'
   if(vs.length){h+=`<div class="sec-hdr mt-2">Voice Samples (${vs.length})</div>`;vs.forEach((s,i)=>h+=`<div class="fitem"><div class="fkey">Sample ${i+1}</div><div class="fval">${esc(s.substring(0,100))}${s.length>100?'…':''}</div></div>`)}
   el.innerHTML=h
 }
@@ -704,8 +704,8 @@ async function saveVS(){
 }
 async function cmdSend(cmd){
   push({role:'user',text:cmd,agent:'user'})
-  const r=await post('/chat',{message:cmd});if(!r){push({role:'bot',text:'⚠️ Connection error',agent:'priya'});return}
-  const d=await r.json();push({role:'bot',text:d.reply||'Done.',agent:'priya'})
+  const r=await post('/chat',{message:cmd});if(!r){push({role:'bot',text:'⚠️ Connection error',agent:'bodhi'});return}
+  const d=await r.json();push({role:'bot',text:d.reply||'Done.',agent:'bodhi'})
 }
 function clearChat(){
   if(!confirm('Clear this conversation? (Memory is kept)'))return
@@ -723,9 +723,9 @@ function clearAll(){
   cm('sm');toast('All data cleared')
 }
 function exportChat(){
-  const txt=S.msgs.map(m=>`[${m.ts}] ${m.role==='user'?'You':m.agent||'Priya'}: ${m.text}`).join('\n\n')
+  const txt=S.msgs.map(m=>`[${m.ts}] ${m.role==='user'?'You':m.agent||'Bodhi'}: ${m.text}`).join('\n\n')
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}))
-  a.download='priya-chat-'+new Date().toISOString().slice(0,10)+'.txt';a.click();toast('Exported','ok')
+  a.download='bodhi-chat-'+new Date().toISOString().slice(0,10)+'.txt';a.click();toast('Exported','ok')
 }
 function copyLast(){
   const m=[...S.msgs].reverse().find(x=>x.role==='bot');if(!m)return
@@ -812,7 +812,7 @@ function init(){
   // Welcome greeting delay
   if(S.msgs.length===0){
     setTimeout(()=>{
-      push({role:'bot',text:'Namaste! 🌸 I\'m Priya — your autonomous AI swarm.\n\nI have **8 specialist agents** available. Just talk naturally and I\'ll route your message to the right expert automatically.\n\nOr tap a quick action below, or use `/agents` to see all specialists.',agent:'priya'})
+      push({role:'bot',text:'Namaste! 🌸 I\'m Bodhi — your autonomous AI swarm.\n\nI have **8 specialist agents** available. Just talk naturally and I\'ll route your message to the right expert automatically.\n\nOr tap a quick action below, or use `/agents` to see all specialists.',agent:'bodhi'})
     },800)
   }
 }
@@ -822,8 +822,8 @@ init()
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('/sw.js').then(r=>{
-      console.log('[Priya] SW registered',r.scope)
-    }).catch(e=>console.log('[Priya] SW failed',e))
+      console.log('[Bodhi] SW registered',r.scope)
+    }).catch(e=>console.log('[Bodhi] SW failed',e))
   })
 }
 // PWA install prompt — surface in settings modal

@@ -261,7 +261,7 @@ func (s *Swarm) Route(agentID, input string) string {
 	agent, ok := s.agents[agentID]
 	s.mu.RUnlock()
 	if !ok {
-		agent = s.agents["priya"]
+		agent = s.agents["bodhi"]
 	}
 
 	reply := make(chan string, 1)
@@ -337,7 +337,7 @@ func (s *Swarm) autonomousFire(agentID, task string) {
 // Status returns a human-readable swarm summary.
 func (s *Swarm) Status() string {
 	var sb strings.Builder
-	sb.WriteString("━━ Priya Swarm Status ━━━━━━━━━━━━━━━━━━━━━━\n\n")
+	sb.WriteString("━━ Bodhi Swarm Status ━━━━━━━━━━━━━━━━━━━━━━\n\n")
 
 	if s.ollama != nil {
 		sb.WriteString(fmt.Sprintf("AI Engine : Ollama (%s)\n", s.ollama.Model))
@@ -373,7 +373,7 @@ func (s *Swarm) Status() string {
 func agentSystemPrompt(id, name, desc string) string {
 	base := fmt.Sprintf(`You are %s — %s.
 
-You are Priya, an autonomous AI assistant built on a self-learning swarm architecture. You run entirely on the user's device using a local language model — no data leaves the device.
+You are Bodhi, an autonomous AI assistant built on a self-learning swarm architecture. You run entirely on the user's device using a local language model — no data leaves the device.
 
 Core identity:
 - Warm, sharp, proactive Indian AI assistant
@@ -492,7 +492,7 @@ You cut through noise by: identifying which events actually move markets or shif
 Always distinguish: confirmed fact vs. rumour vs. speculation. Note the primary source. Flag when a story is being amplified without new information.`
 
 	default:
-		return base + `You are Priya's general intelligence — warm, knowledgeable, and genuinely helpful for any topic the user brings up.
+		return base + `You are Bodhi's general intelligence — warm, knowledgeable, and genuinely helpful for any topic the user brings up.
 
 You are empathetic and practical. You give real answers, not hedged non-answers. When you don't know something, you say so clearly and suggest how the user can find the answer.`
 	}
