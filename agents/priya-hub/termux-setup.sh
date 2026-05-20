@@ -52,36 +52,38 @@ else
 fi
 
 # ── 4. Download Bodhi Hub binary ──────────────────────────────────────────────
-PRIYA_BIN="$HOME/priya-hub"
-if [ -f "$PRIYA_BIN" ]; then
-  ok "priya-hub binary already present"
+BODHI_HUB_BIN="$HOME/bodhi-hub"
+if [ -f "$BODHI_HUB_BIN" ]; then
+  ok "bodhi-hub binary already present"
 else
-  info "Looking for priya-hub-android-arm64 in Downloads…"
-  if [ -f "/sdcard/Download/priya-hub-android-arm64" ]; then
-    cp /sdcard/Download/priya-hub-android-arm64 "$PRIYA_BIN"
-    chmod +x "$PRIYA_BIN"
-    ok "priya-hub copied from Downloads"
+  info "Looking for bodhi-hub-android-arm64 in Downloads…"
+  if [ -f "/sdcard/Download/bodhi-hub-android-arm64" ]; then
+    cp /sdcard/Download/bodhi-hub-android-arm64 "$BODHI_HUB_BIN"
+    chmod +x "$BODHI_HUB_BIN"
+    ok "bodhi-hub copied from Downloads"
   else
     echo ""
-    echo "  ⚠️  priya-hub binary not found."
+    echo "  ⚠️  bodhi-hub binary not found."
     echo ""
-    echo "  Build it on your laptop:"
-    echo "    cd agents/priya-hub && make android"
+    echo "  Download from GitHub Releases:"
+    echo "    https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest"
+    echo "    → bodhi-hub-android-arm64.tar.gz"
     echo ""
-    echo "  Then copy to your phone:"
-    echo "    adb push priya-hub-android-arm64 /sdcard/Download/"
+    echo "  Or build on your laptop:"
+    echo "    cd agents/priya-hub && make android  # outputs dist/bodhi-hub-android-arm64"
+    echo "    adb push dist/bodhi-hub-android-arm64 /sdcard/Download/"
     echo ""
     echo "  Re-run this script after copying."
     echo ""
   fi
 fi
 
-# Also check for priya-app
-PRIYA_APP="$HOME/priya-app"
-if [ -f "/sdcard/Download/priya-app-android-arm64" ] && [ ! -f "$PRIYA_APP" ]; then
-  cp /sdcard/Download/priya-app-android-arm64 "$PRIYA_APP"
-  chmod +x "$PRIYA_APP"
-  ok "priya-app copied from Downloads"
+# Also check for bodhi-app
+BODHI_APP_BIN="$HOME/bodhi-app"
+if [ -f "/sdcard/Download/bodhi-app-android-arm64" ] && [ ! -f "$BODHI_APP_BIN" ]; then
+  cp /sdcard/Download/bodhi-app-android-arm64 "$BODHI_APP_BIN"
+  chmod +x "$BODHI_APP_BIN"
+  ok "bodhi-app copied from Downloads"
 fi
 
 # ── 5. Pull a model (tiny for mobile) ────────────────────────────────────────
@@ -109,8 +111,8 @@ cat > "$START_SCRIPT" <<SCRIPT
 # Bodhi startup script
 
 OLLAMA_DIR="\$HOME/ollama"
-PRIYA_HUB="\$HOME/priya-hub"
-PRIYA_APP="\$HOME/priya-app"
+BODHI_HUB="\$HOME/bodhi-hub"
+BODHI_APP="\$HOME/bodhi-app"
 
 echo "🌸 Starting Bodhi…"
 
@@ -133,17 +135,17 @@ fi)
 fi
 
 # Start Bodhi Hub
-if [ -f "\$PRIYA_HUB" ]; then
+if [ -f "\$BODHI_HUB" ]; then
   echo "→ Starting Bodhi Hub on :8080…"
-  OLLAMA_HOST=http://127.0.0.1:11434 "\$PRIYA_HUB" > "\$HOME/priya-hub.log" 2>&1 &
+  OLLAMA_HOST=http://127.0.0.1:11434 "\$BODHI_HUB" > "\$HOME/bodhi-hub.log" 2>&1 &
   sleep 1
   echo "✓ Hub running: http://localhost:8080"
 fi
 
 # Start Bodhi App (mobile UI)
-if [ -f "\$PRIYA_APP" ]; then
+if [ -f "\$BODHI_APP" ]; then
   echo "→ Starting Bodhi App on :9090…"
-  PRIYA_HUB_URL=http://127.0.0.1:8080 "\$PRIYA_APP" > "\$HOME/priya-app.log" 2>&1 &
+  PRIYA_HUB_URL=http://127.0.0.1:8080 "\$BODHI_APP" > "\$HOME/bodhi-app.log" 2>&1 &
   sleep 1
   echo "✓ App running: http://localhost:9090"
 fi
@@ -155,7 +157,7 @@ echo "  → http://localhost:8080  (full hub UI)"
 echo ""
 echo "  Tap ⋮ → 'Add to Home Screen' to install as PWA"
 echo ""
-echo "  Logs: ~/priya-hub.log  ~/priya-app.log  ~/ollama.log"
+echo "  Logs: ~/bodhi-hub.log  ~/bodhi-app.log  ~/ollama.log"
 SCRIPT
 chmod +x "$START_SCRIPT"
 ok "Start script created: $START_SCRIPT"

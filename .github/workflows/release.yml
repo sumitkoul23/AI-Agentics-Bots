@@ -64,8 +64,7 @@ jobs:
 
       - name: Compute SHA256 checksums
         run: |
-          cd agents/priya-hub/dist && sha256sum * > ../../../hub-checksums.txt
-          cd agents/priya-app/dist && sha256sum * >> ../../../hub-checksums.txt
+          sha256sum agents/priya-hub/dist/* agents/priya-app/dist/* > hub-checksums.txt
           cat hub-checksums.txt
 
       - name: Create GitHub Release
