@@ -2,7 +2,7 @@
 
 Monorepo for the current Teneo agent portfolio.
 
-## ⭐ Start here: Priya Hub
+## ⭐ Start here: Agency Hub
 
 `agents/priya-hub` is the **universal entry point** — one chat gives you access to every specialist agent automatically.
 
@@ -20,7 +20,7 @@ You never have to pick an agent — just talk naturally.
 
 ## Agents
 
-### 🌸 Priya Hub (universal router)
+### 🌸 Agency Hub (universal router)
 | Agent ID | `priya-hub-z7w4v9` |
 |---|---|
 | Path | `agents/priya-hub/` |
