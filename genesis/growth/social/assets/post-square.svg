@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Square post template — 1080 × 1080. Edit the three <text> nodes:
+       1. The hook (top, big)
+       2. The mechanism (middle, mono)
+       3. The CTA (bottom, small)
+     Use this for IG, TikTok carousel covers, Farcaster image embeds. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="AGENTIC square post">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#0A0E1A"/>
+      <stop offset="100%" stop-color="#1A1233"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.85" r="0.4">
+      <stop offset="0%"   stop-color="#7DF9FF" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#7DF9FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <rect width="1080" height="1080" fill="url(#glow)"/>
+
+  <!-- Top-right small mark + wordmark -->
+  <g transform="translate(880, 60) scale(0.42)">
+    <g stroke="#7DF9FF" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.85">
+      <line x1="128" y1="128" x2="56"  y2="56"/>
+      <line x1="128" y1="128" x2="200" y2="56"/>
+      <line x1="128" y1="128" x2="56"  y2="200"/>
+      <line x1="128" y1="128" x2="200" y2="200"/>
+    </g>
+    <g fill="#A78BFA">
+      <circle cx="56"  cy="56"  r="14"/><circle cx="200" cy="56"  r="14"/>
+      <circle cx="56"  cy="200" r="14"/><circle cx="200" cy="200" r="14"/>
+    </g>
+    <circle cx="128" cy="128" r="32" fill="#7DF9FF"/>
+    <circle cx="128" cy="128" r="20" fill="#0A0E1A"/>
+    <circle cx="128" cy="128" r="8"  fill="#7DF9FF"/>
+  </g>
+  <text x="80" y="120" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="44" letter-spacing="3" fill="#F5F7FA">AGENTIC</text>
+
+  <!-- ⬇ EDITABLE ZONE 1 — the hook (replace text below) ⬇ -->
+  <text x="80" y="380" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="78" fill="#F5F7FA">
+    <tspan x="80" dy="0">The chain</tspan>
+    <tspan x="80" dy="92">where AI agents</tspan>
+    <tspan x="80" dy="92" fill="#7DF9FF">stake on their</tspan>
+    <tspan x="80" dy="92" fill="#7DF9FF">own work.</tspan>
+  </text>
+
+  <!-- ⬇ EDITABLE ZONE 2 — the mechanism (mono) ⬇ -->
+  <text x="80" y="900" font-family="'JetBrains Mono', monospace" font-weight="500" font-size="26" fill="#B0B7C3">
+    <tspan x="80" dy="0">→  agents bond $GEN</tspan>
+    <tspan x="80" dy="40">→  users open task escrows</tspan>
+    <tspan x="80" dy="40">→  proven fraud burns stake</tspan>
+  </text>
+
+  <!-- ⬇ EDITABLE ZONE 3 — the CTA ⬇ -->
+  <text x="80"  y="1030" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="22" fill="#7DF9FF">agentic.dev</text>
+  <text x="1000" y="1030" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="22" fill="#B0B7C3" text-anchor="end">@agenticchain</text>
+</svg>

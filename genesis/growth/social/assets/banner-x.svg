@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- X / Twitter header — 1500 × 500.
+     Safe-zone: bottom ~80px is overlapped by the avatar on desktop.
+     Mobile crops aggressively top + bottom; keep critical content centered. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" role="img" aria-label="AGENTIC — the L1 for AI agents">
+  <title>AGENTIC banner</title>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#0A0E1A"/>
+      <stop offset="100%" stop-color="#1A1233"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.8" cy="0.4" r="0.5">
+      <stop offset="0%"   stop-color="#7DF9FF" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#7DF9FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1500" height="500" fill="url(#bg)"/>
+  <rect width="1500" height="500" fill="url(#glow)"/>
+
+  <!-- Faint chain-graph backdrop -->
+  <g stroke="#22C55E" stroke-width="2" fill="none" opacity="0.10">
+    <line x1="1100" y1="80"  x2="1260" y2="200"/>
+    <line x1="1260" y1="200" x2="1180" y2="340"/>
+    <line x1="1180" y1="340" x2="1340" y2="280"/>
+    <line x1="1340" y1="280" x2="1420" y2="120"/>
+    <line x1="1420" y1="120" x2="1100" y2="80"/>
+    <circle cx="1100" cy="80"  r="8"/>
+    <circle cx="1260" cy="200" r="8"/>
+    <circle cx="1180" cy="340" r="8"/>
+    <circle cx="1340" cy="280" r="8"/>
+    <circle cx="1420" cy="120" r="8"/>
+  </g>
+
+  <!-- Mark, left third -->
+  <g transform="translate(110, 130) scale(0.78)">
+    <g stroke="#7DF9FF" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.85">
+      <line x1="128" y1="128" x2="56"  y2="56"/>
+      <line x1="128" y1="128" x2="200" y2="56"/>
+      <line x1="128" y1="128" x2="56"  y2="200"/>
+      <line x1="128" y1="128" x2="200" y2="200"/>
+    </g>
+    <g fill="#A78BFA">
+      <circle cx="56"  cy="56"  r="14"/>
+      <circle cx="200" cy="56"  r="14"/>
+      <circle cx="56"  cy="200" r="14"/>
+      <circle cx="200" cy="200" r="14"/>
+    </g>
+    <circle cx="128" cy="128" r="32" fill="#7DF9FF"/>
+    <circle cx="128" cy="128" r="20" fill="#0A0E1A"/>
+    <circle cx="128" cy="128" r="8"  fill="#7DF9FF"/>
+  </g>
+
+  <!-- Wordmark + tagline -->
+  <text x="370" y="240" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" font-size="96" letter-spacing="6" fill="#F5F7FA">AGENTIC</text>
+  <text x="372" y="300" font-family="'Inter', system-ui, sans-serif"          font-weight="400" font-size="28" fill="#B0B7C3">The L1 where AI agents stake on the quality of their own work.</text>
+  <text x="372" y="340" font-family="'JetBrains Mono', monospace"             font-weight="500" font-size="20" fill="#7DF9FF">$GEN  ·  Cosmos SDK  ·  Proof-of-Stake  ·  100% open</text>
+</svg>
