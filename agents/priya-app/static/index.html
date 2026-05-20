@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Priya</title>
+<meta name="theme-color" content="#0d0d1a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Priya"/>
+<link rel="manifest" href="/manifest.json"/>
+<link rel="icon" type="image/svg+xml" href="/icon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<style>
+/* ── Reset & base ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0d1a;
+  --surface:#16162a;
+  --surface2:#1e1e38;
+  --surface3:#26264a;
+  --border:rgba(139,92,246,.14);
+  --accent:#8b5cf6;
+  --accent2:#ec4899;
+  --amber:#f59e0b;
+  --green:#10b981;
+  --red:#f43f5e;
+  --text:#f1f5f9;
+  --text2:#94a3b8;
+  --text3:#475569;
+  --user-bubble:linear-gradient(135deg,#7c3aed,#a855f7);
+  --bot-bubble:#1e1e38;
+  --r:18px;--r-sm:10px;
+  --nav-h:60px;
+  --hdr-h:56px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);
+}
+[data-theme=light]{
+  --bg:#f0f0ff;--surface:#fff;--surface2:#f4f4ff;--surface3:#e8e8f8;
+  --border:rgba(139,92,246,.18);
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --bot-bubble:#f4f4ff;
+  --user-bubble:linear-gradient(135deg,#7c3aed,#a855f7);
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  display:flex;flex-direction:column;
+  padding-top:var(--safe-top);
+}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ── Header ── */
+.hdr{
+  height:var(--hdr-h);flex-shrink:0;
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  position:relative;z-index:10;
+}
+.hdr-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.hdr-info{flex:1;min-width:0}
+.hdr-name{font-weight:700;font-size:.95rem;line-height:1.2}
+.hdr-sub{font-size:.7rem;color:var(--text3);line-height:1}
+.hdr-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 6px var(--green)}
+.hdr-btn{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;background:transparent;color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.hdr-btn:hover,.hdr-btn:active{background:var(--surface2)}
+
+/* ── Screen system ── */
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateY(12px);transition:opacity .2s,transform .2s}
+.screen.active{opacity:1;pointer-events:auto;transform:none}
+
+/* ── Chat screen ── */
+.msgs{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:2px;scroll-behavior:smooth;overscroll-behavior:contain}
+.msg-row{display:flex;align-items:flex-end;gap:6px;animation:popIn .18s ease}
+@keyframes popIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg-row.user{flex-direction:row-reverse}
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-bottom:14px}
+.avatar.bot{background:var(--surface3)}
+.avatar.user{background:var(--user-bubble)}
+.bubble-wrap{display:flex;flex-direction:column;max-width:80%;gap:2px}
+.bubble{
+  padding:10px 14px;
+  font-size:.875rem;line-height:1.55;
+  border-radius:var(--r);
+  word-break:break-word;
+  position:relative;
+}
+.msg-row.bot .bubble{
+  background:var(--bot-bubble);
+  border:1px solid var(--border);
+  border-bottom-left-radius:4px;
+  color:var(--text);
+}
+.msg-row.user .bubble{
+  background:var(--user-bubble);
+  color:#fff;
+  border-bottom-right-radius:4px;
+}
+.bubble h1,.bubble h2,.bubble h3{font-size:.9rem;margin:.4em 0 .2em}
+.bubble p{margin:.25em 0}
+.bubble ul,.bubble ol{padding-left:1.2em;margin:.25em 0}
+.bubble code{background:rgba(139,92,246,.15);padding:1px 5px;border-radius:4px;font-size:.8em;font-family:monospace}
+.bubble pre{background:rgba(0,0,0,.3);border-radius:8px;padding:8px 10px;overflow-x:auto;margin:.4em 0;font-size:.78em}
+.bubble pre code{background:none;padding:0}
+.bubble strong{color:var(--accent)}
+.msg-time{font-size:.62rem;color:var(--text3);padding:0 4px;align-self:flex-end}
+.msg-row.user .msg-time{text-align:right}
+.bubble-actions{display:flex;gap:4px;margin-top:2px;opacity:0;transition:opacity .15s}
+.msg-row:hover .bubble-actions{opacity:1}
+.bact{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:2px 5px;border-radius:4px;transition:color .12s}
+.bact:hover{color:var(--text2);background:var(--surface2)}
+
+/* Typing indicator */
+.typing-row{display:flex;align-items:flex-end;gap:6px}
+.typing-bubble{padding:10px 16px;background:var(--bot-bubble);border:1px solid var(--border);border-radius:var(--r);border-bottom-left-radius:4px;display:flex;gap:4px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:bounce .9s infinite}
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* ── Input bar ── */
+.input-wrap{
+  flex-shrink:0;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:8px 12px;
+  padding-bottom:max(8px,var(--safe-bottom));
+}
+.input-row{display:flex;align-items:flex-end;gap:6px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);padding:6px 8px;transition:border-color .15s}
+.input-row:focus-within{border-color:var(--accent)}
+#ci{
+  flex:1;background:none;border:none;outline:none;resize:none;
+  font-family:'Inter',sans-serif;font-size:.9rem;color:var(--text);
+  line-height:1.5;max-height:120px;overflow-y:auto;padding:2px 0;
+}
+#ci::placeholder{color:var(--text3)}
+.ib{
+  width:36px;height:36px;flex-shrink:0;border:none;cursor:pointer;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .12s;
+}
+.ib.mic{background:var(--surface3);color:var(--text2)}
+.ib.mic:hover,.ib.mic:active{color:var(--accent)}
+.ib.mic.rec{background:rgba(244,63,94,.15);color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.ib.send{background:var(--user-bubble);color:#fff}
+.ib.send:hover,.ib.send:active{transform:scale(1.08)}
+.ib.send:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* ── Bottom nav ── */
+.nav{
+  display:flex;align-items:center;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding-bottom:var(--safe-bottom);
+  flex-shrink:0;
+  height:calc(var(--nav-h) + var(--safe-bottom));
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:8px 4px;cursor:pointer;border:none;background:none;
+  color:var(--text3);font-size:.62rem;font-weight:500;text-transform:uppercase;
+  letter-spacing:.04em;transition:color .15s;
+  height:var(--nav-h);
+}
+.nav-item .ni{font-size:20px;line-height:1}
+.nav-item.active{color:var(--accent)}
+.nav-item:hover{color:var(--text2)}
+
+/* ── Agents screen ── */
+.screen-body{flex:1;overflow-y:auto;padding:14px}
+.sec-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin:0 0 8px 4px}
+.agent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px}
+.agent-card{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);
+  padding:14px 12px;cursor:pointer;transition:all .15s;
+  display:flex;flex-direction:column;gap:7px;
+}
+.agent-card:hover,.agent-card:active{border-color:var(--accent);background:var(--surface2)}
+.agent-card.selected{border-color:var(--accent);background:var(--surface2);box-shadow:0 0 0 2px rgba(139,92,246,.2)}
+.ac-icon{font-size:24px;line-height:1}
+.ac-name{font-size:.82rem;font-weight:700;color:var(--text)}
+.ac-desc{font-size:.7rem;color:var(--text3);line-height:1.35}
+.ac-badge{font-size:.62rem;font-weight:600;padding:2px 7px;border-radius:99px;background:rgba(139,92,246,.15);color:var(--accent);align-self:flex-start;margin-top:2px}
+
+/* ── Training screen ── */
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.stat-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:6px}
+.stat-val{font-size:1.2rem;font-weight:700}
+.progress-bar{height:6px;border-radius:3px;background:var(--surface3);overflow:hidden;margin:8px 0 4px}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.phase-badge{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 10px;border-radius:99px;margin-top:6px}
+.facts-list{display:flex;flex-direction:column;gap:6px}
+.fact-row{display:flex;gap:8px;font-size:.78rem;background:var(--surface2);border-radius:var(--r-sm);padding:7px 10px}
+.fact-k{color:var(--text3);flex-shrink:0;font-weight:500}
+.fact-v{color:var(--text);word-break:break-word}
+.empty-state{text-align:center;padding:32px 20px;color:var(--text3);font-size:.84rem}
+.empty-icon{font-size:36px;margin-bottom:10px}
+
+/* ── Settings screen ── */
+.settings-list{display:flex;flex-direction:column;gap:2px;padding:14px}
+.s-section{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:14px 4px 6px}
+.s-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface);border-radius:var(--r-sm);cursor:pointer;border:1px solid transparent;transition:all .12s}
+.s-row:hover,.s-row:active{background:var(--surface2);border-color:var(--border)}
+.s-icon{font-size:20px;width:28px;text-align:center;flex-shrink:0}
+.s-info{flex:1;min-width:0}
+.s-name{font-size:.85rem;font-weight:500}
+.s-sub{font-size:.72rem;color:var(--text3)}
+.s-arrow{color:var(--text3);font-size:12px}
+.fi{
+  width:100%;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:var(--r-sm);padding:9px 12px;color:var(--text);
+  font-family:'Inter',sans-serif;font-size:.875rem;outline:none;transition:border-color .15s;
+}
+.fi:focus{border-color:var(--accent)}
+.fi::placeholder{color:var(--text3)}
+
+/* ── Bottom sheet ── */
+.sheet-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)}
+.sheet-ov.open{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:101;
+  background:var(--surface);border-top:1px solid var(--border);
+  border-radius:var(--r) var(--r) 0 0;
+  padding:0 0 calc(var(--safe-bottom) + 12px);
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.22,1,.36,1);
+  max-height:75vh;display:flex;flex-direction:column;
+}
+.sheet-ov.open .sheet{transform:none}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--surface3);margin:10px auto 4px;flex-shrink:0}
+.sheet-title{font-size:.88rem;font-weight:700;padding:8px 18px 12px;flex-shrink:0}
+.sheet-body{overflow-y:auto;padding:0 14px 8px;flex:1}
+.sa-item{display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:var(--r-sm);cursor:pointer;transition:background .12s}
+.sa-item:hover,.sa-item:active{background:var(--surface2)}
+.sa-item.selected{background:rgba(139,92,246,.1)}
+.sa-icon{font-size:22px;width:32px;text-align:center}
+.sa-info{flex:1}
+.sa-name{font-size:.84rem;font-weight:600}
+.sa-desc{font-size:.71rem;color:var(--text3)}
+.sa-check{font-size:16px;color:var(--accent)}
+
+/* ── Toast ── */
+.toast{
+  position:fixed;top:calc(var(--hdr-h) + var(--safe-top) + 10px);left:50%;transform:translateX(-50%) translateY(-8px);
+  background:var(--surface3);color:var(--text);border:1px solid var(--border);
+  padding:8px 18px;border-radius:99px;font-size:.8rem;font-weight:500;
+  z-index:200;opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Scroll to bottom ── */
+.scroll-btn{
+  position:fixed;right:16px;
+  bottom:calc(var(--nav-h) + var(--safe-bottom) + 60px + 12px);
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surface3);border:1px solid var(--border);
+  color:var(--text2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  box-shadow:0 2px 12px rgba(0,0,0,.3);
+}
+.scroll-btn.vis{opacity:1;pointer-events:auto}
+
+/* ── Install banner ── */
+.install-banner{
+  display:none;align-items:center;gap:10px;
+  background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(236,72,153,.15));
+  border-bottom:1px solid rgba(139,92,246,.2);
+  padding:10px 16px;flex-shrink:0;
+}
+.install-banner.show{display:flex}
+.install-banner p{flex:1;font-size:.8rem;font-weight:500}
+.install-banner button{font-size:.78rem;font-weight:600;padding:6px 14px;border:none;border-radius:99px;cursor:pointer;background:var(--accent);color:#fff}
+.install-banner .close-banner{background:none;color:var(--text3);padding:4px;font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- Install banner -->
+<div class="install-banner" id="install-banner">
+  <span style="font-size:20px">📲</span>
+  <p>Add Priya to your home screen for the full app experience</p>
+  <button onclick="installPWA()">Install</button>
+  <button class="close-banner" onclick="dismissBanner()">✕</button>
+</div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-icon" id="hdr-icon" style="background:rgba(139,92,246,.15)">🌸</div>
+  <div class="hdr-info">
+    <div class="hdr-name" id="hdr-name">Priya</div>
+    <div class="hdr-sub" id="hdr-sub">Autonomous AI · On-device</div>
+  </div>
+  <div class="hdr-dot" id="hdr-dot" style="opacity:.3"></div>
+  <button class="hdr-btn" onclick="openAgentSheet()" title="Switch agent">⬆️</button>
+  <button class="hdr-btn" onclick="setScreen('settings')" title="Settings">⚙️</button>
+</div>
+
+<!-- Screens -->
+<div class="screens">
+
+  <!-- Chat -->
+  <div class="screen active" id="screen-chat">
+    <div class="msgs" id="msgs"></div>
+    <div id="typing" style="display:none;padding:0 12px 8px">
+      <div class="typing-row">
+        <div class="avatar bot" style="font-size:13px">🌸</div>
+        <div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      </div>
+    </div>
+    <div class="input-wrap">
+      <div class="input-row">
+        <button class="ib mic" id="mic-btn" onclick="toggleVoice()" title="Voice input">🎙️</button>
+        <textarea id="ci" rows="1" placeholder="Message Priya…" oninput="autoGrow(this)" onkeydown="onKey(event)"></textarea>
+        <button class="ib send" id="send-btn" onclick="send()" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agents -->
+  <div class="screen" id="screen-agents">
+    <div class="screen-body">
+      <div class="sec-title">Choose a Specialist</div>
+      <div class="agent-grid" id="agent-grid"></div>
+    </div>
+  </div>
+
+  <!-- Training / Memory -->
+  <div class="screen" id="screen-training">
+    <div class="screen-body" id="training-body">
+      <div class="empty-state"><div class="empty-icon">🔄</div>Loading…</div>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="screen" id="screen-settings">
+    <div class="settings-list">
+      <div class="s-section">Connection</div>
+      <div class="s-row" style="flex-direction:column;align-items:stretch;gap:8px;cursor:default">
+        <div class="s-name">Priya Hub URL</div>
+        <input class="fi" id="hub-url" placeholder="http://localhost:8080" oninput="S.hubURL=this.value;save()"/>
+        <div style="font-size:.72rem;color:var(--text3)">The running <code style="font-family:monospace">priya-hub</code> server address. Same device = leave blank.</div>
+      </div>
+      <div class="s-section">Appearance</div>
+      <div class="s-row" onclick="toggleTheme()">
+        <div class="s-icon" id="theme-icon">🌙</div>
+        <div class="s-info">
+          <div class="s-name" id="theme-name">Dark mode</div>
+          <div class="s-sub">Tap to switch theme</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
+      <div class="s-section">Chat</div>
+      <div class="s-row" onclick="clearChat()">
+        <div class="s-icon">🗑️</div>
+        <div class="s-info">
+          <div class="s-name">Clear chat history</div>
+          <div class="s-sub">Remove messages from this device</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
+      <div class="s-row" onclick="exportChat()">
+        <div class="s-icon">📤</div>
+        <div class="s-info">
+          <div class="s-name">Export chat</div>
+          <div class="s-sub">Save conversation as text file</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
+      <div class="s-section">Install</div>
+      <div class="s-row" id="install-row" onclick="installPWA()" style="display:none">
+        <div class="s-icon">📲</div>
+        <div class="s-info">
+          <div class="s-name">Install Priya as App</div>
+          <div class="s-sub">Add to home screen for native-like experience</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
+      <div class="s-section">About</div>
+      <div class="s-row" style="cursor:default">
+        <div class="s-icon">🌸</div>
+        <div class="s-info">
+          <div class="s-name">Priya App v1.0</div>
+          <div class="s-sub">On-device · No cloud · No API keys</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom nav -->
+<nav class="nav">
+  <button class="nav-item active" id="nav-chat" onclick="setScreen('chat')">
+    <span class="ni">💬</span>Chat
+  </button>
+  <button class="nav-item" id="nav-agents" onclick="setScreen('agents')">
+    <span class="ni">👥</span>Agents
+  </button>
+  <button class="nav-item" id="nav-training" onclick="setScreen('training');loadTraining()">
+    <span class="ni">🧠</span>Training
+  </button>
+  <button class="nav-item" id="nav-settings" onclick="setScreen('settings')">
+    <span class="ni">⚙️</span>Settings
+  </button>
+</nav>
+
+<!-- Scroll to bottom -->
+<div class="scroll-btn" id="scroll-btn" onclick="scrollBottom()">↓</div>
+
+<!-- Agent bottom sheet -->
+<div class="sheet-ov" id="agent-sheet-ov" onclick="closeAgentSheet()">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Switch Agent</div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Agent definitions ──────────────────────────────────────────────────────
+const AGENTS = [
+  {id:'priya',     name:'Priya',         icon:'🌸', color:'#8b5cf6', desc:'General assistant'},
+  {id:'finance',   name:'Finance',       icon:'📊', color:'#10b981', desc:'Crypto & markets'},
+  {id:'perp-markets',name:'Perp Markets',icon:'⚡', color:'#f59e0b', desc:'Futures & perpetuals'},
+  {id:'portfolio', name:'Portfolio',     icon:'💼', color:'#3b82f6', desc:'Asset allocation'},
+  {id:'social',    name:'Social',        icon:'📣', color:'#ec4899', desc:'Content creation'},
+  {id:'comms',     name:'Comms',         icon:'💬', color:'#06b6d4', desc:'Emails & messages'},
+  {id:'organizer', name:'Organizer',     icon:'🗂️', color:'#f97316', desc:'Productivity'},
+  {id:'freelance', name:'Freelance',     icon:'🔍', color:'#a855f7', desc:'Jobs & proposals'},
+]
+
+// ── State ──────────────────────────────────────────────────────────────────
+const S = {
+  screen: 'chat',
+  agent: 'priya',
+  messages: [],
+  hubURL: '',
+  theme: 'dark',
+  sending: false,
+}
+
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem('priya-app-state') || '{}')
+    if (d.agent) S.agent = d.agent
+    if (d.messages) S.messages = d.messages
+    if (d.hubURL) S.hubURL = d.hubURL
+    if (d.theme) S.theme = d.theme
+  } catch(e) {}
+}
+
+function save() {
+  localStorage.setItem('priya-app-state', JSON.stringify({
+    agent: S.agent, messages: S.messages, hubURL: S.hubURL, theme: S.theme,
+  }))
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+function init() {
+  load()
+  applyTheme()
+  buildAgentGrid()
+  buildSheetBody()
+  renderMessages()
+  setActiveAgent(S.agent, false)
+
+  document.getElementById('hub-url').value = S.hubURL
+  document.getElementById('ci').addEventListener('input', () => {
+    document.getElementById('send-btn').disabled = !document.getElementById('ci').value.trim()
+  })
+
+  // Scroll to bottom when keyboard opens on mobile
+  window.visualViewport?.addEventListener('resize', onViewportResize)
+
+  // Msgs scroll listener
+  const msgs = document.getElementById('msgs')
+  msgs.addEventListener('scroll', onMsgsScroll)
+
+  // If no messages yet, add a welcome message
+  if (S.messages.length === 0) {
+    pushMsg('bot', `Namaste! I'm **Priya** 🌸\n\nI'm your on-device AI assistant — running entirely on your device with no internet required.\n\nTap **👥 Agents** to choose a specialist, or just ask me anything!`)
+  } else {
+    scrollBottom(false)
+  }
+
+  pingHub()
+}
+
+function onViewportResize() {
+  if (S.screen === 'chat') scrollBottom(false)
+}
+
+// ── Theme ──────────────────────────────────────────────────────────────────
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', S.theme === 'light' ? 'light' : 'dark')
+  document.getElementById('theme-icon').textContent = S.theme === 'light' ? '☀️' : '🌙'
+  document.getElementById('theme-name').textContent = S.theme === 'light' ? 'Light mode' : 'Dark mode'
+}
+
+function toggleTheme() {
+  S.theme = S.theme === 'dark' ? 'light' : 'dark'
+  applyTheme()
+  save()
+  toast('Theme changed')
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function setScreen(name) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'))
+  document.getElementById('screen-' + name).classList.add('active')
+  document.getElementById('nav-' + name)?.classList.add('active')
+  S.screen = name
+  if (name === 'chat') setTimeout(() => scrollBottom(false), 50)
+}
+
+// ── Agent management ───────────────────────────────────────────────────────
+function setActiveAgent(id, notify = true) {
+  S.agent = id
+  save()
+  const a = AGENTS.find(x => x.id === id) || AGENTS[0]
+  document.getElementById('hdr-icon').textContent = a.icon
+  document.getElementById('hdr-icon').style.background = a.color + '22'
+  document.getElementById('hdr-name').textContent = a.name
+  document.getElementById('hdr-sub').textContent = a.desc + ' · On-device'
+  // Refresh agent grid selections
+  document.querySelectorAll('.agent-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.id === id)
+  })
+  document.querySelectorAll('.sa-item').forEach(el => {
+    el.querySelector('.sa-check').style.opacity = el.dataset.id === id ? '1' : '0'
+  })
+  if (notify) toast(a.icon + ' ' + a.name + ' selected')
+}
+
+function buildAgentGrid() {
+  const g = document.getElementById('agent-grid')
+  g.innerHTML = ''
+  AGENTS.forEach(a => {
+    const d = document.createElement('div')
+    d.className = 'agent-card' + (a.id === S.agent ? ' selected' : '')
+    d.dataset.id = a.id
+    d.innerHTML = `<div class="ac-icon">${a.icon}</div><div class="ac-name">${a.name}</div><div class="ac-desc">${a.desc}</div><div class="ac-badge" style="background:${a.color}22;color:${a.color}">${a.id}</div>`
+    d.onclick = () => { setActiveAgent(a.id); setScreen('chat') }
+    g.appendChild(d)
+  })
+}
+
+function buildSheetBody() {
+  const b = document.getElementById('sheet-body')
+  b.innerHTML = ''
+  AGENTS.forEach(a => {
+    const d = document.createElement('div')
+    d.className = 'sa-item'
+    d.dataset.id = a.id
+    d.innerHTML = `<div class="sa-icon">${a.icon}</div><div class="sa-info"><div class="sa-name">${a.name}</div><div class="sa-desc">${a.desc}</div></div><div class="sa-check" style="opacity:${a.id===S.agent?1:0}">✓</div>`
+    d.onclick = () => { setActiveAgent(a.id); closeAgentSheet() }
+    b.appendChild(d)
+  })
+}
+
+function openAgentSheet() {
+  document.getElementById('agent-sheet-ov').classList.add('open')
+}
+function closeAgentSheet() {
+  document.getElementById('agent-sheet-ov').classList.remove('open')
+}
+
+// ── Messaging ──────────────────────────────────────────────────────────────
+function pushMsg(role, text, agentId) {
+  const msg = { role, text, agentId: agentId || S.agent, ts: Date.now() }
+  S.messages.push(msg)
+  save()
+  renderMsg(msg)
+  scrollBottom()
+}
+
+function renderMessages() {
+  const el = document.getElementById('msgs')
+  el.innerHTML = ''
+  S.messages.forEach(m => renderMsg(m))
+}
+
+function renderMsg(msg) {
+  const el = document.getElementById('msgs')
+  const a = AGENTS.find(x => x.id === msg.agentId) || AGENTS[0]
+  const isUser = msg.role === 'user'
+  const time = new Date(msg.ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+
+  const row = document.createElement('div')
+  row.className = 'msg-row ' + (isUser ? 'user' : 'bot')
+
+  const avatar = isUser
+    ? `<div class="avatar user">👤</div>`
+    : `<div class="avatar bot" style="font-size:13px;background:${a.color}22">${a.icon}</div>`
+
+  const html = isUser ? esc(msg.text).replace(/\n/g,'<br>') : marked.parse(msg.text)
+  const copy = `<button class="bact" onclick="copyMsg(this)" title="Copy">📋</button>`
+  const speak = `<button class="bact" onclick="speakMsg(this)" title="Speak">🔊</button>`
+  const actions = isUser ? copy : copy + speak
+
+  row.innerHTML = avatar + `<div class="bubble-wrap"><div class="bubble">${html}</div><div style="display:flex;justify-content:${isUser?'flex-end':'flex-start'};align-items:center;gap:4px"><span class="msg-time">${time}</span><div class="bubble-actions">${actions}</div></div></div>`
+
+  el.appendChild(row)
+}
+
+async function send() {
+  const ci = document.getElementById('ci')
+  const text = ci.value.trim()
+  if (!text || S.sending) return
+  ci.value = ''
+  ci.style.height = ''
+  document.getElementById('send-btn').disabled = true
+  S.sending = true
+
+  pushMsg('user', text)
+  showTyping(true)
+
+  try {
+    const headers = { 'Content-Type': 'application/json' }
+    if (S.hubURL) headers['X-Hub-URL'] = S.hubURL
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ message: text, agent: S.agent }),
+    })
+    const data = await res.json()
+    showTyping(false)
+    pushMsg('bot', data.reply || '(no response)', S.agent)
+  } catch(e) {
+    showTyping(false)
+    pushMsg('bot', '⚠️ Could not reach Priya Hub. Check Settings → Hub URL, and make sure `./priya-hub` is running.')
+  }
+  S.sending = false
+}
+
+function onKey(e) {
+  // Shift+Enter = newline, Enter alone = send (desktop)
+  if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 720) {
+    e.preventDefault()
+    send()
+  }
+  document.getElementById('send-btn').disabled = !e.target.value.trim()
+}
+
+function autoGrow(el) {
+  el.style.height = 'auto'
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px'
+}
+
+function showTyping(v) {
+  document.getElementById('typing').style.display = v ? 'block' : 'none'
+  if (v) scrollBottom()
+}
+
+// ── Scroll ─────────────────────────────────────────────────────────────────
+let atBottom = true
+function onMsgsScroll() {
+  const el = document.getElementById('msgs')
+  atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50
+  document.getElementById('scroll-btn').classList.toggle('vis', !atBottom)
+}
+
+function scrollBottom(smooth = true) {
+  const el = document.getElementById('msgs')
+  setTimeout(() => {
+    el.scrollTo({ top: el.scrollHeight, behavior: smooth ? 'smooth' : 'instant' })
+  }, 30)
+}
+
+// ── Voice input ────────────────────────────────────────────────────────────
+let recog = null
+function toggleVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+  if (!SR) { toast('Voice not supported in this browser'); return }
+  const btn = document.getElementById('mic-btn')
+  if (recog) {
+    recog.stop(); recog = null; btn.classList.remove('rec'); return
+  }
+  recog = new SR()
+  recog.lang = 'en-US'; recog.continuous = false; recog.interimResults = false
+  btn.classList.add('rec')
+  recog.onresult = e => {
+    document.getElementById('ci').value += e.results[0][0].transcript
+    document.getElementById('send-btn').disabled = false
+  }
+  recog.onend = () => { btn.classList.remove('rec'); recog = null }
+  recog.onerror = () => { btn.classList.remove('rec'); recog = null; toast('Voice error') }
+  recog.start()
+}
+
+// ── TTS ────────────────────────────────────────────────────────────────────
+function speakMsg(btn) {
+  const text = btn.closest('.bubble-wrap').querySelector('.bubble').textContent
+  const u = new SpeechSynthesisUtterance(text)
+  u.rate = 1.05
+  window.speechSynthesis.speak(u)
+  toast('Speaking…')
+}
+
+// ── Clipboard ──────────────────────────────────────────────────────────────
+function copyMsg(btn) {
+  const text = btn.closest('.bubble-wrap').querySelector('.bubble').textContent
+  navigator.clipboard.writeText(text).then(() => toast('Copied'))
+}
+
+// ── Training / Memory ──────────────────────────────────────────────────────
+async function loadTraining() {
+  const body = document.getElementById('training-body')
+  body.innerHTML = '<div class="empty-state"><div class="empty-icon">🔄</div>Loading…</div>'
+  try {
+    const headers = {}
+    if (S.hubURL) headers['X-Hub-URL'] = S.hubURL
+    const [statusRes, memRes] = await Promise.all([
+      fetch('/api/status', { headers }),
+      fetch('/api/memory', { headers }),
+    ])
+    const statusTxt = await statusRes.text()
+    const mem = await memRes.json()
+    renderTraining(statusTxt, mem)
+  } catch(e) {
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div>Cannot reach Priya Hub.<br>Check Settings → Hub URL.</div>'
+  }
+}
+
+function renderTraining(statusTxt, mem) {
+  const body = document.getElementById('training-body')
+  const lines = statusTxt.split('\n')
+  const tl = lines.find(l => l.startsWith('Training:')) || ''
+  const tsm = tl.match(/Training:\s*([\d.]+)\/100/)
+  const score = tsm ? parseFloat(tsm[1]) : null
+  const onboard = tl.includes('Onboarding: complete') ? 'complete' : 'in progress'
+  const interactions = (tl.match(/(\d+)\s+interactions/) || [])[1] || '0'
+  const phase = score == null ? '—' : score < 20 ? 'Cold start' : score < 45 ? 'Learning' : score < 70 ? 'Familiar' : 'Expert'
+  const scoreColor = score == null ? 'var(--text3)' : score < 30 ? '#e05252' : score < 65 ? '#e09c52' : '#10b981'
+  const phaseColor = score == null ? 'var(--surface3)' : score < 30 ? 'rgba(224,82,82,.15)' : score < 65 ? 'rgba(224,156,82,.15)' : 'rgba(16,185,129,.15)'
+
+  let h = ''
+
+  // Training score card
+  h += `<div class="stat-card">
+    <div class="stat-label">Training Score</div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="stat-val" style="color:${scoreColor}">${score != null ? Math.round(score) : '—'}<span style="font-size:.8rem;color:var(--text3)">/100</span></div>
+      <span class="phase-badge" style="background:${phaseColor};color:${scoreColor}">${phase}</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${score||0}%;background:${scoreColor}"></div></div>
+    <div style="font-size:.72rem;color:var(--text3);margin-top:4px">
+      ${interactions} interactions · Onboarding: <span style="color:${onboard==='complete'?'#10b981':'var(--accent)'}">${onboard}</span>
+    </div>
+  </div>`
+
+  // Agent confidence
+  const ql = lines.filter(l => l.includes('confidence:'))
+  if (ql.length) {
+    h += `<div class="sec-title" style="margin-top:14px">Agent Confidence</div>`
+    ql.forEach(ln => {
+      const m = ln.trim().match(/^(\S+)\s+queue:\s*(\d+)\s+confidence:\s*([\d.]+)%/)
+      if (!m) return
+      const id = m[1], conf = parseFloat(m[3])
+      const a = AGENTS.find(x => x.id === id)
+      const cc = conf < 30 ? '#e05252' : conf < 65 ? '#e09c52' : '#10b981'
+      h += `<div class="stat-card" style="padding:10px 14px;margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <div style="font-size:.82rem;font-weight:600">${a?.icon||'•'} ${id}</div>
+          <div style="font-size:.78rem;font-weight:700;color:${cc}">${conf.toFixed(0)}%</div>
+        </div>
+        <div class="progress-bar" style="margin:0"><div class="progress-fill" style="width:${conf}%;background:${cc}"></div></div>
+      </div>`
+    })
+  }
+
+  // Facts & prefs
+  const facts = Object.entries(mem.facts || {})
+  const prefs = Object.entries(mem.preferences || {})
+  if (prefs.length) {
+    h += `<div class="sec-title" style="margin-top:14px">Preferences (${prefs.length})</div><div class="facts-list">`
+    prefs.forEach(([k, v]) => h += `<div class="fact-row"><div class="fact-k">${esc(k)}</div><div class="fact-v">${esc(v)}</div></div>`)
+    h += '</div>'
+  }
+  if (facts.length) {
+    h += `<div class="sec-title" style="margin-top:14px">Learned Facts (${facts.length})</div><div class="facts-list">`
+    facts.slice(0, 20).forEach(([k, v]) => h += `<div class="fact-row"><div class="fact-k">${esc(k)}</div><div class="fact-v">${esc(v)}</div></div>`)
+    if (facts.length > 20) h += `<div style="font-size:.73rem;color:var(--text3);padding:6px 4px">+${facts.length-20} more</div>`
+    h += '</div>'
+  }
+
+  if (!facts.length && !prefs.length) {
+    h += `<div class="empty-state" style="margin-top:14px"><div class="empty-icon">🌱</div>No learned facts yet.<br>Keep chatting — Priya learns as you talk!</div>`
+  }
+
+  h += '<div style="height:16px"></div>'
+  body.innerHTML = h
+}
+
+// ── Hub connectivity ───────────────────────────────────────────────────────
+async function pingHub() {
+  try {
+    const headers = {}
+    if (S.hubURL) headers['X-Hub-URL'] = S.hubURL
+    await fetch('/api/status', { headers, signal: AbortSignal.timeout(4000) })
+    document.getElementById('hdr-dot').style.opacity = '1'
+    document.getElementById('hdr-sub').textContent = AGENTS.find(x=>x.id===S.agent)?.desc + ' · Online'
+  } catch {
+    document.getElementById('hdr-dot').style.opacity = '.3'
+    document.getElementById('hdr-dot').style.background = '#e05252'
+  }
+}
+
+// ── Clear / Export ─────────────────────────────────────────────────────────
+function clearChat() {
+  if (!confirm('Clear all messages from this device?')) return
+  S.messages = []
+  save()
+  renderMessages()
+  pushMsg('bot', 'Chat cleared! How can I help you today?')
+  setScreen('chat')
+}
+
+function exportChat() {
+  const lines = S.messages.map(m =>
+    `[${new Date(m.ts).toLocaleString()}] ${m.role==='user'?'You':'Priya'}: ${m.text}`
+  ).join('\n\n')
+  const a = document.createElement('a')
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(lines)
+  a.download = `priya-chat-${Date.now()}.txt`
+  a.click()
+  toast('Chat exported')
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+let toastT
+function toast(msg) {
+  const el = document.getElementById('toast')
+  el.textContent = msg
+  el.classList.add('show')
+  clearTimeout(toastT)
+  toastT = setTimeout(() => el.classList.remove('show'), 2000)
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+// ── PWA ────────────────────────────────────────────────────────────────────
+let deferredInstall = null
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault()
+  deferredInstall = e
+  document.getElementById('install-banner').classList.add('show')
+  document.getElementById('install-row').style.display = 'flex'
+})
+window.addEventListener('appinstalled', () => {
+  deferredInstall = null
+  document.getElementById('install-banner').classList.remove('show')
+  document.getElementById('install-row').style.display = 'none'
+  toast('Priya installed! 🎉')
+})
+function installPWA() {
+  if (!deferredInstall) return
+  deferredInstall.prompt()
+  deferredInstall.userChoice.then(c => { if (c.outcome === 'accepted') deferredInstall = null })
+}
+function dismissBanner() {
+  document.getElementById('install-banner').classList.remove('show')
+}
+
+// ── Service Worker ─────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(r => console.log('[Priya App] SW registered', r.scope))
+      .catch(e => console.log('[Priya App] SW failed', e))
+  })
+}
+
+// ── Boot ───────────────────────────────────────────────────────────────────
+init()
+</script>
+</body>
+</html>
