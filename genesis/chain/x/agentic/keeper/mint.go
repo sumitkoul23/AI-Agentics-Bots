@@ -6,7 +6,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/sumitkoul23/agentic-chain/app"
+	"github.com/sumitkoul23/agentic-chain/types/coinconst"
 	"github.com/sumitkoul23/agentic-chain/x/agentic/types"
 )
 
@@ -23,7 +23,7 @@ func (k Keeper) MintReputationReward(ctx sdk.Context, agent sdk.AccAddress, amou
 	if !amount.IsPositive() {
 		return nil
 	}
-	coins := sdk.NewCoins(sdk.NewCoin(app.BaseCoinUnit, amount))
+	coins := sdk.NewCoins(sdk.NewCoin(coinconst.BaseCoinUnit, amount))
 	if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, coins); err != nil {
 		return fmt.Errorf("mint reward: %w", err)
 	}

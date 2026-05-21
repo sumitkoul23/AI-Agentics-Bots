@@ -8,11 +8,13 @@ import (
 	"cosmossdk.io/collections"
 	storetypes "cosmossdk.io/core/store"
 	"cosmossdk.io/log"
+	"cosmossdk.io/math"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/sumitkoul23/agentic-chain/x/agentic/types"
+	"github.com/sumitkoul23/agentic-chain/types/jsonvalue"
 )
 
 // Keeper is the AGENTIC module's state owner.
@@ -45,7 +47,7 @@ type BankKeeper interface {
 // StakingKeeper is the subset of `x/staking` used for validator quorum lookup
 // when validating fraud proofs.
 type StakingKeeper interface {
-	GetLastTotalPower(ctx sdk.Context) sdk.Int
+	GetLastTotalPower(ctx sdk.Context) math.Int
 }
 
 // NewKeeper wires up the module's state schema.
@@ -64,9 +66,9 @@ func NewKeeper(
 		bankKeeper:    bk,
 		stakingKeeper: sk,
 
-		Params:      collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		Agents:      collections.NewMap(sb, types.AgentRecordsKey, "agents", collections.StringKey, codec.CollValue[types.AgentRecord](cdc)),
-		Tasks:       collections.NewMap(sb, types.TasksKey, "tasks", collections.Uint64Key, codec.CollValue[types.Task](cdc)),
+		Params:      collections.NewItem(sb, types.ParamsKey, "params", jsonvalue.Codec[types.Params]()),
+		Agents:      collections.NewMap(sb, types.AgentRecordsKey, "agents", collections.StringKey, jsonvalue.Codec[types.AgentRecord]()),
+		Tasks:       collections.NewMap(sb, types.TasksKey, "tasks", collections.Uint64Key, jsonvalue.Codec[types.Task]()),
 		TaskCounter: collections.NewSequence(sb, types.TaskCounterKey, "task_counter"),
 		BurnedTotal: collections.NewItem(sb, types.BurnedTotalKey, "burned_total", collections.StringValue),
 	}

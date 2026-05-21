@@ -6,7 +6,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/sumitkoul23/agentic-chain/app"
+	"github.com/sumitkoul23/agentic-chain/types/coinconst"
 	"github.com/sumitkoul23/agentic-chain/x/agentic/types"
 )
 
@@ -19,7 +19,7 @@ func (k Keeper) BurnFromEscrow(ctx sdk.Context, amount math.Int, reason string) 
 	if !amount.IsPositive() {
 		return nil
 	}
-	coins := sdk.NewCoins(sdk.NewCoin(app.BaseCoinUnit, amount))
+	coins := sdk.NewCoins(sdk.NewCoin(coinconst.BaseCoinUnit, amount))
 	if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins); err != nil {
 		return fmt.Errorf("burn coins: %w", err)
 	}

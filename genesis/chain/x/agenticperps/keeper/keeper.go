@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/sumitkoul23/agentic-chain/x/agenticperps/types"
+	"github.com/sumitkoul23/agentic-chain/types/jsonvalue"
 )
 
 type Keeper struct {
@@ -52,9 +53,9 @@ func NewKeeper(
 		cdc: cdc, storeService: storeService, authority: authority,
 		bankKeeper: bk, priceKeeper: pk,
 
-		Params:        collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		Markets:       collections.NewMap(sb, types.MarketsKey, "markets", collections.StringKey, codec.CollValue[types.Market](cdc)),
-		Positions:     collections.NewMap(sb, types.PositionsKey, "positions", collections.PairKeyCodec(collections.StringKey, collections.StringKey), codec.CollValue[types.Position](cdc)),
+		Params:        collections.NewItem(sb, types.ParamsKey, "params", jsonvalue.Codec[types.Params]()),
+		Markets:       collections.NewMap(sb, types.MarketsKey, "markets", collections.StringKey, jsonvalue.Codec[types.Market]()),
+		Positions:     collections.NewMap(sb, types.PositionsKey, "positions", collections.PairKeyCodec(collections.StringKey, collections.StringKey), jsonvalue.Codec[types.Position]()),
 		FundingIndex:  collections.NewMap(sb, types.FundingIndexKey, "funding_index", collections.StringKey, collections.StringValue),
 		InsuranceFund: collections.NewItem(sb, types.InsuranceFundKey, "insurance_fund", collections.StringValue),
 	}

@@ -7,7 +7,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/sumitkoul23/agentic-chain/app"
+	"github.com/sumitkoul23/agentic-chain/types/coinconst"
 	"github.com/sumitkoul23/agentic-chain/x/agenticdex/types"
 )
 
@@ -90,9 +90,9 @@ func (k Keeper) Swap(
 		// Burn — but only if the fee denom matches the chain's burn-eligible
 		// token. We can only burn coins we have authority over; for foreign
 		// denoms we route the full slice to the treasury instead.
-		if amountIn.Denom == app.BaseCoinUnit && burnAmt.IsPositive() {
+		if amountIn.Denom == coinconst.BaseCoinUnit && burnAmt.IsPositive() {
 			if err := k.bankKeeper.BurnCoins(sdkCtx, types.ModuleName,
-				sdk.NewCoins(sdk.NewCoin(app.BaseCoinUnit, burnAmt))); err != nil {
+				sdk.NewCoins(sdk.NewCoin(coinconst.BaseCoinUnit, burnAmt))); err != nil {
 				return math.Int{}, math.Int{}, fmt.Errorf("burn protocol fee: %w", err)
 			}
 		} else {

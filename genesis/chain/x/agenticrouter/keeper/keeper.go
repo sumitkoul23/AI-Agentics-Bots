@@ -4,11 +4,13 @@ import (
 	"cosmossdk.io/collections"
 	storetypes "cosmossdk.io/core/store"
 	"cosmossdk.io/log"
+	"cosmossdk.io/math"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/sumitkoul23/agentic-chain/x/agenticrouter/types"
+	"github.com/sumitkoul23/agentic-chain/types/jsonvalue"
 )
 
 type Keeper struct {
@@ -35,7 +37,7 @@ type BankKeeper interface {
 
 // DEXKeeper is the slim subset of `x/agenticdex` we call into.
 type DEXKeeper interface {
-	Swap(ctx sdk.Context, swapper sdk.AccAddress, poolID uint64, amountIn sdk.Coin, denomOut string, minOut sdk.Int) (sdk.Int, sdk.Int, error)
+	Swap(ctx sdk.Context, swapper sdk.AccAddress, poolID uint64, amountIn sdk.Coin, denomOut string, minOut math.Int) (math.Int, math.Int, error)
 }
 
 // IBCTransferKeeper is the slim subset of `x/ibc/transfer` we use. In v0
@@ -60,8 +62,8 @@ func NewKeeper(
 		cdc: cdc, storeService: storeService, authority: authority,
 		bankKeeper: bk, dexKeeper: dk, transferKeeper: tk,
 
-		Params:        collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		PendingRoutes: collections.NewMap(sb, types.PendingRoutesKey, "pending_routes", collections.Uint64Key, codec.CollValue[types.PendingRoute](cdc)),
+		Params:        collections.NewItem(sb, types.ParamsKey, "params", jsonvalue.Codec[types.Params]()),
+		PendingRoutes: collections.NewMap(sb, types.PendingRoutesKey, "pending_routes", collections.Uint64Key, jsonvalue.Codec[types.PendingRoute]()),
 		RouteCounter:  collections.NewSequence(sb, types.RouteCounterKey, "route_counter"),
 		VolumeTotal:   collections.NewItem(sb, types.VolumeTotalKey, "volume_total", collections.StringValue),
 	}

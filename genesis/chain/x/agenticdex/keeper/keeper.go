@@ -10,6 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/sumitkoul23/agentic-chain/x/agenticdex/types"
+	"github.com/sumitkoul23/agentic-chain/types/jsonvalue"
 )
 
 type Keeper struct {
@@ -50,8 +51,8 @@ func NewKeeper(
 		authority:    authority,
 		bankKeeper:   bk,
 
-		Params:       collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		Pools:        collections.NewMap(sb, types.PoolsKey, "pools", collections.Uint64Key, codec.CollValue[types.Pool](cdc)),
+		Params:       collections.NewItem(sb, types.ParamsKey, "params", jsonvalue.Codec[types.Params]()),
+		Pools:        collections.NewMap(sb, types.PoolsKey, "pools", collections.Uint64Key, jsonvalue.Codec[types.Pool]()),
 		PoolCounter:  collections.NewSequence(sb, types.PoolCounterKey, "pool_counter"),
 		TotalSwapFee: collections.NewItem(sb, types.TotalSwapFeeKey, "total_swap_fee", collections.StringValue),
 	}

@@ -11,7 +11,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/sumitkoul23/agentic-chain/app"
+	"github.com/sumitkoul23/agentic-chain/types/coinconst"
 	"github.com/sumitkoul23/agentic-chain/x/agentic/types"
 )
 
@@ -41,7 +41,7 @@ func (s msgServer) RegisterAgent(ctx context.Context, msg *types.MsgRegisterAgen
 		return nil, fmt.Errorf("operator %s already registered", msg.Operator)
 	}
 
-	coins := sdk.NewCoins(sdk.NewCoin(app.BaseCoinUnit, msg.Stake))
+	coins := sdk.NewCoins(sdk.NewCoin(coinconst.BaseCoinUnit, msg.Stake))
 	if err := s.bankKeeper.SendCoinsFromAccountToModule(sdkCtx, operator, types.ModuleName, coins); err != nil {
 		return nil, errors.Wrap(err, "escrow stake")
 	}
@@ -82,7 +82,7 @@ func (s msgServer) CreateTask(ctx context.Context, msg *types.MsgCreateTask) (*t
 		return nil, fmt.Errorf("agent %s is jailed", msg.Agent)
 	}
 
-	bountyCoins := sdk.NewCoins(sdk.NewCoin(app.BaseCoinUnit, msg.Bounty))
+	bountyCoins := sdk.NewCoins(sdk.NewCoin(coinconst.BaseCoinUnit, msg.Bounty))
 	if err := s.bankKeeper.SendCoinsFromAccountToModule(sdkCtx, requester, types.ModuleName, bountyCoins); err != nil {
 		return nil, errors.Wrap(err, "escrow bounty")
 	}
@@ -190,7 +190,7 @@ func (s msgServer) SettleTask(ctx context.Context, msg *types.MsgSettleTask) (*t
 
 	agentAddr := sdk.MustAccAddressFromBech32(task.Agent)
 	if err := s.bankKeeper.SendCoinsFromModuleToAccount(sdkCtx, types.ModuleName, agentAddr,
-		sdk.NewCoins(sdk.NewCoin(app.BaseCoinUnit, agentCut))); err != nil {
+		sdk.NewCoins(sdk.NewCoin(coinconst.BaseCoinUnit, agentCut))); err != nil {
 		return nil, errors.Wrap(err, "pay agent")
 	}
 
@@ -198,7 +198,7 @@ func (s msgServer) SettleTask(ctx context.Context, msg *types.MsgSettleTask) (*t
 	// then sprays it across validators proportionally to voting power.
 	feeCollector := s.authModuleAddress("fee_collector")
 	if err := s.bankKeeper.SendCoinsFromModuleToAccount(sdkCtx, types.ModuleName, feeCollector,
-		sdk.NewCoins(sdk.NewCoin(app.BaseCoinUnit, valCut))); err != nil {
+		sdk.NewCoins(sdk.NewCoin(coinconst.BaseCoinUnit, valCut))); err != nil {
 		return nil, errors.Wrap(err, "pay validators")
 	}
 

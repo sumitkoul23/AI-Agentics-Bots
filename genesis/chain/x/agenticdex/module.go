@@ -37,12 +37,12 @@ func (AppModuleBasic) GetTxCmd() *cobra.Command                               { 
 func (AppModuleBasic) GetQueryCmd() *cobra.Command                            { return nil }
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
-	return cdc.MustMarshalJSON(&types.GenesisState{Params: types.DefaultParams()})
+	return mustJSON(&types.GenesisState{Params: types.DefaultParams()})
 }
 
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingConfig, raw json.RawMessage) error {
 	var gs types.GenesisState
-	if err := cdc.UnmarshalJSON(raw, &gs); err != nil {
+	if err := json.Unmarshal(raw, &gs); err != nil {
 		return fmt.Errorf("unmarshal %s genesis: %w", types.ModuleName, err)
 	}
 	return gs.Params.Validate()
@@ -64,7 +64,7 @@ func (AppModule) IsOnePerModuleType() {}
 
 func (am AppModule) InitGenesis(ctx context.Context, cdc codec.JSONCodec, raw json.RawMessage) {
 	var gs types.GenesisState
-	cdc.MustUnmarshalJSON(raw, &gs)
+	mustUnmarshalJSON(raw, &gs)
 	if err := am.keeper.Params.Set(ctx, gs.Params); err != nil {
 		panic(err)
 	}
@@ -86,5 +86,22 @@ func (am AppModule) ExportGenesis(ctx context.Context, cdc codec.JSONCodec) json
 		gs.Pools = append(gs.Pools, p)
 		return false, nil
 	})
-	return cdc.MustMarshalJSON(&gs)
+	return mustJSON(&gs)
+}
+
+// mustJSON marshals via encoding/json and panics on failure — the v0 stand-in
+// for cdc.MustMarshalJSON until proto-gen produces typed messages.
+func mustJSON(v interface{}) []byte {
+	b, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+// mustUnmarshalJSON is the inverse of mustJSON.
+func mustUnmarshalJSON(b []byte, v interface{}) {
+	if err := json.Unmarshal(b, v); err != nil {
+		panic(err)
+	}
 }

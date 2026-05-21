@@ -8,7 +8,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/sumitkoul23/agentic-chain/app"
+	"github.com/sumitkoul23/agentic-chain/types/coinconst"
 	"github.com/sumitkoul23/agentic-chain/x/agentic/types"
 )
 
@@ -51,7 +51,7 @@ func (k Keeper) slashAgentAndCloseTask(ctx context.Context, task *types.Task) er
 	bounty, _ := math.NewIntFromString(task.BountyUgen)
 	requesterAddr := sdk.MustAccAddressFromBech32(task.Requester)
 	if err := k.bankKeeper.SendCoinsFromModuleToAccount(sdkCtx, types.ModuleName, requesterAddr,
-		sdk.NewCoins(sdk.NewCoin(app.BaseCoinUnit, bounty))); err != nil {
+		sdk.NewCoins(sdk.NewCoin(coinconst.BaseCoinUnit, bounty))); err != nil {
 		return fmt.Errorf("refund requester: %w", err)
 	}
 
