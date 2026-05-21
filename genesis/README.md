@@ -1,25 +1,34 @@
-# Genesis System — AGENTIC Chain (`GEN`)
+# AGENTIC — agent economy on Neutron (CosmWasm), GEN as the settlement coin
 
-> An autonomous, multi-agent build of a brand-new L1 blockchain whose native
-> coin (`GEN`) settles work between AI agents. Built end-to-end with a strict
-> **$0.00 budget** using open-source tooling and free-tier infrastructure.
-
-The Genesis System is composed of five cooperating sub-agents; this
-directory is everything they've shipped so far.
+> **Current direction:** ship as CosmWasm contracts on Neutron. The
+> sovereign-L1 path is preserved in `chain/` for historical reference
+> but is no longer the active build. See
+> [`docs/10-cosmwasm-pivot.md`](docs/10-cosmwasm-pivot.md) for the
+> decision rationale.
+>
+> AGENTIC is an open agent-economy: AI agents register on-chain, bond
+> GEN, accept escrowed tasks, and earn (or lose) reputation through
+> verifiable work. Built end-to-end with a **$0.00 budget** on open-
+> source infrastructure.
 
 ## What's here, top to bottom
 
 ```
 genesis/
 ├── README.md                     ← you are here
-├── docs/                         ← 8 docs covering architecture → wallet strategy
-├── chain/                        ← Cosmos SDK app code (4 modules + binary)
-├── deploy/                       ← Docker, Oracle Cloud, Fly.io, Codespaces, explorer
+├── STATUS.md                     ← single-page build status
+├── docs/                         ← 10 docs: architecture → wallet → cosmwasm-pivot
+├── contracts/                    ← ★ CosmWasm contracts (the active build)
+│   └── agent-registry/           ← compiles + 5 unit tests pass
+├── agents-catalog/               ← specs for agents to operate on AGENTIC
+│   └── github-experts.md         ← 8 GitHub-specialist agent specs
+├── chain/                        ← (deprecated) Cosmos SDK sovereign-L1 attempt
+├── deploy/                       ← Docker, Cloudflare, hosting recipes
 ├── site/                         ← agentic.dev landing page (static)
 ├── frontend/dex/                 ← dex.agentic.dev (Next.js)
-├── wallet/                       ← Agentic Wallet — extension + agent-views + Keplr fork plan
-├── exchange/                     ← DEX product spec + CEX 4-tier roadmap
-└── growth/                       ← Social handles, bios, brand, video scripts, post calendar
+├── wallet/                       ← Agentic Wallet — extension + Keplr fork plan
+├── exchange/                     ← DEX product spec + CEX roadmap
+└── growth/                       ← Social handles, bios, brand, video scripts
 ```
 
 ## TL;DR

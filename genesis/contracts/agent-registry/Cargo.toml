@@ -1,0 +1,35 @@
+[package]
+name = "agentic-registry"
+version = "0.1.0"
+edition = "2021"
+authors = ["AGENTIC contributors"]
+license = "Apache-2.0"
+description = "On-chain registry + task escrow + fraud-proof slashing for AI agents. The CosmWasm successor to genesis/chain/x/agentic/."
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+library = []
+
+[dependencies]
+cosmwasm-std = "2.1"
+cosmwasm-schema = "2.1"
+cw-storage-plus = "2.0"
+cw2 = "2.0"
+schemars = "0.8"
+serde = { version = "1.0", default-features = false, features = ["derive"] }
+thiserror = "1.0"
+
+[dev-dependencies]
+cosmwasm-vm = "2.1"
+
+[profile.release]
+opt-level = 3
+debug = false
+debug-assertions = false
+codegen-units = 1
+panic = "abort"
+incremental = false
+overflow-checks = true
