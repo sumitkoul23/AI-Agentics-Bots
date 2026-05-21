@@ -1,9 +1,15 @@
 // Package app wires together the modules that make up the AGENTIC chain.
 //
-// The Genesis System's v0 module set is deliberately conservative — the
-// standard Cosmos SDK suite (auth, bank, staking, slashing, distribution,
-// gov, mint, ibc) plus the bespoke `x/agentic` module that ships the
-// agent-staking primitive described in `docs/01-architecture.md`.
+// Module composition (post-integration batch):
+//
+//	── Standard Cosmos SDK ───────────────────────────────────────────
+//	auth · bank · staking · slashing · distribution · gov · mint · genutil
+//
+//	── Bespoke AGENTIC modules ───────────────────────────────────────
+//	x/agentic        — agent registry, task escrow, fraud-proof slashing
+//	x/agenticdex     — constant-product AMM, the chain's native DEX
+//	x/agenticperps   — virtual-AMM perpetuals (vAMM), GEN-margined
+//	x/agenticrouter  — atomic multi-hop swap aggregator (Skip-style)
 //
 // This file is intentionally a slim wiring layer; the heavy lifting lives in
 // the Cosmos SDK's `runtime` package and the per-module keepers.
@@ -40,6 +46,12 @@ import (
 
 	"github.com/sumitkoul23/agentic-chain/x/agentic"
 	agentictypes "github.com/sumitkoul23/agentic-chain/x/agentic/types"
+	"github.com/sumitkoul23/agentic-chain/x/agenticdex"
+	agenticdextypes "github.com/sumitkoul23/agentic-chain/x/agenticdex/types"
+	"github.com/sumitkoul23/agentic-chain/x/agenticperps"
+	agenticperpstypes "github.com/sumitkoul23/agentic-chain/x/agenticperps/types"
+	"github.com/sumitkoul23/agentic-chain/x/agenticrouter"
+	agenticroutertypes "github.com/sumitkoul23/agentic-chain/x/agenticrouter/types"
 )
 
 // ModuleBasics is the canonical list of modules exposed at the CLI / genesis
@@ -54,10 +66,17 @@ var ModuleBasics = module.NewBasicManager(
 	slashing.AppModuleBasic{},
 	genutil.AppModuleBasic{},
 	agentic.AppModuleBasic{},
+	agenticdex.AppModuleBasic{},
+	agenticperps.AppModuleBasic{},
+	agenticrouter.AppModuleBasic{},
 )
 
-// maccPerms lists the module-account permissions. `x/agentic` gets `minter`
-// + `burner` because agent slashing burns stake and reputation rewards mint.
+// maccPerms lists the module-account permissions.
+//
+//   - x/agentic — minter (reputation rewards) + burner (slashed stake)
+//   - x/agenticdex — minter (LP shares) + burner (exit + protocol-fee burn)
+//   - x/agenticperps — escrow only; no mint/burn (margin is non-native)
+//   - x/agenticrouter — escrow only; routes through other modules
 var maccPerms = map[string][]string{
 	authtypes.FeeCollectorName:     nil,
 	distrtypes.ModuleName:          nil,
@@ -66,7 +85,11 @@ var maccPerms = map[string][]string{
 	stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 	govtypes.ModuleName:            {authtypes.Burner},
 	slashingtypes.ModuleName:       nil,
+
 	agentictypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+	agenticdextypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
+	agenticperpstypes.ModuleName:   nil,
+	agenticroutertypes.ModuleName:  nil,
 }
 
 // AgenticApp is the concrete `servertypes.Application` for this chain.
