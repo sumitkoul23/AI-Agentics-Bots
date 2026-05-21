@@ -67,17 +67,38 @@ In order, smallest to largest:
 | Memecoin launcher | Attention drain on real product surface |
 | Generic stablecoin | Needs real fiat issuer (Tier 4) |
 
-## Open questions for the human
+## Open questions for the human — **two of these define the timeline**
 
-None blocking — every "what should we do" answer is encoded in a doc.
-The maintainer's queue:
+### Blocking decisions (read `docs/09-honest-launch-timeline.md` first)
 
-1. Decide whether to register `agentic.dev` (the one paid step we
-   accepted in the playbook).
-2. Decide which social handles to claim from
-   `growth/social/signup-checklist.md`.
-3. Decide whether to engage with an external auditor now (cheap diff
-   audit of the Keplr fork) or after the proto pipeline lands.
+1. **Sovereign L1 or CosmWasm app on Neutron?** This is the single
+   decision that defines whether mainnet is 4 months away or 12+ months
+   away. See `docs/09` §"The single decision."
+2. **Solo / small team / funded team?** Determines all timelines. See
+   `docs/09` §"Three realistic scenarios."
 
-Otherwise the Genesis System is in steady-state: ship a batch, surface
-the status here, repeat.
+### Non-blocking maintainer queue
+
+1. Decide whether to register `agentic.dev` (the one paid step in the
+   playbook).
+2. Claim social handles from `growth/social/signup-checklist.md`
+   (~30 minutes of your clicking).
+3. Engage an external auditor — diff-scoped audit of the Keplr fork
+   first ($30–80k), full chain audit later ($80–200k).
+
+## Realistic launch ranges
+
+From `docs/09-honest-launch-timeline.md` — the honest answer to "when
+can we launch":
+
+| Path | Mainnet ETA |
+|---|---|
+| Solo, $0, learning as you go | 24–36 months (high drop-off risk) |
+| Solo, experienced Cosmos SDK engineer | 12–18 months |
+| 2–3 engineers + ~$500k | 9–14 months |
+| Funded team, $2–5M raised | 6–9 months |
+| **Skip sovereign L1; ship as CosmWasm on Neutron** | **3–4 months** |
+
+This scaffold compresses the architecture + product-design phase by
+~2–4 months. The remaining work is engineering, security, operations,
+community — none of which can be done in chat sessions.
