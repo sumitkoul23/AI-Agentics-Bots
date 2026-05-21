@@ -1,0 +1,35 @@
+# Static-site validation + headers sanity. No deploy step here — the deploy
+# is wired by connecting `genesis/site/` to Cloudflare Pages directly (free
+# tier; auto-deploys on every push to main).
+name: genesis-site
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "genesis/site/**"
+      - ".github/workflows/genesis-site.yml"
+  pull_request:
+    paths:
+      - "genesis/site/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: tidy-up checks
+        run: |
+          test -f genesis/site/index.html
+          test -f genesis/site/og-image.svg
+          test -f genesis/site/favicon.svg
+          test -f genesis/site/robots.txt
+          test -f genesis/site/_headers
+
+      - name: HTML validation (htmlhint, no install — uses npx free)
+        run: npx --yes htmlhint genesis/site/index.html
