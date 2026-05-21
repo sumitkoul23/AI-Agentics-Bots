@@ -2,201 +2,236 @@ package main
 
 import (
 	"context"
-	_ "embed"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"strings"
+
+	"github.com/TeneoProtocolAI/teneo-agent-sdk/pkg/agent"
+	"github.com/TeneoProtocolAI/teneo-agent-sdk/pkg/deploy"
+	"github.com/TeneoProtocolAI/teneo-agent-sdk/pkg/types"
+	"github.com/joho/godotenv"
 )
 
-//go:embed static/index.html
-var indexHTML []byte
+// ── Teneo handler ─────────────────────────────────────────────────────────────
 
-//go:embed static/manifest.json
-var manifestJSON []byte
-
-//go:embed static/sw.js
-var swJS []byte
-
-//go:embed static/icon.svg
-var iconSVG []byte
-
-const systemPrompt = `You are FusionAI — a highly capable assistant combining the best strengths of multiple AI models:
-- Deep reasoning, nuanced writing, and long-context understanding (like Claude)
-- Broad world knowledge, multimodal awareness, and speed (like Gemini)
-- Expert code generation, debugging, and software engineering (like OpenAI Codex/GPT)
-
-You excel at all of these:
-• Code generation, debugging, and refactoring in any language
-• Complex analysis, research summaries, and logical reasoning
-• Creative writing, storytelling, and ideation
-• Mathematics, science, and technical explanations
-• General knowledge and conversational assistance
-
-Always be thorough and practical. For code, include working examples. For analysis, be structured. For creative tasks, be imaginative.`
-
-// FusionAI orchestrates all AI models
-type FusionAI struct {
-	gemini *GeminiClient
-	groq   *GroqClient
-	claude *ClaudeClient
-	openai *OpenAIClient
-	ollama *OllamaClient
+// FusionAIHandler implements the Teneo agent handler interface.
+// Each incoming task is routed to the best available AI model.
+type FusionAIHandler struct {
+	ai *FusionAI
 }
 
-type chatRequest struct {
-	Message string `json:"message"`
-	Model   string `json:"model"` // "auto", "gemini", "groq", "claude", "openai", "ollama"
+// ProcessTask classifies the query and dispatches it to the best AI model.
+func (h *FusionAIHandler) ProcessTask(ctx context.Context, task string) (string, error) {
+	input := strings.TrimSpace(task)
+	lower := strings.ToLower(input)
+
+	// Command dispatch
+	switch {
+	case input == "" || lower == "/help":
+		return helpText(h.ai), nil
+
+	case lower == "/models":
+		return modelStatus(h.ai), nil
+
+	case strings.HasPrefix(lower, "/model "):
+		// /model <id> <message>
+		rest := strings.TrimSpace(input[7:])
+		parts := strings.SplitN(rest, " ", 2)
+		if len(parts) < 2 {
+			return "Usage: /model gemini|groq|claude|openai|ollama <your message>", nil
+		}
+		modelID, msg := parts[0], parts[1]
+		reply, _, name := h.ai.Chat(ctx, msg, modelID)
+		return fmt.Sprintf("**[%s]**\n\n%s", name, reply), nil
+
+	case strings.HasPrefix(lower, "/code "):
+		return h.dispatch(ctx, input[6:], "code"), nil
+
+	case strings.HasPrefix(lower, "/analyze "):
+		return h.dispatch(ctx, input[9:], "analysis"), nil
+
+	case strings.HasPrefix(lower, "/write "):
+		return h.dispatch(ctx, input[7:], "creative"), nil
+
+	case strings.HasPrefix(lower, "/math "):
+		return h.dispatch(ctx, input[6:], "math"), nil
+	}
+
+	// Auto-route
+	reply, _, modelName := h.ai.Chat(ctx, input, "")
+	return fmt.Sprintf("**[%s]**\n\n%s", modelName, reply), nil
 }
 
-type chatResponse struct {
-	Reply     string `json:"reply"`
-	ModelID   string `json:"model_id"`
-	ModelName string `json:"model_name"`
+func (h *FusionAIHandler) dispatch(ctx context.Context, input, hint string) string {
+	// Map hint to a forced query type by prefixing context
+	prefixes := map[string]string{
+		"code":     "Write code for: ",
+		"analysis": "Analyze in detail: ",
+		"creative": "Write creatively: ",
+		"math":     "Solve this math problem: ",
+	}
+	msg := input
+	if p, ok := prefixes[hint]; ok && !strings.Contains(strings.ToLower(input), hint) {
+		msg = p + input
+	}
+	reply, _, modelName := h.ai.Chat(ctx, msg, "")
+	return fmt.Sprintf("**[%s]**\n\n%s", modelName, reply)
 }
 
-type modelInfo struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Available bool   `json:"available"`
-	Free      bool   `json:"free"`
-	Note      string `json:"note"`
-	Color     string `json:"color"`
+// ── Metadata ─────────────────────────────────────────────────────────────────
+
+type Metadata struct {
+	Name             string             `json:"name"`
+	AgentID          string             `json:"agent_id"`
+	ShortDescription string             `json:"short_description"`
+	Description      string             `json:"description"`
+	AgentType        string             `json:"agent_type"`
+	Categories       []string           `json:"categories"`
+	Capabilities     []types.Capability `json:"capabilities"`
+	Commands         json.RawMessage    `json:"commands"`
+	NLPFallback      bool               `json:"nlp_fallback"`
+	FAQItems         json.RawMessage    `json:"faq_items"`
 }
+
+// ── Main ──────────────────────────────────────────────────────────────────────
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	_ = godotenv.Load()
+
+	// Load metadata
+	raw, err := os.ReadFile("fusion-ai-metadata.json")
+	if err != nil {
+		log.Fatal("Cannot read fusion-ai-metadata.json: ", err)
+	}
+	var meta Metadata
+	if err := json.Unmarshal(raw, &meta); err != nil {
+		log.Fatal("Cannot parse metadata: ", err)
 	}
 
-	ai := &FusionAI{}
+	// Initialise AI models
+	ai := initModels()
 
-	log.Println("FusionAI — initialising models...")
+	// Deploy on-chain via Teneo
+	capJSON, _ := json.Marshal(meta.Capabilities)
+	catJSON, _ := json.Marshal(meta.Categories)
 
-	// Gemini 2.0 Flash (free tier: 15 req/min, ~1M tokens/day)
-	if key := os.Getenv("GEMINI_API_KEY"); key != "" {
-		ai.gemini = NewGeminiClient(key)
-		log.Println("  [✓] Gemini 2.0 Flash    — FREE tier (aistudio.google.com)")
-	} else {
-		log.Println("  [○] Gemini              — set GEMINI_API_KEY (free at aistudio.google.com)")
-	}
-
-	// Groq — fast free Llama 3.3 70B
-	if key := os.Getenv("GROQ_API_KEY"); key != "" {
-		ai.groq = NewGroqClient(key)
-		log.Println("  [✓] Groq Llama 3.3 70B  — FREE tier (console.groq.com)")
-	} else {
-		log.Println("  [○] Groq                — set GROQ_API_KEY (free at console.groq.com)")
-	}
-
-	// Claude (paid, optional — best reasoning)
-	if key := os.Getenv("ANTHROPIC_API_KEY"); key != "" {
-		ai.claude = NewClaudeClient(key)
-		log.Println("  [✓] Claude Sonnet       — paid API active")
-	}
-
-	// OpenAI GPT-4o mini (paid, optional — strong at code)
-	if key := os.Getenv("OPENAI_API_KEY"); key != "" {
-		ai.openai = NewOpenAIClient(key)
-		log.Println("  [✓] OpenAI GPT-4o mini  — paid API active")
-	}
-
-	// Ollama (local, completely free)
-	oc := NewOllamaClient()
-	if oc.IsAvailable() {
-		oc.AutoModel()
-		ai.ollama = oc
-		log.Printf("  [✓] Ollama (%s)  — local FREE model", oc.Model)
-	} else {
-		log.Println("  [○] Ollama              — install from ollama.ai for 100% local AI")
-	}
-
-	if !ai.hasAnyModel() {
-		log.Println()
-		log.Println("  ⚠  No models configured!")
-		log.Println("     → Get a free Gemini key: https://aistudio.google.com/app/apikey")
-		log.Println("     → Get a free Groq key:   https://console.groq.com")
-		log.Println("     → Copy .env.example → .env and fill in at least one key")
-	}
-
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			http.Error(w, "POST only", http.StatusMethodNotAllowed)
-			return
-		}
-		body, err := io.ReadAll(io.LimitReader(r.Body, 128*1024))
-		if err != nil {
-			http.Error(w, "bad request", http.StatusBadRequest)
-			return
-		}
-		var req chatRequest
-		if err := json.Unmarshal(body, &req); err != nil {
-			req.Message = strings.TrimSpace(string(body))
-		}
-		input := strings.TrimSpace(req.Message)
-		w.Header().Set("Content-Type", "application/json")
-
-		if input == "" {
-			json.NewEncoder(w).Encode(chatResponse{
-				Reply: greeting(ai), ModelID: "system", ModelName: "FusionAI",
-			})
-			return
-		}
-
-		reply, mid, mname := ai.Chat(r.Context(), input, req.Model)
-		json.NewEncoder(w).Encode(chatResponse{Reply: reply, ModelID: mid, ModelName: mname})
+	result, err := deploy.DeployAgent(deploy.DeployConfig{
+		PrivateKey:       os.Getenv("PRIVATE_KEY"),
+		AgentID:          meta.AgentID,
+		AgentName:        meta.Name,
+		Description:      meta.Description,
+		AgentType:        meta.AgentType,
+		Capabilities:     capJSON,
+		Commands:         meta.Commands,
+		NlpFallback:      meta.NLPFallback,
+		Categories:       catJSON,
+		ShortDescription: meta.ShortDescription,
+		FAQItems:         meta.FAQItems,
+		MetadataVersion:  "2.4.0",
+		StateFilePath:    ".teneo-deploy-state.json",
 	})
+	if err != nil {
+		log.Fatal("Deploy failed: ", err)
+	}
+	log.Printf("FusionAI on-chain — token_id=%d", result.TokenID)
 
-	mux.HandleFunc("/models", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(ai.ModelList())
-	})
+	// Configure and start the Teneo agent
+	cfg := agent.DefaultConfig()
+	if err := cfg.LoadFromEnv(); err != nil {
+		log.Fatal(err)
+	}
+	cfg.AgentID = meta.AgentID
+	cfg.Name = meta.Name
+	cfg.Description = meta.Description
+	cfg.ShortDescription = meta.ShortDescription
+	cfg.CapabilityDetails = meta.Capabilities
+	cfg.Capabilities = make([]string, 0, len(meta.Capabilities))
+	for _, cap := range meta.Capabilities {
+		cfg.Capabilities = append(cfg.Capabilities, cap.Name)
+	}
 
-	mux.HandleFunc("/manifest.json", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/manifest+json")
-		w.Write(manifestJSON)
+	a, err := agent.NewEnhancedAgent(&agent.EnhancedAgentConfig{
+		Config:          cfg,
+		AgentHandler:    &FusionAIHandler{ai: ai},
+		AgentID:         meta.AgentID,
+		TokenID:         result.TokenID,
+		SubmitForReview: true,
 	})
-	mux.HandleFunc("/sw.js", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/javascript")
-		w.Header().Set("Cache-Control", "no-cache")
-		w.Write(swJS)
-	})
-	mux.HandleFunc("/icon.svg", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "image/svg+xml")
-		w.Write(iconSVG)
-	})
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			http.NotFound(w, r)
-			return
-		}
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Header().Set("Cache-Control", "no-cache")
-		w.Write(indexHTML)
-	})
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	log.Printf("FusionAI running → http://localhost:%s", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
+	log.Printf("FusionAI live — models: %s", activeModelList(ai))
+	if err := a.Run(); err != nil {
 		log.Fatal(err)
 	}
 }
 
+// initModels reads API keys from env and initialises each model client.
+func initModels() *FusionAI {
+	ai := &FusionAI{}
+
+	if key := os.Getenv("GEMINI_API_KEY"); key != "" {
+		ai.gemini = NewGeminiClient(key)
+		log.Println("  [✓] Gemini 2.0 Flash    — FREE tier")
+	} else {
+		log.Println("  [○] Gemini              — set GEMINI_API_KEY (free: aistudio.google.com)")
+	}
+
+	if key := os.Getenv("GROQ_API_KEY"); key != "" {
+		ai.groq = NewGroqClient(key)
+		log.Println("  [✓] Groq Llama 3.3 70B  — FREE tier")
+	} else {
+		log.Println("  [○] Groq                — set GROQ_API_KEY (free: console.groq.com)")
+	}
+
+	if key := os.Getenv("ANTHROPIC_API_KEY"); key != "" {
+		ai.claude = NewClaudeClient(key)
+		log.Println("  [✓] Claude Sonnet       — paid API")
+	}
+
+	if key := os.Getenv("OPENAI_API_KEY"); key != "" {
+		ai.openai = NewOpenAIClient(key)
+		log.Println("  [✓] OpenAI GPT-4o mini  — paid API")
+	}
+
+	oc := NewOllamaClient()
+	if oc.IsAvailable() {
+		oc.AutoModel()
+		ai.ollama = oc
+		log.Printf("  [✓] Ollama (%s)  — local free model", oc.Model)
+	} else {
+		log.Println("  [○] Ollama              — install from ollama.ai for local AI")
+	}
+
+	if !ai.hasAnyModel() {
+		log.Println("  ⚠  No AI models configured — add GEMINI_API_KEY or GROQ_API_KEY to .env")
+	}
+	return ai
+}
+
 // ── Routing ───────────────────────────────────────────────────────────────────
+
+const systemPrompt = `You are FusionAI — a highly capable assistant combining the strengths of multiple AI models:
+- Expert code generation, debugging, and software engineering (like OpenAI Codex/GPT)
+- Deep reasoning, nuanced writing, and analysis (like Claude)
+- Broad knowledge, mathematics, and multimodal understanding (like Gemini)
+
+For code: provide working examples with clear explanations.
+For analysis: be structured, thorough, and cite reasoning.
+For writing: be creative, clear, and audience-aware.
+For math: show working steps and verify results.`
 
 type queryType int
 
 const (
 	queryGeneral  queryType = iota
-	queryCode               // code, debugging, programming
-	queryAnalysis           // deep analysis, research, comparison
-	queryCreative           // writing, stories, essays
-	queryMath               // math, calculations, equations
+	queryCode
+	queryAnalysis
+	queryCreative
+	queryMath
 )
 
 func classifyQuery(input string) queryType {
@@ -207,6 +242,7 @@ func classifyQuery(input string) queryType {
 		"c++", "html", "css", "sql", "regex", "algorithm", "implement", "refactor",
 		"compile", "syntax", "class", "method", "loop", "array", "api endpoint",
 		"dockerfile", "kubernetes", "terraform", "bash script", "shell script",
+		"write code", "fix this", "why is this failing",
 	} {
 		if strings.Contains(lower, kw) {
 			return queryCode
@@ -223,7 +259,7 @@ func classifyQuery(input string) queryType {
 	for _, kw := range []string{
 		"analyze", "analyse", "explain why", "how does", "compare", "difference between",
 		"research", "summarize", "summarise", "review", "evaluate", "pros and cons",
-		"breakdown", "deep dive", "detailed analysis",
+		"breakdown", "deep dive", "detailed analysis", "what are the implications",
 	} {
 		if strings.Contains(lower, kw) {
 			return queryAnalysis
@@ -231,7 +267,7 @@ func classifyQuery(input string) queryType {
 	}
 	for _, kw := range []string{
 		"write a story", "write a poem", "creative writing", "fiction",
-		"blog post", "essay", "narrative", "screenplay",
+		"blog post", "essay", "narrative", "screenplay", "write me a",
 	} {
 		if strings.Contains(lower, kw) {
 			return queryCreative
@@ -240,26 +276,21 @@ func classifyQuery(input string) queryType {
 	return queryGeneral
 }
 
-// modelPriority returns the ordered list of model IDs to try for a given query type.
-// Free models (gemini, groq, ollama) are preferred first.
+// modelPriority returns ordered model IDs for a given query type (free models first).
 func modelPriority(qt queryType) []string {
 	switch qt {
 	case queryCode:
-		// Gemini Flash is strong at code + free; OpenAI GPT-4o also excellent; Ollama CodeLlama local
 		return []string{"gemini", "openai", "groq", "ollama", "claude"}
 	case queryAnalysis, queryCreative:
-		// Claude is best for nuanced reasoning; Gemini is strong + free
 		return []string{"claude", "gemini", "groq", "openai", "ollama"}
 	case queryMath:
-		// Gemini is strong at math and it's free; Claude and OpenAI also good
 		return []string{"gemini", "claude", "openai", "groq", "ollama"}
 	default:
-		// General: Gemini first (free), then Groq (free), then paid
 		return []string{"gemini", "groq", "claude", "openai", "ollama"}
 	}
 }
 
-// Chat selects the best model and returns a response
+// Chat routes a message to the best available model.
 func (f *FusionAI) Chat(ctx context.Context, input, prefer string) (reply, modelID, modelName string) {
 	qt := classifyQuery(input)
 
@@ -268,7 +299,6 @@ func (f *FusionAI) Chat(ctx context.Context, input, prefer string) (reply, model
 		if id != "" {
 			return r, id, name
 		}
-		// Requested model unavailable — fall through to auto
 	}
 
 	for _, mid := range modelPriority(qt) {
@@ -277,10 +307,10 @@ func (f *FusionAI) Chat(ctx context.Context, input, prefer string) (reply, model
 			return r, id, name
 		}
 	}
-	return "⚠ No AI models configured. Add GEMINI_API_KEY (free) or GROQ_API_KEY (free) to your .env file to get started. See .env.example for instructions.", "none", "None"
+	return "⚠ No AI models configured. Add GEMINI_API_KEY (free) or GROQ_API_KEY (free) to your .env file.", "none", "None"
 }
 
-// invoke calls a specific model by ID
+// invoke calls a specific model by ID.
 func (f *FusionAI) invoke(ctx context.Context, modelID, input string) (reply, id, name string) {
 	switch modelID {
 	case "gemini":
@@ -289,7 +319,7 @@ func (f *FusionAI) invoke(ctx context.Context, modelID, input string) (reply, id
 		}
 		r, err := f.gemini.Generate(ctx, systemPrompt, input)
 		if err != nil {
-			log.Printf("gemini error: %v", err)
+			log.Printf("gemini: %v", err)
 			return "", "", ""
 		}
 		return r, "gemini", "Gemini 2.0 Flash"
@@ -300,7 +330,7 @@ func (f *FusionAI) invoke(ctx context.Context, modelID, input string) (reply, id
 		}
 		r, err := f.groq.Generate(ctx, systemPrompt, input)
 		if err != nil {
-			log.Printf("groq error: %v", err)
+			log.Printf("groq: %v", err)
 			return "", "", ""
 		}
 		return r, "groq", "Llama 3.3 70B (Groq)"
@@ -311,7 +341,7 @@ func (f *FusionAI) invoke(ctx context.Context, modelID, input string) (reply, id
 		}
 		r, err := f.claude.Generate(ctx, systemPrompt, input)
 		if err != nil {
-			log.Printf("claude error: %v", err)
+			log.Printf("claude: %v", err)
 			return "", "", ""
 		}
 		return r, "claude", "Claude Sonnet"
@@ -322,7 +352,7 @@ func (f *FusionAI) invoke(ctx context.Context, modelID, input string) (reply, id
 		}
 		r, err := f.openai.Generate(ctx, systemPrompt, input)
 		if err != nil {
-			log.Printf("openai error: %v", err)
+			log.Printf("openai: %v", err)
 			return "", "", ""
 		}
 		return r, "openai", "GPT-4o mini"
@@ -333,7 +363,7 @@ func (f *FusionAI) invoke(ctx context.Context, modelID, input string) (reply, id
 		}
 		r, err := f.ollama.Generate(ctx, systemPrompt, input)
 		if err != nil {
-			log.Printf("ollama error: %v", err)
+			log.Printf("ollama: %v", err)
 			return "", "", ""
 		}
 		return r, "ollama", fmt.Sprintf("Ollama (%s)", f.ollama.Model)
@@ -341,62 +371,87 @@ func (f *FusionAI) invoke(ctx context.Context, modelID, input string) (reply, id
 	return "", "", ""
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
 func (f *FusionAI) hasAnyModel() bool {
 	return f.gemini != nil || f.groq != nil || f.claude != nil || f.openai != nil || f.ollama != nil
 }
 
-func (f *FusionAI) ModelList() []modelInfo {
-	ollamaName := "Ollama (local)"
+// ── Display helpers ───────────────────────────────────────────────────────────
+
+func activeModelList(f *FusionAI) string {
+	var parts []string
+	if f.gemini != nil {
+		parts = append(parts, "Gemini")
+	}
+	if f.groq != nil {
+		parts = append(parts, "Groq")
+	}
+	if f.claude != nil {
+		parts = append(parts, "Claude")
+	}
+	if f.openai != nil {
+		parts = append(parts, "GPT-4o")
+	}
 	if f.ollama != nil {
-		ollamaName = fmt.Sprintf("Ollama (%s)", f.ollama.Model)
+		parts = append(parts, "Ollama("+f.ollama.Model+")")
 	}
-	return []modelInfo{
-		{ID: "gemini", Name: "Gemini 2.0 Flash", Available: f.gemini != nil, Free: true,
-			Note: "Google — best at code & math — FREE tier", Color: "#4285f4"},
-		{ID: "groq", Name: "Llama 3.3 70B (Groq)", Available: f.groq != nil, Free: true,
-			Note: "Fast open-source inference — FREE tier", Color: "#f97316"},
-		{ID: "claude", Name: "Claude Sonnet", Available: f.claude != nil, Free: false,
-			Note: "Anthropic — best reasoning & writing", Color: "#f59e0b"},
-		{ID: "openai", Name: "GPT-4o mini", Available: f.openai != nil, Free: false,
-			Note: "OpenAI Codex successor — strong at code", Color: "#10b981"},
-		{ID: "ollama", Name: ollamaName, Available: f.ollama != nil, Free: true,
-			Note: "Local model — 100% private & free", Color: "#6366f1"},
+	if len(parts) == 0 {
+		return "none"
 	}
+	return strings.Join(parts, ", ")
 }
 
-func greeting(f *FusionAI) string {
-	var active, inactive []string
-	check := func(available bool, name string) {
-		if available {
-			active = append(active, name)
-		} else {
-			inactive = append(inactive, name)
+func modelStatus(f *FusionAI) string {
+	status := func(ok bool) string {
+		if ok {
+			return "✓ active"
 		}
+		return "○ not configured"
 	}
-	check(f.gemini != nil, "Gemini 2.0 Flash (free)")
-	check(f.groq != nil, "Groq Llama 3.3 (free)")
-	check(f.claude != nil, "Claude Sonnet")
-	check(f.openai != nil, "GPT-4o mini")
-	check(f.ollama != nil, fmt.Sprintf("Ollama %s (local)", func() string {
-		if f.ollama != nil {
-			return f.ollama.Model
-		}
-		return ""
-	}()))
-
-	activeStr := "none configured"
-	if len(active) > 0 {
-		activeStr = strings.Join(active, ", ")
+	ollamaModel := ""
+	if f.ollama != nil {
+		ollamaModel = " (" + f.ollama.Model + ")"
 	}
+	return fmt.Sprintf(`FusionAI — Model Status
 
-	msg := fmt.Sprintf("Welcome to **FusionAI** — combining Claude, Gemini, and Codex capabilities in one interface.\n\n**Active models:** %s\n\nSmart routing automatically picks the best model for your query:\n- **Code & Debugging** → Gemini Flash or GPT-4o (Codex-style)\n- **Analysis & Writing** → Claude or Gemini\n- **Fast Q&A** → Groq (Llama 3.3)\n- **Private/Offline** → Ollama (local)\n\nOr select a model manually from the dropdown. Just ask anything!", activeStr)
+FREE models:
+  Gemini 2.0 Flash    %s
+  Groq Llama 3.3 70B  %s
+  Ollama (local)%s %s
 
-	if len(active) == 0 {
-		msg += "\n\n⚠ **No models active.** Copy `.env.example` → `.env` and add at least one API key.\n- Free: `GEMINI_API_KEY` (aistudio.google.com) or `GROQ_API_KEY` (console.groq.com)"
-	} else if len(inactive) > 0 {
-		msg += fmt.Sprintf("\n\n💡 *Unlock more models: %s — see `.env.example`*", strings.Join(inactive, ", "))
-	}
-	return msg
+PAID models (optional):
+  Claude Sonnet       %s
+  OpenAI GPT-4o mini  %s
+
+Use /model <id> <message> to force a specific model.
+IDs: gemini  groq  claude  openai  ollama`,
+		status(f.gemini != nil),
+		status(f.groq != nil),
+		ollamaModel,
+		status(f.ollama != nil),
+		status(f.claude != nil),
+		status(f.openai != nil),
+	)
+}
+
+func helpText(f *FusionAI) string {
+	return fmt.Sprintf(`FusionAI — Multi-Model Intelligence
+
+Active models: %s
+
+COMMANDS
+  /model <id> <msg>   Force a model (gemini|groq|claude|openai|ollama)
+  /models             Show all model statuses
+  /code <task>        Code mode  → routes to Gemini/GPT
+  /analyze <topic>    Analysis   → routes to Claude/Gemini
+  /write <request>    Creative   → routes to Claude/Gemini
+  /math <problem>     Math mode  → routes to Gemini/Claude
+  /help               Show this message
+
+AUTO ROUTING
+  Code & debugging    → Gemini Flash → GPT-4o mini
+  Analysis & writing  → Claude Sonnet → Gemini
+  Mathematics         → Gemini Flash → Claude
+  General / fast      → Gemini Flash → Groq Llama
+
+Just type naturally — I route automatically.`, activeModelList(f))
 }

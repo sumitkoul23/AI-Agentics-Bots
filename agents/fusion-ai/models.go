@@ -11,6 +11,15 @@ import (
 	"time"
 )
 
+// FusionAI holds all configured model clients and routes queries between them.
+type FusionAI struct {
+	gemini *GeminiClient
+	groq   *GroqClient
+	claude *ClaudeClient
+	openai *OpenAIClient
+	ollama *OllamaClient
+}
+
 // ── Gemini 2.0 Flash (Google) — FREE tier ────────────────────────────────────
 
 type GeminiClient struct {
@@ -277,7 +286,6 @@ func (c *OllamaClient) AutoModel() {
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil || len(result.Models) == 0 {
 		return
 	}
-	// Prefer code-capable models when available
 	preferred := []string{"codellama", "deepseek-coder", "llama3.2", "llama3.1", "llama3", "mistral", "gemma2", "phi3", "qwen"}
 	for _, p := range preferred {
 		for _, m := range result.Models {
