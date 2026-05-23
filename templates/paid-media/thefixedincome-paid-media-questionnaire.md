@@ -1,184 +1,204 @@
-# Paid Media Discovery Questionnaire — thefixedincome.in
+# Let's Plan Your Paid Media — thefixedincome.in
 
-**Client:** thefixedincome.in
-**Vertical:** Fixed-income investing / fintech (India)
-**Purpose:** Capture everything needed to plan, launch, and measure paid media campaigns.
-**Instructions:** Share answers inline. Anything unknown, mark `TBD` — do not leave blank.
+Hi team,
 
----
+Before we put a single rupee behind an ad, we want to understand your business the way you do. The questions below help us build campaigns that actually move the numbers that matter to you — qualified leads, completed CKYCs, and first investments — rather than just chasing cheap clicks.
 
-## Section 1 — Business & Product Overview
-
-1. What product(s) are we promoting (bonds, T-bills, FDs, debt MFs, SDIs, etc.) and which is the priority for this campaign?
-2. Who is the ideal customer? (retail investor, HNI, NRI, first-time fixed-income buyer)
-3. What is the minimum investment ticket size and the average ticket size you see today?
-4. What is the single most important action a user must complete? (lead → CKYC → first transaction)
-5. Who are your top 3 competitors you want to be benchmarked against?
-6. What is your unique selling proposition vs. a regular bank FD or a broker?
+Please answer in as much detail as you can. If something isn't decided yet, just write *"still figuring this out"* and we'll work through it together on our kickoff call. There are no wrong answers here.
 
 ---
 
-## Section 2 — Objectives, KPIs & Targets
+## 1. Tell us about your business
 
-Primary objective (pick one): ☐ Leads ☐ CKYC completions ☐ First transactions (funded) ☐ AUM growth ☐ Brand awareness
+We'll start with the big picture so we're speaking your language from day one.
 
-### KPI definitions (confirm these match your internal reporting)
+- Which products should this campaign focus on first — bonds, T-bills, FDs, debt mutual funds, SDIs? If you had to pick one to push hardest, what would it be?
+- Who is your dream customer? Paint us a picture — a 35-year-old salaried professional in Bangalore? A retiree protecting their savings? An HNI diversifying away from equities?
+- What's the smallest amount someone can invest, and what does a typical first investment look like?
+- When someone discovers you, what's the *one* thing you most want them to do — leave their details, finish CKYC, or actually invest?
+- Who do you see as your main competition, and what makes you the better choice? Why should someone pick you over a plain bank FD?
 
-| KPI | Definition | Reported by |
-|---|---|---|
-| Impressions | Times an ad was served | Platform |
-| Clicks | Clicks on the ad | Platform |
-| CPM | Cost per 1,000 impressions | Platform |
-| Cost | Total ad spend | Platform |
-| Leads | Form fills / sign-ups captured | Platform + CRM |
-| CKYC | Central KYC completions | CRM / backend |
-| CPFT | Cost per first (funded) transaction | CRM / backend |
+---
 
-> Please confirm whether **CPFT = Cost per First Transaction** or **Cost per Funded Transaction**, and how a "funded" transaction is defined on your side.
+## 2. What does success look like?
 
-### Target setting
+Every campaign needs a finish line. Help us understand yours.
 
-Fill in the target (and acceptable ceiling) for each KPI you track:
+First, what's the **primary goal** of this push? More leads? More completed CKYCs? More first-time investors? Growing AUM? Pure brand awareness? Pick the one that matters most right now.
 
-| KPI | Current benchmark | Target | Max acceptable |
+Next, let's get on the same page about the metrics. Here's how we read them — please flag anything you define differently internally:
+
+| Metric | What it means |
+|---|---|
+| **Impressions** | How many times your ad was shown |
+| **Clicks** | How many people clicked it |
+| **CPM** | What it costs to show your ad 1,000 times |
+| **Cost** | Total amount spent |
+| **Leads** | People who left their details |
+| **CKYC** | People who completed Central KYC |
+| **CPFT** | What it costs to win one first transaction |
+
+> One quick clarification on **CPFT** — does this mean *cost per first transaction* or *cost per funded transaction* for you? And how do you define a transaction as "funded"? This matters a lot for how we optimise.
+
+Finally, where do you want to land? If you already have benchmarks from past campaigns, even better — share what you're getting today and where you'd like to be.
+
+| Metric | Where you are today | Where you'd like to be | The point we'd worry |
 |---|---|---|---|
 | CPM | | | |
-| CPC (cost / click) | | | |
-| Cost per Lead | | | |
+| Cost per click | | | |
+| Cost per lead | | | |
 | Cost per CKYC | | | |
 | CPFT | | | |
-| Lead → CKYC rate (%) | | | |
-| CKYC → First txn rate (%) | | | |
+| Leads that finish CKYC (%) | | | |
+| CKYCs that invest (%) | | | |
 
 ---
 
-## Section 3 — Budget & Timeline
+## 3. Budget and timing
 
-1. Total monthly paid media budget (INR)?
-2. Budget split you expect across platforms (or should we recommend)?
-3. Campaign start date and any flight/seasonality (e.g. financial year-end, bond issue windows)?
-4. Is budget fixed, or scalable if KPIs (CPFT / CKYC) hit target?
-
----
-
-## Section 4 — Audience Targeting
-
-### Demographics & geography
-1. Target age range and gender (if any skew)?
-2. Priority cities / states / tiers (Tier 1, 2, 3)? Any geo to exclude?
-3. Income bracket / net-worth segment (mass affluent, HNI)?
-4. Languages for targeting and creative (English, Hindi, regional)?
-
-### Interests, behaviours & intent
-5. Relevant interests/affinities (mutual funds, stock market, FDs, real estate, gold, tax saving)?
-6. Professions / job titles to prioritise (salaried, business owners, CAs, retirees)?
-7. Investment-intent signals to target (recently searched bonds/FD rates, brokerage app users)?
-
-### First-party & custom audiences
-8. Can you share customer lists / CRM segments for Custom Audiences? (existing investors, dormant leads, abandoned CKYC)
-9. Should we build Lookalike / Similar audiences off your best customers? Off which seed (high-AUM, repeat investors)?
-10. Website / app retargeting available? (pixel, GA4, app SDK installed?)
-11. Audiences or segments to **exclude** (existing customers, employees, ineligible geos/age)?
-
-### Compliance on targeting
-12. Any regulatory limits on who can be targeted (e.g. NRI eligibility, accredited-investor rules, age 18+)?
+- What monthly budget are you comfortable starting with?
+- Do you already have a sense of how to split it across platforms, or would you like us to recommend the mix?
+- When would you like to go live, and is there any seasonality we should ride — financial year-end, a specific bond issue window, tax-saving season?
+- If we hit your targets, is there appetite to scale spend, or is the budget fixed for now?
 
 ---
 
-## Section 5 — Platform-wise Plan & KPIs
+## 4. Who should we be reaching?
 
-For each active platform, confirm whether it's in scope and fill the target KPIs.
+This is where campaigns are won or lost, so we'll go a little deeper.
 
-### Meta (Facebook + Instagram)  ☐ In scope
+**The basics**
+- What age range and (if there's a skew) gender are we after?
+- Which cities or states matter most — and are there any we should avoid? Are you focused on metros, or also Tier 2 and Tier 3?
+- Any income or net-worth segment you're built for — mass affluent, HNI?
+- What languages should we target and create ads in — English, Hindi, regional?
+
+**Their interests and intent**
+- What are these people into? Mutual funds, the stock market, real estate, gold, tax planning?
+- Any professions worth prioritising — salaried employees, business owners, CAs, retirees?
+- Are there buying signals we can chase, like people recently researching bond or FD rates, or users of brokerage apps?
+
+**People you already know**
+- Can you share customer or CRM lists so we can target (or exclude) the right people — existing investors, cold leads, folks who started CKYC but dropped off?
+- Want us to find *more people like your best customers*? If so, which customers should we model — your highest-AUM investors, your repeat buyers?
+- Is your website or app set up for retargeting? (Do you have a pixel, GA4, or app SDK in place?)
+- Who should we deliberately **leave out** — existing customers, employees, anyone ineligible?
+
+**One compliance check**
+- Are there rules about who you're allowed to target — NRI eligibility, accredited-investor limits, an 18+ requirement?
+
+---
+
+## 5. Platform by platform
+
+Let's get specific about where we'll show up. For each platform you'd like to use, tick it as in-scope and fill in the targets you're aiming for. If a platform isn't right for you, just skip it.
+
+### Meta — Facebook & Instagram
+*In scope? ___*
+
 | Metric | Target |
 |---|---|
 | Impressions | |
 | Clicks | |
 | CPM | |
-| Cost (monthly) | |
+| Monthly cost | |
 | Leads | |
 | CKYC | |
 | CPFT | |
 
-Objective / optimisation event: __________  •  Placements: __________  •  Lead form vs. landing page: __________
+A few extras: what should we optimise toward, where should ads appear, and do you prefer an instant lead form or sending people to a landing page?
 
-### Google Ads (Search / Performance Max / YouTube)  ☐ In scope
+### Google — Search, Performance Max, YouTube
+*In scope? ___*
+
 | Metric | Target |
 |---|---|
 | Impressions | |
 | Clicks | |
 | CPM | |
-| Cost (monthly) | |
+| Monthly cost | |
 | Leads | |
 | CKYC | |
 | CPFT | |
 
-Campaign types in scope: __________  •  Priority keywords/themes: __________  •  Bidding strategy: __________
+Which campaign types interest you, what keywords or themes should we own, and do you have a preferred bidding approach?
 
-### LinkedIn Ads  ☐ In scope
+### LinkedIn
+*In scope? ___*
+
 | Metric | Target |
 |---|---|
 | Impressions | |
 | Clicks | |
 | CPM | |
-| Cost (monthly) | |
+| Monthly cost | |
 | Leads | |
 | CKYC | |
 | CPFT | |
 
-Targeting basis (job title / seniority / company size / industry): __________
+How should we narrow the audience here — by job title, seniority, company size, industry?
 
-### Other (X / Taboola / Outbrain / affiliates — specify)  ☐ In scope
+### Anywhere else? (X, Taboola, Outbrain, affiliates…)
+*In scope? ___  •  Platform: ___*
+
 | Metric | Target |
 |---|---|
 | Impressions | |
 | Clicks | |
 | CPM | |
-| Cost (monthly) | |
+| Monthly cost | |
 | Leads | |
 | CKYC | |
 | CPFT | |
 
 ---
 
-## Section 6 — Creative & Landing Experience
+## 6. Creative and the landing experience
 
-1. Do you have brand guidelines, logos, and approved creative assets? (link)
-2. Who produces creative — your team or ours?
-3. Approved messaging angles (rate %, safety, RBI/SEBI-regulated, tax efficiency, liquidity)?
-4. Mandatory disclaimers / risk statements that must appear in every ad?
-5. Where do leads land — dedicated landing page, app install, or lead form? (share URLs)
-6. Is the landing page mobile-optimised and CKYC-flow tested?
-
----
-
-## Section 7 — Tracking, Attribution & Reporting
-
-1. What is installed: Meta Pixel, Google Ads tag, GA4, server-side / Conversions API, app SDK?
-2. Is the full funnel tracked end-to-end (Click → Lead → CKYC → First transaction)?
-3. Which system is source-of-truth for CKYC and CPFT — CRM, data warehouse, or platform?
-4. Can we get conversion data back into ad platforms (offline conversions / CAPI) to optimise toward CKYC & CPFT?
-5. Attribution window and model you want to standardise on?
-6. Reporting cadence and format (live dashboard, weekly, monthly)? Who are the recipients?
+- Do you have brand guidelines, logos, and approved creative we can use? (A link is perfect.)
+- Will your team handle creative, or would you like us to produce it?
+- What messages tend to land best with your audience — the rate, the safety, being RBI/SEBI-regulated, tax efficiency, liquidity?
+- Are there disclaimers or risk statements that *must* appear on every ad?
+- Where do people go after they click — a dedicated landing page, an app install, a lead form? Please share the URLs.
+- Is that destination mobile-friendly, and have you tested the CKYC flow recently?
 
 ---
 
-## Section 8 — Compliance & Approvals (financial services, India)
+## 7. How we'll measure it all
 
-1. Are you SEBI / RBI registered, and which registration numbers must appear in ads?
-2. What is the ad-copy approval / compliance sign-off process and turnaround time?
-3. Any restricted claims (guaranteed returns, "risk-free", specific yield promises)?
-4. Grievance / contact details required in ads?
+Good tracking is the difference between guessing and knowing.
 
----
-
-## Section 9 — Access & Logistics
-
-1. Ad accounts: do they exist, and can you grant agency/partner access? (Meta Business Manager, Google Ads MCC, LinkedIn Campaign Manager)
-2. Billing setup per platform (who pays — client card or agency)?
-3. Access to GA4, GTM, CRM, and landing-page CMS for tracking setup?
-4. Key points of contact and their roles (marketing, compliance, product/tech)?
+- What's already installed — Meta Pixel, Google tag, GA4, server-side/Conversions API, an app SDK?
+- Can we follow the full journey, from click all the way to first investment?
+- Which system is the source of truth for CKYC and CPFT — your CRM, a data warehouse, the ad platform?
+- Can we feed conversion data *back* into the ad platforms so they learn to find more people who actually complete CKYC and invest?
+- What attribution window and model would you like us to standardise on?
+- How often would you like reporting — a live dashboard, weekly, monthly — and who should receive it?
 
 ---
 
-*Prepared for thefixedincome.in — paid media onboarding.*
+## 8. The compliance essentials
+
+We work in a regulated space, so let's get this right from the start.
+
+- Are you SEBI/RBI registered, and are there registration numbers that must appear in ads?
+- What does your ad-copy approval process look like, and how long does sign-off usually take?
+- Which claims are off-limits — "guaranteed returns", "risk-free", specific yield promises?
+- Are there grievance or contact details that need to be on every ad?
+
+---
+
+## 9. Getting set up
+
+Last stretch — the practical bits that let us hit the ground running.
+
+- Do the ad accounts already exist, and can you grant us access? (Meta Business Manager, Google Ads MCC, LinkedIn Campaign Manager)
+- How is billing handled on each platform — your card or ours?
+- Can we get access to GA4, Tag Manager, your CRM, and the landing-page CMS to set up tracking?
+- Finally, who are our go-to people on your side — for marketing, for compliance, and for product/tech?
+
+---
+
+Thanks for taking the time. Once we have your answers, we'll turn this into a clear plan with realistic targets and a launch timeline — and we'll walk you through all of it together.
+
+*— Prepared for thefixedincome.in*
