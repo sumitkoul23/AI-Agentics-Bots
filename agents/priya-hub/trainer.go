@@ -75,6 +75,122 @@ var agentOnboardQ = map[string][]string{
 		"Do you want raw signal (just the facts) or analysis with context and implications?",
 		"How frequently do you want news briefings — daily, when significant events happen, or on-demand only?",
 	},
+
+	// ── 23 new specialist agents ─────────────────────────────────────────────
+	"tax": {
+		"Are you employed, self-employed, or running a business entity (LLC, S-Corp, Ltd)?",
+		"Which country/jurisdiction are you filing in — US, UK, EU, or elsewhere?",
+		"What's your biggest tax pain point — reducing liability, handling crypto gains, or business deductions?",
+	},
+	"real-estate": {
+		"Are you looking at residential, commercial, or short-term rental (Airbnb) properties?",
+		"What's your investment goal — cash flow, appreciation, or both?",
+		"Are you investing directly, via REITs, or exploring syndications/crowdfunding?",
+	},
+	"startup": {
+		"What stage are you at — idea, pre-revenue, early traction, or scaling?",
+		"Are you bootstrapping or planning to raise venture/angel funding?",
+		"What's your industry and target customer — B2B, B2C, enterprise, or consumer?",
+	},
+	"sales": {
+		"What are you selling — SaaS, services, physical products, or enterprise deals?",
+		"What's your current pipeline stage — prospecting, demos, or closing?",
+		"What's your biggest sales challenge — finding leads, running discovery, or handling objections?",
+	},
+	"marketing": {
+		"What's your primary growth goal — brand awareness, lead generation, or conversion?",
+		"What channels are you currently using — paid ads, SEO, email, social, or content?",
+		"What's your monthly marketing budget range?",
+	},
+	"legal": {
+		"What type of legal matter are you dealing with — contracts, IP, business formation, compliance, or employment?",
+		"What jurisdiction are you in — US, UK, EU, or other?",
+		"Are you an individual, small business, or scaling startup?",
+	},
+	"hr": {
+		"What's your company size and current HR challenge — hiring, retention, culture, or performance management?",
+		"Are you fully remote, hybrid, or in-office?",
+		"What industry are you in — tech, services, retail, or other?",
+	},
+	"ecommerce": {
+		"What platform are you on or considering — Shopify, Amazon FBA, WooCommerce, Etsy, or other?",
+		"Are you dropshipping, holding inventory, or using a 3PL?",
+		"What's your current monthly revenue range, and what's your growth target?",
+	},
+	"devops": {
+		"What cloud provider are you on — AWS, GCP, Azure, or self-hosted?",
+		"What's your current deployment setup — containers (Docker/K8s), VMs, serverless, or bare metal?",
+		"What's your biggest DevOps pain — CI/CD, monitoring, scaling, or security posture?",
+	},
+	"data": {
+		"What's your primary use case — business analytics, ML models, data engineering, or dashboards?",
+		"What stack are you working with — Python, SQL, Spark, dbt, or cloud-native tools?",
+		"What's the data size and update frequency — batch, streaming, or ad hoc?",
+	},
+	"security": {
+		"What's the context — personal security, application security, or enterprise/org security?",
+		"What's your role — developer, security engineer, or non-technical decision-maker?",
+		"What's the immediate concern — vulnerability assessment, compliance, incident response, or hardening?",
+	},
+	"web3": {
+		"What are you building — a DeFi protocol, NFT project, DAO, or general dApp?",
+		"Which chain — Ethereum, Solana, Polygon, Arbitrum, Base, or other EVM?",
+		"What's your Solidity/Rust experience level — beginner, intermediate, or advanced?",
+	},
+	"writing": {
+		"What type of writing do you need most — copywriting, long-form content, technical writing, or creative?",
+		"Who is your primary audience — consumers, business professionals, or technical readers?",
+		"What's your main goal — sales conversion, thought leadership, SEO traffic, or brand storytelling?",
+	},
+	"design": {
+		"What type of design work — UI/UX, branding/identity, marketing assets, or design systems?",
+		"What tools do you use — Figma, Sketch, Adobe XD, Canva, or other?",
+		"Are you a designer yourself or a non-designer who needs guidance?",
+	},
+	"video": {
+		"What platform is your primary focus — YouTube, TikTok, Instagram Reels, LinkedIn, or client work?",
+		"What's your current setup — phone only, entry-level camera, or professional gear?",
+		"What's your content goal — education, entertainment, brand building, or direct sales?",
+	},
+	"travel": {
+		"What type of traveller are you — budget backpacker, mid-range explorer, or luxury traveller?",
+		"Do you prefer solo travel, couple/family trips, or group adventures?",
+		"What matters most — new experiences, relaxation, adventure, or cultural immersion?",
+	},
+	"mindset": {
+		"What's your main challenge — motivation, focus, anxiety, procrastination, or building habits?",
+		"Have you worked with a therapist or coach before, or is this new territory?",
+		"Are you looking for quick tactics or deeper behavioural change?",
+	},
+	"food": {
+		"What's your cooking experience level — beginner, confident home cook, or advanced?",
+		"Any dietary preferences or restrictions — vegan, keto, gluten-free, halal, or no restrictions?",
+		"What's your main goal — healthy eating, meal prep efficiency, learning new techniques, or weight management?",
+	},
+	"tutor": {
+		"What subject or topic do you need help with?",
+		"What's your current level — school, university, self-study, or professional development?",
+		"Do you prefer step-by-step explanations, worked examples, or practice problems?",
+	},
+	"language": {
+		"Which language are you learning or working with?",
+		"What's your current level — complete beginner, conversational, or advanced?",
+		"What's your goal — travel, business, academic, or full fluency?",
+	},
+	"consulting": {
+		"What industry are you in, and what's the strategic challenge — growth, cost, market entry, or transformation?",
+		"Are you an independent consultant, in-house strategist, or executive looking for frameworks?",
+		"What's the decision timeline and stakeholder context?",
+	},
+	"medical": {
+		"Please note: I provide general health information only — not medical advice. What health topic can I help you understand?",
+		"Are you researching a condition, understanding a medication, or looking for general wellness information?",
+	},
+	"supply-chain": {
+		"What's your industry — manufacturing, retail, e-commerce, or services?",
+		"What's your main supply chain challenge — sourcing, logistics, inventory, or demand forecasting?",
+		"What's the scale — small business, mid-market, or enterprise?",
+	},
 }
 
 // Trainer manages Bodhi's progressive self-improvement cycle.

@@ -1667,25 +1667,55 @@ func handleBodhi(input string, mem *Memory) string {
 	if strings.Contains(lower, "how are you") || strings.Contains(lower, "who are you") {
 		return whoAmI()
 	}
-	return fmt.Sprintf(`I'm Bodhi — I received your message:
+	return fmt.Sprintf(`I'm Bodhi — 35 specialist agents at your service.
 
-"%s"
+Your message: "%s"
 
-I can help you with any of these topics. Just ask naturally:
+Just describe what you need and I'll route to the right expert. Popular topics:
 
-  📈 Trading      — "BTC trade plan", "funding rate analysis"       (/use perp-markets)
-  💼 Portfolio    — "review my portfolio", "rebalance"               (/use portfolio)
-  📣 Social       — "draft a tweet", "LinkedIn post about AI"        (/use social)
-  💬 Comms        — "write email to client", "negotiate my rate"     (/use comms)
-  🗂  Organizer    — "brain dump", "daily plan", "I'm stuck"         (/use organizer)
-  💰 Finance      — "explain RSI", "macro briefing"                  (/use finance)
-  🔍 Freelance    — "find Upwork jobs", "write proposal"             (/use freelance)
-  💻 Code         — "debug this error", "review my code"             (/use code)
-  🏃 Health       — "create workout plan", "nutrition advice"        (/use health)
-  🔬 Research     — "deep dive on X", "compare A vs B"              (/use research)
-  📰 News         — "what's moving markets", "crypto signals"        (/use news)
+FINANCE & MARKETS
+  📈 "BTC trade plan" / "funding rate"         (/use perp-markets)
+  💼 "review my portfolio" / "rebalance"        (/use portfolio)
+  💰 "explain RSI" / "macro briefing"           (/use finance)
+  🧾 "what tax deductions can I claim"          (/use tax)
+  🏠 "analyse this rental property"             (/use real-estate)
 
-Type /help for all commands or /agents for the full agent list.`, input)
+BUSINESS & GROWTH
+  🚀 "how to pitch investors" / "term sheet"    (/use startup)
+  🤝 "cold outreach email" / "handle objection" (/use sales)
+  📊 "improve my SEO" / "calculate CAC"         (/use marketing)
+  ⚖️  "NDA template" / "LLC vs S-corp"          (/use legal)
+  👥 "write job description" / "interview Qs"   (/use hr)
+  🛒 "Amazon FBA product research"              (/use ecommerce)
+  📦 "find a supplier" / "safety stock"         (/use supply-chain)
+
+PRODUCTIVITY & SKILLS
+  🗂  "brain dump" / "daily plan"               (/use organizer)
+  🔍 "find Upwork jobs" / "write proposal"      (/use freelance)
+  ✍️  "improve this hook" / "edit my essay"     (/use writing)
+  📚 "explain calculus" / "teach me X"          (/use tutor)
+  🌍 "learn Spanish fast" / "translate this"    (/use language)
+  🧠 "build a habit" / "overcome procrastination"(/use mindset)
+
+TECH
+  💻 "debug this error" / "review my code"      (/use code)
+  ⚙️  "Docker setup" / "CI/CD pipeline"         (/use devops)
+  📉 "write this SQL" / "analyse this data"     (/use data)
+  🔒 "security audit" / "OWASP checklist"       (/use security)
+  ⛓️  "audit smart contract" / "DeFi risk"      (/use web3)
+
+LIFESTYLE & CONTENT
+  📣 "LinkedIn post" / "viral TikTok hook"      (/use social)
+  💬 "write cold email" / "negotiate rate"      (/use comms)
+  🏃 "workout plan" / "nutrition targets"       (/use health)
+  🍳 "meal prep plan" / "macro targets"         (/use food)
+  ✈️  "plan trip to Tokyo" / "flight deals"     (/use travel)
+  🎬 "YouTube title" / "short-form script"      (/use video)
+  🎨 "UX review" / "colour system"              (/use design)
+  🩺 "what does this symptom mean"              (/use medical)
+  🏛  "structure this business problem"          (/use consulting)
+
+Type /help for commands · /agents for the full list.`, input)
 }
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
@@ -1710,20 +1740,51 @@ func extractTopic(input string) string {
 func greeting() string {
 	return `Namaste! I'm Bodhi 🌸
 
-Your all-in-one AI assistant — running fully offline, no keys needed.
+Your all-in-one AI assistant — 35 specialist agents, running fully offline.
 
-What I can do for you:
+FINANCE & BUSINESS
   📈 Crypto trade plans + technical analysis  (/use perp-markets)
   💼 Portfolio strategy + DeFi yields          (/use portfolio)
-  📣 Social media content (all platforms)      (/use social)
-  💬 Emails, DMs, proposals, negotiation       (/use comms)
-  🗂  Daily/weekly planning + task management  (/use organizer)
   💰 Finance explainers + market frameworks    (/use finance)
+  🧾 Tax strategy + deductions + entity setup  (/use tax)
+  🏠 Real estate investment + cap rates        (/use real-estate)
+  🚀 Startup coaching + pitch + fundraising    (/use startup)
+  🤝 Sales pipeline + objections + closing     (/use sales)
+  📊 Marketing + SEO + CAC/LTV + growth        (/use marketing)
+
+PRODUCTIVITY & CAREER
+  🗂  Daily/weekly planning + task management  (/use organizer)
   🔍 Freelance job search + proposals + rates  (/use freelance)
+  ✍️  Writing coaching + hooks + editing       (/use writing)
+  📚 Tutoring — any subject (Socratic method)  (/use tutor)
+  🌍 Language learning + conversation practice (/use language)
+
+TECH & ANALYSIS
   💻 Code debugging, review, architecture      (/use code)
-  🏃 Training, nutrition, sleep, recovery      (/use health)
   🔬 Deep research + fact-checked analysis     (/use research)
+  ⚙️  CI/CD, Docker, Kubernetes, observability (/use devops)
+  📉 SQL, Python, dashboards, ML evaluation    (/use data)
+  🔒 App security, OWASP, hardening            (/use security)
+  ⛓️  Smart contracts, DeFi, Solidity          (/use web3)
+
+LIFESTYLE & COMMUNICATION
+  💬 Emails, DMs, proposals, negotiation       (/use comms)
+  📣 Social media content (all platforms)      (/use social)
   📰 Market signals + news + trend analysis    (/use news)
+  🏃 Training, nutrition, sleep, recovery      (/use health)
+  🍳 Recipes, meal prep, macros, cooking       (/use food)
+  🧠 Habits, productivity, resilience          (/use mindset)
+  ✈️  Itineraries, flights, budget, logistics  (/use travel)
+  🎬 YouTube SEO, short-form, scripts          (/use video)
+  🎨 UX/UI, visual systems, accessibility      (/use design)
+
+PROFESSIONAL SERVICES
+  ⚖️  Contracts, IP, incorporation, compliance (/use legal)
+  👥 Hiring, performance, compensation         (/use hr)
+  🏛  MECE frameworks, strategy, slide decks   (/use consulting)
+  🩺 Health education + care navigation        (/use medical)
+  📦 Sourcing, inventory, logistics            (/use supply-chain)
+  🛒 Amazon FBA, Shopify, marketplaces         (/use ecommerce)
 
 Just ask naturally — I route automatically. Or /help to see all commands.`
 }
@@ -1734,22 +1795,58 @@ func whoAmI() string {
 No API keys. No internet connection required. No data sent anywhere.
 All intelligence is built directly into the bot.
 
-I have 12 specialist agents inside me:
-  perp-markets  — Perpetual Markets Strategist
-  portfolio     — Portfolio Strategist
-  social        — Social Media Expert (all 7 platforms)
-  comms         — Communication Specialist
-  organizer     — Personal Organizer
-  finance       — Finance & Crypto Analyst
-  freelance     — Freelance & Jobs Advisor
-  code          — Code Assistant (any language)
-  health        — Health & Fitness
-  research      — Research Analyst
-  news          — News & Trends
-  bodhi         — General (that's me, the fallback)
+I have 35 specialist agents:
+
+FINANCE & BUSINESS
+  perp-markets   — Perpetual Markets Strategist
+  portfolio      — Portfolio Strategist
+  finance        — Finance & Crypto Analyst
+  tax            — Tax Strategist
+  real-estate    — Real Estate Advisor
+  startup        — Startup Coach
+  sales          — Sales Coach
+  marketing      — Marketing Strategist
+  ecommerce      — E-commerce Advisor
+
+PRODUCTIVITY & CAREER
+  organizer      — Personal Organizer
+  freelance      — Freelance & Jobs Advisor
+  writing        — Writing Coach
+  tutor          — Tutor (any subject)
+  language       — Language Coach
+
+TECH & ANALYSIS
+  code           — Code Assistant (any language)
+  research       — Research Analyst
+  devops         — DevOps Engineer
+  data           — Data Analyst
+  security       — Security Analyst
+  web3           — Web3 & Blockchain
+
+COMMUNICATION & CONTENT
+  comms          — Communication Specialist
+  social         — Social Media Expert
+  news           — News & Trends
+  video          — Video Creator
+
+LIFESTYLE
+  health         — Health & Fitness
+  food           — Food & Nutrition
+  mindset        — Mindset Coach
+  travel         — Travel Planner
+  design         — Design Advisor
+
+PROFESSIONAL SERVICES
+  legal          — Legal Advisor
+  hr             — HR & People
+  consulting     — Consulting Advisor
+  medical        — Medical Information
+  supply-chain   — Supply Chain Advisor
+
+  bodhi          — General coordinator (that's me, the fallback)
 
 I route your messages automatically. You can also force a specific agent:
-/use perp-markets BTC trade plan long`
+/use tax what deductions can I claim as a freelancer?`
 }
 
 // ── Code Assistant ────────────────────────────────────────────────────────────

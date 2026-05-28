@@ -111,7 +111,7 @@ func (p *hubProxy) chat(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{
-			"reply": fmt.Sprintf("Cannot reach Bodhi Hub at %s — is it running?\n\nStart it with: `./priya-hub`\n\nOr update the Hub URL in ⚙️ Settings.", target),
+			"reply": fmt.Sprintf("Cannot reach Bodhi Hub at %s — is it running?\n\nStart it with: `./bodhi-hub`\n\nOr update the Hub URL in ⚙️ Settings.", target),
 		})
 		return
 	}

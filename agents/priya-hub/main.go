@@ -333,12 +333,33 @@ func helpText() string {
 ━━ ROUTING ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 (automatic — just talk naturally)
 
-/agents               List all specialist agents
+/agents               List all 35 specialist agents
 /use <id> <message>   Force a specific agent
-                        IDs: bodhi, perp-markets, portfolio, finance,
-                             social, comms, organizer, freelance,
-                             code, health, research, news
-                        (omit id or use "auto" to auto-route)
+
+Agent IDs (35 total):
+  FINANCE & BUSINESS
+    bodhi           perp-markets    portfolio       finance
+    tax             real-estate     startup         sales
+    marketing       legal           hr              ecommerce
+    supply-chain
+
+  PRODUCTIVITY & SKILLS
+    organizer       freelance       writing         tutor
+    language        mindset
+
+  TECH & ANALYSIS
+    code            research        devops          data
+    security        web3
+
+  CONTENT & COMMUNICATION
+    social          comms           news            video
+    design
+
+  LIFESTYLE & SERVICES
+    health          food            travel          consulting
+    medical
+
+  (omit id or use "auto" to let Bodhi route automatically)
 
 ━━ SWARM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /status               Show swarm health + Ollama status
@@ -349,17 +370,21 @@ func helpText() string {
 /learn voice <text>   Feed your writing style
 
 ━━ QUICK EXAMPLES ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-"BTC trade plan long"            → perp-markets
-"Rebalance my portfolio"         → portfolio
-"Draft a LinkedIn post about AI" → social
-"Write email to my client"       → comms
-"Brain dump all my tasks"        → organizer
-"Explain DeFi yields"            → finance
-"Find Upwork gigs for Go dev"    → freelance
-"Debug this nil pointer"         → code
-"Create a workout plan"          → health
-"Research best LLM frameworks"   → research
-"What's moving crypto today"     → news
+"BTC trade plan long"              → perp-markets
+"What tax deductions can I claim"  → tax
+"Analyse this rental property"     → real-estate
+"How to pitch investors"           → startup
+"Cold outreach email for SaaS"     → sales
+"Improve my SEO strategy"          → marketing
+"Draft a LinkedIn post about AI"   → social
+"Write email to my client"         → comms
+"Brain dump all my tasks"          → organizer
+"Debug this nil pointer"           → code
+"Docker multi-stage build"         → devops
+"Audit this smart contract"        → web3
+"Create a workout plan"            → health
+"Plan trip to Japan 10 days"       → travel
+"Explain quantum entanglement"     → tutor
 
 ━━ MESH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /mesh                 Show connected device peers

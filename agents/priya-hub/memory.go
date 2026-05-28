@@ -210,6 +210,28 @@ func (m *Memory) SetAgentConfidence(agentID string, v float64) {
 	m.Data.AgentConf[agentID] = v
 }
 
+// ── Pending onboard answer ────────────────────────────────────────────────────
+// When Bodhi injects an onboarding question, we don't record it as answered
+// until the user actually sends their next message.
+
+func (m *Memory) SetOnboardPending(agentID string) {
+	m.mu.Lock()
+	m.Data.Facts["_onboard_pending"] = agentID
+	m.mu.Unlock()
+}
+
+// ConsumeOnboardPending returns (agentID, true) if there is a pending question
+// and clears it atomically. Returns ("", false) if nothing is pending.
+func (m *Memory) ConsumeOnboardPending() (string, bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	v, ok := m.Data.Facts["_onboard_pending"]
+	if ok {
+		delete(m.Data.Facts, "_onboard_pending")
+	}
+	return v, ok
+}
+
 // ── Onboarding ─────────────────────────────────────────────────────────────────
 
 func (m *Memory) GetOnboardStep() int {
