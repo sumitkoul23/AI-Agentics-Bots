@@ -1,0 +1,12 @@
+{
+  "task": {
+    "id": 1,
+    "requester": "wasm1xm7fyheq5vpwyrt0sr50tz7xa8k6mualrrqp3x",
+    "agent": "wasm1htu6tfhgv3ycp8nfetppcuaakf87e8ck58wajd",
+    "bounty": "1000",
+    "spec": "Review PR #7",
+    "response_cid": "QmReviewLIVE",
+    "settled": true,
+    "slashed": false
+  }
+}

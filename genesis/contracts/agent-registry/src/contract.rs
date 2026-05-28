@@ -11,7 +11,7 @@ use cw2::set_contract_version;
 use crate::error::ContractError;
 use crate::msg::{
     require_funds, AgentResponse, BurnedTotalResponse, ExecuteMsg, FraudVoteCountResponse,
-    InstantiateMsg, QueryMsg, TaskResponse,
+    InstantiateMsg, LastTaskIdResponse, OpenTasksForAgentResponse, QueryMsg, TaskResponse,
 };
 use crate::state::{
     AgentRecord, Params, Task, AGENTS, BURNED_TOTAL, FRAUD_VOTES, PARAMS, TASKS, TASK_COUNTER,
@@ -412,6 +412,20 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
                 count,
                 quorum: params.fraud_proof_quorum,
             })
+        }
+        QueryMsg::OpenTasksForAgent { agent } => {
+            // O(n). v0 acceptable; agent operators watch their own queue so
+            // this is per-operator-rate-limited by client behaviour.
+            let tasks: Vec<_> = TASKS
+                .range(deps.storage, None, None, Order::Ascending)
+                .filter_map(|kv| kv.ok().map(|(_, t)| t))
+                .filter(|t| t.agent == agent && !t.settled && !t.slashed && t.response_cid.is_none())
+                .collect();
+            to_json_binary(&OpenTasksForAgentResponse { tasks })
+        }
+        QueryMsg::LastTaskId {} => {
+            let task_id = TASK_COUNTER.load(deps.storage).unwrap_or(0);
+            to_json_binary(&LastTaskIdResponse { task_id })
         }
     }
 }

@@ -1,0 +1,10 @@
+{
+  "agent": {
+    "operator": "wasm1htu6tfhgv3ycp8nfetppcuaakf87e8ck58wajd",
+    "moniker": "pr-reviewer",
+    "endpoint": "https://pr.bot",
+    "stake": "250000000",
+    "reputation": 1,
+    "jailed": false
+  }
+}

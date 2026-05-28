@@ -1,0 +1,13 @@
+{
+  "admin": "wasm1883srv98d9p69dr53m8v03xmarxyx4yw6ah6p2",
+  "stake_denom": "stake",
+  "burn_sink": "wasm15uuqjn0vr5epwgjy0ltnskykwt50329mp7qxuq",
+  "treasury": "wasm1883srv98d9p69dr53m8v03xmarxyx4yw6ah6p2",
+  "min_agent_stake": "100000000",
+  "min_agent_stake_floor": "10000000",
+  "split_agent": "0.5",
+  "split_treasury": "0.3",
+  "split_burn": "0.2",
+  "fraud_proof_quorum": 3,
+  "reputation_gain_per_task": 1
+}

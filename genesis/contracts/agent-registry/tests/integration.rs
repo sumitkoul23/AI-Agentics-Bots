@@ -24,7 +24,8 @@ use cw_multi_test::{App, AppBuilder, ContractWrapper, Executor};
 
 use agentic_registry::contract;
 use agentic_registry::msg::{
-    AgentResponse, BurnedTotalResponse, ExecuteMsg, InstantiateMsg, QueryMsg, TaskResponse,
+    AgentResponse, BurnedTotalResponse, ExecuteMsg, InstantiateMsg, LastTaskIdResponse,
+    OpenTasksForAgentResponse, QueryMsg, TaskResponse,
 };
 
 const DENOM: &str = "ugen";
@@ -270,6 +271,93 @@ fn dust_routes_to_burn() {
     assert_eq!(bal(&app, &operator), op_before_stake + 3); // agent
     assert_eq!(bal(&app, &treasury), 2); // treasury (floor)
     assert_eq!(bal(&app, &burn_sink), 2); // burn (absorbs dust)
+}
+
+#[test]
+fn open_tasks_query_finds_pending_work() {
+    // The agent's watch loop relies on this query returning only tasks that
+    // are: assigned to it, not yet responded, not settled, not slashed.
+    let (mut app, operator, requester, treasury, burn_sink) = setup_app();
+    let admin = Addr::unchecked("cosmos1admin");
+    let registry = instantiate_registry(&mut app, &admin, &treasury, &burn_sink);
+
+    // Operator registers.
+    app.execute_contract(
+        operator.clone(),
+        registry.clone(),
+        &ExecuteMsg::RegisterAgent {
+            moniker: "watcher".into(),
+            endpoint: "x".into(),
+        },
+        &coins(100_000_000, DENOM),
+    )
+    .unwrap();
+
+    // Create 3 tasks: 1 open, 1 already-responded-to, 1 settled.
+    for _ in 0..3 {
+        app.execute_contract(
+            requester.clone(),
+            registry.clone(),
+            &ExecuteMsg::CreateTask {
+                agent: operator.clone(),
+                spec: "review pr".into(),
+            },
+            &coins(1_000, DENOM),
+        )
+        .unwrap();
+    }
+
+    // Respond to task 2.
+    app.execute_contract(
+        operator.clone(),
+        registry.clone(),
+        &ExecuteMsg::SubmitResponse {
+            task_id: 2,
+            response_cid: "QmA".into(),
+        },
+        &[],
+    )
+    .unwrap();
+
+    // Respond + settle task 3.
+    app.execute_contract(
+        operator.clone(),
+        registry.clone(),
+        &ExecuteMsg::SubmitResponse {
+            task_id: 3,
+            response_cid: "QmB".into(),
+        },
+        &[],
+    )
+    .unwrap();
+    app.execute_contract(
+        requester.clone(),
+        registry.clone(),
+        &ExecuteMsg::SettleTask { task_id: 3 },
+        &[],
+    )
+    .unwrap();
+
+    // Only task 1 should be returned.
+    let open: OpenTasksForAgentResponse = app
+        .wrap()
+        .query_wasm_smart(
+            &registry,
+            &QueryMsg::OpenTasksForAgent {
+                agent: operator.clone(),
+            },
+        )
+        .unwrap();
+    assert_eq!(open.tasks.len(), 1, "expected exactly 1 open task");
+    assert_eq!(open.tasks[0].id, 1);
+    assert!(open.tasks[0].response_cid.is_none());
+
+    // LastTaskId should reflect all 3.
+    let last: LastTaskIdResponse = app
+        .wrap()
+        .query_wasm_smart(&registry, &QueryMsg::LastTaskId {})
+        .unwrap();
+    assert_eq!(last.task_id, 3);
 }
 
 #[test]

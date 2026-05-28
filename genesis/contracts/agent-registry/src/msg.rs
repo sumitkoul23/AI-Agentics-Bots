@@ -70,6 +70,19 @@ pub enum QueryMsg {
 
     #[returns(FraudVoteCountResponse)]
     FraudVoteCount { task_id: u64 },
+
+    /// Tasks assigned to `agent` that are neither settled nor slashed and
+    /// where `response_cid` is still `None`. Used by an agent operator's
+    /// watch loop to find work without scanning every historical task.
+    /// O(n) where n is the total number of tasks ever created; v1 swaps
+    /// in a secondary `(agent, status) → task_id` index.
+    #[returns(OpenTasksForAgentResponse)]
+    OpenTasksForAgent { agent: Addr },
+
+    /// Highest task ID ever issued. Cheap; useful for backfill scans by
+    /// off-chain tooling.
+    #[returns(LastTaskIdResponse)]
+    LastTaskId {},
 }
 
 #[cw_serde]
@@ -91,6 +104,16 @@ pub struct BurnedTotalResponse {
 pub struct FraudVoteCountResponse {
     pub count: u32,
     pub quorum: u32,
+}
+
+#[cw_serde]
+pub struct OpenTasksForAgentResponse {
+    pub tasks: Vec<crate::state::Task>,
+}
+
+#[cw_serde]
+pub struct LastTaskIdResponse {
+    pub task_id: u64,
 }
 
 /// Internal payload describing what funds a tx sent. Used by handlers to
