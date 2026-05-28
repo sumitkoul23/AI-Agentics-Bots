@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
 
 permissions:
   contents: write
@@ -117,10 +123,14 @@ jobs:
       - name: Install build tools
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Set version name from tag
+      - name: Set version name from tag or input
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          # Inject version into app/build.gradle
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
           sed -i "s/versionName \"1.0.0\"/versionName \"${VERSION}\"/" agents/bodhi-android/app/build.gradle
 
       - name: Build debug APK (signed with debug key — no keystore needed)
@@ -189,9 +199,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: "Bodhi ${{ github.ref_name }}"
+          name: "Bodhi v${{ github.event.inputs.version || github.ref_name }}"
+          tag_name: "v${{ github.event.inputs.version || github.ref_name }}"
           body: |
-            ## Bodhi ${{ github.ref_name }} — On-device Autonomous AI Swarm
+            ## Bodhi v${{ github.event.inputs.version || github.ref_name }} — On-device Autonomous AI Swarm
 
             **35 specialist agents.** Single binary. No cloud. No API keys.
             Runs entirely on your device using [Ollama](https://ollama.ai).
