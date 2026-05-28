@@ -1,8 +1,8 @@
 {
-  "name": "Priya Hub — All Agents",
+  "name": "Bodhi Hub — All Agents",
   "agent_id": "priya-hub-z7w4v9",
   "short_description": "One chat, every expert. Routes automatically to the right specialist agent.",
-  "description": "## Priya Hub\n\nA single conversational entry point that gives you access to every specialized agent in the portfolio — automatically. No need to switch between agents or remember which one handles what.\n\n### How it works\n1. You send any message in plain language\n2. The hub classifies your intent using fast keyword matching and Claude AI\n3. Your message is dispatched to the specialist whose system prompt, expertise, and training best matches\n4. You get an expert-level response without ever picking an agent yourself\n\n### Specialists behind the hub\n\n**Perpetual Markets Strategist** — Full crypto perp analysis: chart structure, RSI, MACD, Bollinger Bands, funding rates, open interest, basis. Complete trade plans with entry, stop-loss, targets, sizing, and timing.\n\n**Portfolio Strategist** — Multi-asset portfolio analysis, allocation recommendations, rebalancing plans, risk management, and DeFi yield integration.\n\n**Social Media Expert** — Content creation for Twitter/X, LinkedIn, Instagram, TikTok, YouTube, Facebook, Pinterest. Captions, scripts, threads, design briefs, content calendars, growth strategies.\n\n**Communication Specialist** — Professional emails, DMs, proposals, cover letters, negotiation scripts, follow-ups, polite declines, client onboarding sequences.\n\n**Personal Organizer** — Brain-dump triage, prioritised action lists, daily and weekly planning, time-block schedules, delegation plans, getting-unstuck coaching.\n\n**Finance & Crypto Analyst** — Crypto, equities, forex. Market briefings, DeFi yields, plain-language explainers, macro analysis, investment screening.\n\n**Freelance & Jobs Advisor** — Job search across Upwork, Fiverr, Toptal, LinkedIn, Contra. Proposal drafting, application tracking, rate strategy, niche positioning, interview prep.\n\n**Priya (General)** — Warm, knowledgeable default for anything that doesn't fit a specialist category.\n\n### Pricing\nFirst query free where supported. 0.5 USDC per query; 1.5 USDC for complex data tasks.",
+  "description": "## Bodhi Hub\n\nA single conversational entry point that gives you access to every specialized agent in the portfolio — automatically. No need to switch between agents or remember which one handles what.\n\n### How it works\n1. You send any message in plain language\n2. The hub classifies your intent using fast keyword matching and Claude AI\n3. Your message is dispatched to the specialist whose system prompt, expertise, and training best matches\n4. You get an expert-level response without ever picking an agent yourself\n\n### Specialists behind the hub\n\n**Perpetual Markets Strategist** — Full crypto perp analysis: chart structure, RSI, MACD, Bollinger Bands, funding rates, open interest, basis. Complete trade plans with entry, stop-loss, targets, sizing, and timing.\n\n**Portfolio Strategist** — Multi-asset portfolio analysis, allocation recommendations, rebalancing plans, risk management, and DeFi yield integration.\n\n**Social Media Expert** — Content creation for Twitter/X, LinkedIn, Instagram, TikTok, YouTube, Facebook, Pinterest. Captions, scripts, threads, design briefs, content calendars, growth strategies.\n\n**Communication Specialist** — Professional emails, DMs, proposals, cover letters, negotiation scripts, follow-ups, polite declines, client onboarding sequences.\n\n**Personal Organizer** — Brain-dump triage, prioritised action lists, daily and weekly planning, time-block schedules, delegation plans, getting-unstuck coaching.\n\n**Finance & Crypto Analyst** — Crypto, equities, forex. Market briefings, DeFi yields, plain-language explainers, macro analysis, investment screening.\n\n**Freelance & Jobs Advisor** — Job search across Upwork, Fiverr, Toptal, LinkedIn, Contra. Proposal drafting, application tracking, rate strategy, niche positioning, interview prep.\n\n**Bodhi (General)** — Warm, knowledgeable default for anything that doesn't fit a specialist category.\n\n### Pricing\nFirst query free where supported. 0.5 USDC per query; 1.5 USDC for complex data tasks.",
   "agent_type": "nlp",
   "categories": [
     "Hub",
@@ -57,7 +57,7 @@
     {"command": "/agents",              "description": "List all available specialist agents"},
     {"command": "/use",                 "description": "Force a specific agent — /use <id> <message>"},
     {"command": "/set",                 "description": "Save a preference — /set key=value"},
-    {"command": "/learn voice",         "description": "Teach Priya your writing style"},
+    {"command": "/learn voice",         "description": "Teach Bodhi your writing style"},
     {"command": "/learn",               "description": "Save a fact — /learn key=value"},
     {"command": "/help",                "description": "Full command reference"}
   ],
@@ -69,15 +69,15 @@
     },
     {
       "question": "Which agents are available?",
-      "answer": "Perpetual Markets Strategist, Portfolio Strategist, Social Media Expert, Communication Specialist, Personal Organizer, Finance & Crypto Analyst, Freelance & Jobs Advisor, and Priya (General). All accessible from this single chat."
+      "answer": "Perpetual Markets Strategist, Portfolio Strategist, Social Media Expert, Communication Specialist, Personal Organizer, Finance & Crypto Analyst, Freelance & Jobs Advisor, and Bodhi (General). All accessible from this single chat."
     },
     {
       "question": "Does the hub remember my preferences?",
-      "answer": "Yes. Use /set key=value to save preferences and /learn voice <sample> to teach Priya your writing style. All agents in the hub use this context."
+      "answer": "Yes. Use /set key=value to save preferences and /learn voice <sample> to teach Bodhi your writing style. All agents in the hub use this context."
     },
     {
       "question": "How is routing decided?",
-      "answer": "Fast keyword matching handles obvious cases instantly. For ambiguous messages, Claude (Haiku) classifies intent and picks the best specialist. Fallback is Priya (General)."
+      "answer": "Fast keyword matching handles obvious cases instantly. For ambiguous messages, Claude (Haiku) classifies intent and picks the best specialist. Fallback is Bodhi (General)."
     },
     {
       "question": "How does pricing work?",

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 //go:embed static/index.html
@@ -27,13 +28,16 @@ var iconSVG []byte
 //go:embed static/icon-maskable.svg
 var iconMaskableSVG []byte
 
+//go:embed static/icon-192.png
+var icon192PNG []byte
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	mem := NewMemory(".priya-hub-memory.json")
+	mem := NewMemory(".bodhi-memory.json")
 	registry := NewRegistry(mem)
 	swarm := NewSwarm(registry, mem)
 	router := NewRouter(registry, swarm)
@@ -44,7 +48,7 @@ func main() {
 	defer swarm.Stop()
 	defer mesh.Stop()
 
-	log.Printf("Priya Hub — %d agents | port %s | mesh discovery active", len(swarm.agents), port)
+	log.Printf("Bodhi Hub — %d agents | port %s | mesh discovery active", len(swarm.agents), port)
 
 	if os.Getenv("CLI") == "1" {
 		runCLI(router, registry, mem, swarm, mesh)
@@ -142,6 +146,47 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 		})
 	}
 
+	// SSE — real-time push notifications from autonomous agents
+	mux.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Header().Set("Connection", "keep-alive")
+
+		flusher, ok := w.(http.Flusher)
+		if !ok {
+			http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Fprintf(w, "data: {\"type\":\"connected\"}\n\n")
+		flusher.Flush()
+
+		subID, ch := swarm.Notifs.Subscribe()
+		defer swarm.Notifs.Unsubscribe(subID)
+
+		tick := time.NewTicker(25 * time.Second)
+		defer tick.Stop()
+
+		for {
+			select {
+			case <-r.Context().Done():
+				return
+			case n := <-ch:
+				payload, _ := json.Marshal(map[string]string{
+					"type": "notification",
+					"from": n.From,
+					"text": n.Text,
+					"at":   n.At.Format(time.RFC3339),
+				})
+				fmt.Fprintf(w, "data: %s\n\n", payload)
+				flusher.Flush()
+			case <-tick.C:
+				fmt.Fprintf(w, ": heartbeat\n\n")
+				flusher.Flush()
+			}
+		}
+	})
+
 	mux.HandleFunc("/manifest.json", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/manifest+json")
 		w.Header().Set("Cache-Control", "public, max-age=3600")
@@ -161,6 +206,11 @@ func registerRoutes(mux *http.ServeMux, router *Router, registry *Registry, mem 
 		w.Header().Set("Content-Type", "image/svg+xml")
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		w.Write(iconMaskableSVG)
+	})
+	mux.HandleFunc("/icon-192.png", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		w.Write(icon192PNG)
 	})
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -190,7 +240,7 @@ func runCLI(router *Router, registry *Registry, mem *Memory, swarm *Swarm, mesh 
 			continue
 		}
 		reply := handleInput(input, router, registry, mem, swarm, mesh)
-		fmt.Printf("\nPriya: %s\n\n", reply)
+		fmt.Printf("\nBodhi: %s\n\n", reply)
 	}
 }
 
@@ -266,7 +316,7 @@ func hubGreeting(swarm *Swarm) string {
 	if swarm.ollama != nil {
 		engine = fmt.Sprintf("Ollama — %s (100%% on-device, no API keys)", swarm.ollama.Model)
 	}
-	return fmt.Sprintf(`Namaste! I'm Priya — your autonomous self-learning AI swarm 🌸
+	return fmt.Sprintf(`Namaste! I'm Bodhi — your autonomous self-learning AI swarm 🌸
 
 AI Engine : %s
 Agents    : %d specialist agents active
@@ -278,15 +328,38 @@ Type /agents to see all specialists, /status for swarm health, /help for command
 }
 
 func helpText() string {
-	return `Priya Swarm — Command Reference
+	return `Bodhi Swarm — Command Reference
 
 ━━ ROUTING ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 (automatic — just talk naturally)
 
-/agents               List all specialist agents
+/agents               List all 35 specialist agents
 /use <id> <message>   Force a specific agent
-                        IDs: perp-markets, portfolio, social,
-                             comms, organizer, finance, freelance, priya
+
+Agent IDs (35 total):
+  FINANCE & BUSINESS
+    bodhi           perp-markets    portfolio       finance
+    tax             real-estate     startup         sales
+    marketing       legal           hr              ecommerce
+    supply-chain
+
+  PRODUCTIVITY & SKILLS
+    organizer       freelance       writing         tutor
+    language        mindset
+
+  TECH & ANALYSIS
+    code            research        devops          data
+    security        web3
+
+  CONTENT & COMMUNICATION
+    social          comms           news            video
+    design
+
+  LIFESTYLE & SERVICES
+    health          food            travel          consulting
+    medical
+
+  (omit id or use "auto" to let Bodhi route automatically)
 
 ━━ SWARM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /status               Show swarm health + Ollama status
@@ -297,13 +370,21 @@ func helpText() string {
 /learn voice <text>   Feed your writing style
 
 ━━ QUICK EXAMPLES ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-"BTC trade plan long"            → Perp Markets
-"Rebalance my portfolio"         → Portfolio
-"Draft a LinkedIn post about AI" → Social Media
-"Write email to my client"       → Comms
-"Brain dump all my tasks"        → Organizer
-"Explain DeFi yields"            → Finance
-"Find Upwork gigs for Go dev"    → Freelance
+"BTC trade plan long"              → perp-markets
+"What tax deductions can I claim"  → tax
+"Analyse this rental property"     → real-estate
+"How to pitch investors"           → startup
+"Cold outreach email for SaaS"     → sales
+"Improve my SEO strategy"          → marketing
+"Draft a LinkedIn post about AI"   → social
+"Write email to my client"         → comms
+"Brain dump all my tasks"          → organizer
+"Debug this nil pointer"           → code
+"Docker multi-stage build"         → devops
+"Audit this smart contract"        → web3
+"Create a workout plan"            → health
+"Plan trip to Japan 10 days"       → travel
+"Explain quantum entanglement"     → tutor
 
 ━━ MESH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /mesh                 Show connected device peers

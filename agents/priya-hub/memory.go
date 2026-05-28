@@ -37,7 +37,7 @@ type Turn struct {
 	Content string `json:"content"`
 }
 
-// StoredDecision records why Priya decided what she decided.
+// StoredDecision records why Bodhi decided what she decided.
 type StoredDecision struct {
 	At         time.Time `json:"at"`
 	AgentID    string    `json:"agent_id"`
@@ -46,7 +46,7 @@ type StoredDecision struct {
 	Reasoning  string    `json:"reasoning,omitempty"`
 }
 
-// StoredLesson is a self-evaluation result that Priya learns from.
+// StoredLesson is a self-evaluation result that Bodhi learns from.
 type StoredLesson struct {
 	At      time.Time `json:"at"`
 	AgentID string    `json:"agent_id"`
@@ -64,6 +64,12 @@ func NewMemory(path string) *Memory {
 			Facts:       make(map[string]string),
 			AgentConf:   make(map[string]float64),
 		},
+	}
+	// Migrate from legacy file name if new path doesn't exist yet
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		if data, err2 := os.ReadFile(".priya-hub-memory.json"); err2 == nil {
+			os.WriteFile(path, data, 0600)
+		}
 	}
 	raw, err := os.ReadFile(path)
 	if err == nil {
@@ -124,6 +130,12 @@ func (m *Memory) Get(k string) string {
 	return m.Data.Preferences[k]
 }
 func (m *Memory) Learn(k, v string) { m.mu.Lock(); m.Data.Facts[k] = v; m.mu.Unlock() }
+
+func (m *Memory) GetFact(k string) string {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.Data.Facts[k]
+}
 
 func (m *Memory) GetFacts() map[string]string {
 	m.mu.RLock()
@@ -196,6 +208,28 @@ func (m *Memory) SetAgentConfidence(agentID string, v float64) {
 		v = 1
 	}
 	m.Data.AgentConf[agentID] = v
+}
+
+// ── Pending onboard answer ────────────────────────────────────────────────────
+// When Bodhi injects an onboarding question, we don't record it as answered
+// until the user actually sends their next message.
+
+func (m *Memory) SetOnboardPending(agentID string) {
+	m.mu.Lock()
+	m.Data.Facts["_onboard_pending"] = agentID
+	m.mu.Unlock()
+}
+
+// ConsumeOnboardPending returns (agentID, true) if there is a pending question
+// and clears it atomically. Returns ("", false) if nothing is pending.
+func (m *Memory) ConsumeOnboardPending() (string, bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	v, ok := m.Data.Facts["_onboard_pending"]
+	if ok {
+		delete(m.Data.Facts, "_onboard_pending")
+	}
+	return v, ok
 }
 
 // ── Onboarding ─────────────────────────────────────────────────────────────────

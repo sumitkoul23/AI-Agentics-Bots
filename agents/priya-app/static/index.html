@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Priya</title>
+<title>Bodhi</title>
 <meta name="theme-color" content="#0d0d1a"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Priya"/>
+<meta name="apple-mobile-web-app-title" content="Bodhi"/>
 <link rel="manifest" href="/manifest.json"/>
 <link rel="icon" type="image/svg+xml" href="/icon.svg"/>
+<link rel="apple-touch-icon" href="/icon-192.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/icon-192.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
@@ -171,7 +173,9 @@ body{
   letter-spacing:.04em;transition:color .15s;
   height:var(--nav-h);
 }
-.nav-item .ni{font-size:20px;line-height:1}
+.nav-item .ni{font-size:20px;line-height:1;position:relative;display:inline-block}
+.nav-badge{position:absolute;top:-4px;right:-6px;min-width:16px;height:16px;background:var(--red);color:#fff;border-radius:99px;font-size:.58rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px;pointer-events:none;opacity:0;transform:scale(.5);transition:all .2s}
+.nav-badge.show{opacity:1;transform:scale(1)}
 .nav-item.active{color:var(--accent)}
 .nav-item:hover{color:var(--text2)}
 
@@ -287,7 +291,7 @@ body{
 <!-- Install banner -->
 <div class="install-banner" id="install-banner">
   <span style="font-size:20px">📲</span>
-  <p>Add Priya to your home screen for the full app experience</p>
+  <p>Add Bodhi to your home screen for the full app experience</p>
   <button onclick="installPWA()">Install</button>
   <button class="close-banner" onclick="dismissBanner()">✕</button>
 </div>
@@ -296,7 +300,7 @@ body{
 <div class="hdr">
   <div class="hdr-icon" id="hdr-icon" style="background:rgba(139,92,246,.15)">🌸</div>
   <div class="hdr-info">
-    <div class="hdr-name" id="hdr-name">Priya</div>
+    <div class="hdr-name" id="hdr-name">Bodhi</div>
     <div class="hdr-sub" id="hdr-sub">Autonomous AI · On-device</div>
   </div>
   <div class="hdr-dot" id="hdr-dot" style="opacity:.3"></div>
@@ -319,7 +323,7 @@ body{
     <div class="input-wrap">
       <div class="input-row">
         <button class="ib mic" id="mic-btn" onclick="toggleVoice()" title="Voice input">🎙️</button>
-        <textarea id="ci" rows="1" placeholder="Message Priya…" oninput="autoGrow(this)" onkeydown="onKey(event)"></textarea>
+        <textarea id="ci" rows="1" placeholder="Message Bodhi…" oninput="autoGrow(this)" onkeydown="onKey(event)"></textarea>
         <button class="ib send" id="send-btn" onclick="send()" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
         </button>
@@ -347,8 +351,8 @@ body{
     <div class="settings-list">
       <div class="s-section">Connection</div>
       <div class="s-row" style="flex-direction:column;align-items:stretch;gap:8px;cursor:default">
-        <div class="s-name">Priya Hub URL</div>
-        <input class="fi" id="hub-url" placeholder="http://localhost:8080" oninput="S.hubURL=this.value;save()"/>
+        <div class="s-name">Bodhi Hub URL</div>
+        <input class="fi" id="hub-url" placeholder="http://localhost:8080" oninput="S.hubURL=this.value;save();connectEvents()"/>
         <div style="font-size:.72rem;color:var(--text3)">The running <code style="font-family:monospace">priya-hub</code> server address. Same device = leave blank.</div>
       </div>
       <div class="s-section">Appearance</div>
@@ -377,11 +381,20 @@ body{
         </div>
         <div class="s-arrow">›</div>
       </div>
+      <div class="s-section">Notifications</div>
+      <div class="s-row" onclick="requestNotifPermission()">
+        <div class="s-icon">🔔</div>
+        <div class="s-info">
+          <div class="s-name">Enable Notifications</div>
+          <div class="s-sub" id="notif-status">Allow Bodhi to notify you of autonomous insights</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
       <div class="s-section">Install</div>
       <div class="s-row" id="install-row" onclick="installPWA()" style="display:none">
         <div class="s-icon">📲</div>
         <div class="s-info">
-          <div class="s-name">Install Priya as App</div>
+          <div class="s-name">Install Bodhi as App</div>
           <div class="s-sub">Add to home screen for native-like experience</div>
         </div>
         <div class="s-arrow">›</div>
@@ -390,7 +403,7 @@ body{
       <div class="s-row" style="cursor:default">
         <div class="s-icon">🌸</div>
         <div class="s-info">
-          <div class="s-name">Priya App v1.0</div>
+          <div class="s-name">Bodhi App v1.0</div>
           <div class="s-sub">On-device · No cloud · No API keys</div>
         </div>
       </div>
@@ -401,8 +414,8 @@ body{
 
 <!-- Bottom nav -->
 <nav class="nav">
-  <button class="nav-item active" id="nav-chat" onclick="setScreen('chat')">
-    <span class="ni">💬</span>Chat
+  <button class="nav-item active" id="nav-chat" onclick="setScreen('chat');clearNotifBadge()">
+    <span class="ni">💬<span class="nav-badge" id="notif-badge"></span></span>Chat
   </button>
   <button class="nav-item" id="nav-agents" onclick="setScreen('agents')">
     <span class="ni">👥</span>Agents
@@ -433,30 +446,63 @@ body{
 <script>
 // ── Agent definitions ──────────────────────────────────────────────────────
 const AGENTS = [
-  {id:'priya',     name:'Priya',         icon:'🌸', color:'#8b5cf6', desc:'General assistant'},
-  {id:'finance',   name:'Finance',       icon:'📊', color:'#10b981', desc:'Crypto & markets'},
-  {id:'perp-markets',name:'Perp Markets',icon:'⚡', color:'#f59e0b', desc:'Futures & perpetuals'},
-  {id:'portfolio', name:'Portfolio',     icon:'💼', color:'#3b82f6', desc:'Asset allocation'},
-  {id:'social',    name:'Social',        icon:'📣', color:'#ec4899', desc:'Content creation'},
-  {id:'comms',     name:'Comms',         icon:'💬', color:'#06b6d4', desc:'Emails & messages'},
-  {id:'organizer', name:'Organizer',     icon:'🗂️', color:'#f97316', desc:'Productivity'},
-  {id:'freelance', name:'Freelance',     icon:'🔍', color:'#a855f7', desc:'Jobs & proposals'},
+  {id:'bodhi',        name:'Bodhi',          icon:'🌸', color:'#8b5cf6', desc:'General assistant'},
+  {id:'finance',      name:'Finance',        icon:'📊', color:'#10b981', desc:'Crypto & markets'},
+  {id:'perp-markets', name:'Perp Markets',   icon:'⚡', color:'#f59e0b', desc:'Futures & perpetuals'},
+  {id:'portfolio',    name:'Portfolio',      icon:'💼', color:'#3b82f6', desc:'Asset allocation'},
+  {id:'social',       name:'Social',         icon:'📣', color:'#ec4899', desc:'Content creation'},
+  {id:'comms',        name:'Comms',          icon:'💬', color:'#06b6d4', desc:'Emails & messages'},
+  {id:'organizer',    name:'Organizer',      icon:'🗂️', color:'#f97316', desc:'Productivity'},
+  {id:'freelance',    name:'Freelance',      icon:'🔍', color:'#a855f7', desc:'Jobs & proposals'},
+  {id:'code',         name:'Code',           icon:'💻', color:'#22d3ee', desc:'Debugging & architecture'},
+  {id:'health',       name:'Health',         icon:'💪', color:'#4ade80', desc:'Fitness & nutrition'},
+  {id:'research',     name:'Research',       icon:'🔬', color:'#818cf8', desc:'Deep dives & analysis'},
+  {id:'news',         name:'News',           icon:'📰', color:'#fb923c', desc:'Trends & current events'},
+  {id:'tax',          name:'Tax',            icon:'🧾', color:'#84cc16', desc:'Tax strategy & deductions'},
+  {id:'real-estate',  name:'Real Estate',    icon:'🏠', color:'#d97706', desc:'Property investment'},
+  {id:'startup',      name:'Startup',        icon:'🚀', color:'#6366f1', desc:'Fundraising & PMF'},
+  {id:'sales',        name:'Sales',          icon:'🤝', color:'#14b8a6', desc:'Pipeline & closing'},
+  {id:'marketing',    name:'Marketing',      icon:'📈', color:'#f43f5e', desc:'SEO, funnels & growth'},
+  {id:'legal',        name:'Legal',          icon:'⚖️', color:'#94a3b8', desc:'Contracts & compliance'},
+  {id:'hr',           name:'HR',             icon:'👥', color:'#fb923c', desc:'Hiring & performance'},
+  {id:'ecommerce',    name:'E-commerce',     icon:'🛒', color:'#f97316', desc:'Amazon FBA & Shopify'},
+  {id:'devops',       name:'DevOps',         icon:'⚙️', color:'#64748b', desc:'CI/CD & infrastructure'},
+  {id:'data',         name:'Data',           icon:'📉', color:'#0ea5e9', desc:'SQL & analytics'},
+  {id:'security',     name:'Security',       icon:'🔒', color:'#dc2626', desc:'AppSec & hardening'},
+  {id:'web3',         name:'Web3',           icon:'⛓️', color:'#7c3aed', desc:'Smart contracts & DeFi'},
+  {id:'writing',      name:'Writing',        icon:'✍️', color:'#0891b2', desc:'Hooks, structure & editing'},
+  {id:'design',       name:'Design',         icon:'🎨', color:'#db2777', desc:'UX/UI & visual systems'},
+  {id:'video',        name:'Video',          icon:'🎬', color:'#dc2626', desc:'YouTube & short-form'},
+  {id:'travel',       name:'Travel',         icon:'✈️', color:'#0284c7', desc:'Itineraries & booking'},
+  {id:'mindset',      name:'Mindset',        icon:'🧠', color:'#7c3aed', desc:'Habits & productivity'},
+  {id:'food',         name:'Food',           icon:'🍳', color:'#16a34a', desc:'Recipes & nutrition'},
+  {id:'tutor',        name:'Tutor',          icon:'📚', color:'#ca8a04', desc:'Socratic teaching'},
+  {id:'language',     name:'Language',       icon:'🌍', color:'#0369a1', desc:'Acquisition & practice'},
+  {id:'consulting',   name:'Consulting',     icon:'🏛', color:'#475569', desc:'MECE & strategy'},
+  {id:'medical',      name:'Medical Info',   icon:'🩺', color:'#dc2626', desc:'Health education'},
+  {id:'supply-chain', name:'Supply Chain',   icon:'📦', color:'#92400e', desc:'Sourcing & logistics'},
 ]
 
 // ── State ──────────────────────────────────────────────────────────────────
 const S = {
   screen: 'chat',
-  agent: 'priya',
+  agent: 'bodhi',
   messages: [],
   hubURL: '',
   theme: 'dark',
   sending: false,
 }
 
+// Legacy agent ID map — renames from old installs
+const AGENT_REMAP = { priya: 'bodhi' }
+
 function load() {
   try {
     const d = JSON.parse(localStorage.getItem('priya-app-state') || '{}')
-    if (d.agent) S.agent = d.agent
+    if (d.agent) {
+      const remapped = AGENT_REMAP[d.agent] || d.agent
+      S.agent = AGENTS.find(a => a.id === remapped) ? remapped : 'bodhi'
+    }
     if (d.messages) S.messages = d.messages
     if (d.hubURL) S.hubURL = d.hubURL
     if (d.theme) S.theme = d.theme
@@ -492,12 +538,13 @@ function init() {
 
   // If no messages yet, add a welcome message
   if (S.messages.length === 0) {
-    pushMsg('bot', `Namaste! I'm **Priya** 🌸\n\nI'm your on-device AI assistant — running entirely on your device with no internet required.\n\nTap **👥 Agents** to choose a specialist, or just ask me anything!`)
+    pushMsg('bot', `Namaste! I'm **Bodhi** 🌸\n\nI'm your on-device AI assistant — running entirely on your device with no internet required.\n\nTap **👥 Agents** to choose a specialist, or just ask me anything!`)
   } else {
     scrollBottom(false)
   }
 
   pingHub()
+  connectEvents()
 }
 
 function onViewportResize() {
@@ -643,7 +690,7 @@ async function send() {
     pushMsg('bot', data.reply || '(no response)', S.agent)
   } catch(e) {
     showTyping(false)
-    pushMsg('bot', '⚠️ Could not reach Priya Hub. Check Settings → Hub URL, and make sure `./priya-hub` is running.')
+    pushMsg('bot', '⚠️ Could not reach Bodhi Hub. Check Settings → Hub URL, and make sure `./priya-hub` is running.')
   }
   S.sending = false
 }
@@ -733,7 +780,7 @@ async function loadTraining() {
     const mem = await memRes.json()
     renderTraining(statusTxt, mem)
   } catch(e) {
-    body.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div>Cannot reach Priya Hub.<br>Check Settings → Hub URL.</div>'
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div>Cannot reach Bodhi Hub.<br>Check Settings → Hub URL.</div>'
   }
 }
 
@@ -800,11 +847,80 @@ function renderTraining(statusTxt, mem) {
   }
 
   if (!facts.length && !prefs.length) {
-    h += `<div class="empty-state" style="margin-top:14px"><div class="empty-icon">🌱</div>No learned facts yet.<br>Keep chatting — Priya learns as you talk!</div>`
+    h += `<div class="empty-state" style="margin-top:14px"><div class="empty-icon">🌱</div>No learned facts yet.<br>Keep chatting — Bodhi learns as you talk!</div>`
   }
 
   h += '<div style="height:16px"></div>'
   body.innerHTML = h
+}
+
+// ── Push notifications (SSE) ───────────────────────────────────────────────
+let notifCount = 0
+let _es = null
+let _esHub = ''
+function connectEvents() {
+  const hub = S.hubURL || ''
+  // Close existing connection if hub URL changed
+  if (_es) {
+    if (_esHub === hub) return
+    _es.close()
+    _es = null
+  }
+  _esHub = hub
+  const url = '/api/events' + (hub ? '?hub=' + encodeURIComponent(hub) : '')
+  const es = new EventSource(url)
+  _es = es
+  es.onmessage = e => {
+    try {
+      const d = JSON.parse(e.data)
+      if (d.type === 'notification' && d.from && d.text) {
+        onNotification(d)
+      }
+    } catch {}
+  }
+  es.onerror = () => {
+    es.close()
+    if (_es === es) _es = null
+    setTimeout(connectEvents, 10000)
+  }
+}
+
+function onNotification(n) {
+  const a = AGENTS.find(x => x.id === n.from) || {icon:'🌸', name:'Bodhi', color:'#8b5cf6'}
+  // Inject as a bot message in chat
+  pushMsg('bot', n.text, n.from)
+
+  // If user is not on chat screen, show badge
+  if (S.screen !== 'chat') {
+    notifCount++
+    const badge = document.getElementById('notif-badge')
+    badge.textContent = notifCount > 9 ? '9+' : notifCount
+    badge.classList.add('show')
+  }
+
+  // System notification (if permission granted)
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(a.icon + ' ' + a.name, {
+      body: n.text.slice(0, 120),
+      icon: '/icon.svg',
+      tag: 'bodhi-auto',
+    })
+  }
+
+  toast(a.icon + ' ' + a.name + ' has an update')
+}
+
+function clearNotifBadge() {
+  notifCount = 0
+  const badge = document.getElementById('notif-badge')
+  badge.textContent = ''
+  badge.classList.remove('show')
+}
+
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission()
+  }
 }
 
 // ── Hub connectivity ───────────────────────────────────────────────────────
@@ -833,11 +949,11 @@ function clearChat() {
 
 function exportChat() {
   const lines = S.messages.map(m =>
-    `[${new Date(m.ts).toLocaleString()}] ${m.role==='user'?'You':'Priya'}: ${m.text}`
+    `[${new Date(m.ts).toLocaleString()}] ${m.role==='user'?'You':'Bodhi'}: ${m.text}`
   ).join('\n\n')
   const a = document.createElement('a')
   a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(lines)
-  a.download = `priya-chat-${Date.now()}.txt`
+  a.download = `bodhi-chat-${Date.now()}.txt`
   a.click()
   toast('Chat exported')
 }
@@ -869,7 +985,7 @@ window.addEventListener('appinstalled', () => {
   deferredInstall = null
   document.getElementById('install-banner').classList.remove('show')
   document.getElementById('install-row').style.display = 'none'
-  toast('Priya installed! 🎉')
+  toast('Bodhi installed! 🎉')
 })
 function installPWA() {
   if (!deferredInstall) return
@@ -884,8 +1000,8 @@ function dismissBanner() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
-      .then(r => console.log('[Priya App] SW registered', r.scope))
-      .catch(e => console.log('[Priya App] SW failed', e))
+      .then(r => console.log('[Bodhi App] SW registered', r.scope))
+      .catch(e => console.log('[Bodhi App] SW failed', e))
   })
 }
 

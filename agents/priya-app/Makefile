@@ -1,37 +1,40 @@
-.PHONY: build android android-arm linux darwin windows run clean
+.PHONY: build android android-arm linux linux-arm darwin darwin-intel windows all run clean help
 
 build:
-	CGO_ENABLED=0 go build -o priya-app .
+	CGO_ENABLED=0 go build -ldflags="-s -w" -o bodhi-app .
 
 run: build
-	./priya-app
+	./bodhi-app
 
 android:
-	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o priya-app-android-arm64 .
-	@echo ""
-	@echo "✅  priya-app-android-arm64 ready"
-	@echo ""
-	@echo "── Install on Android ──────────────────────────────────────────────"
-	@echo "Requires: priya-hub running on the same device or LAN"
-	@echo ""
-	@echo "1. Copy binary to phone (adb / Bluetooth / Files)"
-	@echo "2. In Termux:"
-	@echo "   chmod +x ~/priya-app && PRIYA_HUB_URL=http://localhost:8080 ./priya-app"
-	@echo "3. Open Chrome → http://localhost:9090"
-	@echo "4. Tap ⋮ → Add to Home Screen → pure app experience"
-	@echo "────────────────────────────────────────────────────────────────────"
+	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-android-arm64 .
+	@echo "✅  dist/bodhi-app-android-arm64"
 
 android-arm:
-	GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -o priya-app-android-arm .
+	GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-android-arm32 .
 
 linux:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o priya-app-linux .
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-linux-amd64 .
+
+linux-arm:
+	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-linux-arm64 .
 
 darwin:
-	GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -o priya-app-macos .
+	GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-macos-arm64 .
+
+darwin-intel:
+	GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-macos-amd64 .
 
 windows:
-	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o priya-app.exe .
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-windows-amd64.exe .
+
+all:
+	mkdir -p dist
+	$(MAKE) linux linux-arm darwin darwin-intel windows android android-arm
+	@ls -lh dist/
 
 clean:
-	rm -f priya-app priya-app-* *.exe
+	rm -f bodhi-app dist/bodhi-app-* dist/*.exe
+
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-16s %s\n",$$1,$$2}'

@@ -25,6 +25,9 @@ var swJS []byte
 //go:embed static/icon.svg
 var iconSVG []byte
 
+//go:embed static/icon-192.png
+var icon192PNG []byte
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -37,18 +40,20 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// ── Proxy to Priya Hub ────────────────────────────────────────────────────
+	// ── Proxy to Bodhi Hub ────────────────────────────────────────────────────
 	proxy := &hubProxy{baseURL: hubURL, client: &http.Client{Timeout: 100 * time.Second}}
 
 	mux.HandleFunc("/api/chat", proxy.chat)
 	mux.HandleFunc("/api/status", proxy.status)
 	mux.HandleFunc("/api/agents", proxy.agents)
 	mux.HandleFunc("/api/memory", proxy.memory)
+	mux.HandleFunc("/api/events", proxy.events)
 
 	// ── Static assets ─────────────────────────────────────────────────────────
 	mux.HandleFunc("/manifest.json", staticHandler(manifestJSON, "application/manifest+json", "public, max-age=3600"))
 	mux.HandleFunc("/sw.js", staticHandler(swJS, "application/javascript", "no-cache"))
 	mux.HandleFunc("/icon.svg", staticHandler(iconSVG, "image/svg+xml", "public, max-age=86400"))
+	mux.HandleFunc("/icon-192.png", staticHandler(icon192PNG, "image/png", "public, max-age=86400"))
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
@@ -60,7 +65,7 @@ func main() {
 		w.Write(appHTML)
 	})
 
-	log.Printf("Priya App — port %s  →  hub: %s", port, hubURL)
+	log.Printf("Bodhi App — port %s  →  hub: %s", port, hubURL)
 	log.Printf("Open: http://localhost:%s", port)
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
@@ -106,7 +111,7 @@ func (p *hubProxy) chat(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{
-			"reply": fmt.Sprintf("Cannot reach Priya Hub at %s — is it running?\n\nStart it with: `./priya-hub`\n\nOr update the Hub URL in ⚙️ Settings.", target),
+			"reply": fmt.Sprintf("Cannot reach Bodhi Hub at %s — is it running?\n\nStart it with: `./bodhi-hub`\n\nOr update the Hub URL in ⚙️ Settings.", target),
 		})
 		return
 	}
@@ -126,6 +131,61 @@ func (p *hubProxy) agents(w http.ResponseWriter, r *http.Request) {
 
 func (p *hubProxy) memory(w http.ResponseWriter, r *http.Request) {
 	p.proxyGET(w, r, "/memory", "application/json")
+}
+
+// events proxies the hub's SSE /events stream — must flush line-by-line.
+// EventSource cannot set custom headers, so hub URL also accepted via ?hub= query param.
+func (p *hubProxy) events(w http.ResponseWriter, r *http.Request) {
+	target := r.Header.Get("X-Hub-URL")
+	if target == "" {
+		target = r.URL.Query().Get("hub")
+	}
+	if target == "" {
+		target = p.baseURL
+	}
+	if _, err := url.ParseRequestURI(target); err != nil {
+		target = p.baseURL
+	}
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+		return
+	}
+
+	// Use a long-lived client — no timeout for SSE
+	req, err := http.NewRequestWithContext(r.Context(), http.MethodGet, target+"/events", nil)
+	if err != nil {
+		http.Error(w, "bad request", http.StatusBadRequest)
+		return
+	}
+
+	resp, err := (&http.Client{}).Do(req)
+	if err != nil {
+		// Hub unavailable — send a synthetic disconnected event
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		fmt.Fprintf(w, "data: {\"type\":\"disconnected\"}\n\n")
+		flusher.Flush()
+		return
+	}
+	defer resp.Body.Close()
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+
+	buf := make([]byte, 4096)
+	for {
+		n, err := resp.Body.Read(buf)
+		if n > 0 {
+			w.Write(buf[:n])
+			flusher.Flush()
+		}
+		if err != nil {
+			return
+		}
+	}
 }
 
 func (p *hubProxy) proxyGET(w http.ResponseWriter, r *http.Request, path, ct string) {

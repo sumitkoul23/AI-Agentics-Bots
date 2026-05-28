@@ -1655,9 +1655,9 @@ depending on scope. What budget have you allocated?"
 I'll send you a proposal by [tomorrow]. Does that work?"`
 }
 
-// ── Priya (General) ───────────────────────────────────────────────────────────
+// ── Bodhi (General) ───────────────────────────────────────────────────────────
 
-func handlePriya(input string, mem *Memory) string {
+func handleBodhi(input string, mem *Memory) string {
 	lower := strings.ToLower(input)
 
 	// Catch a few more patterns even in general mode
@@ -1667,21 +1667,55 @@ func handlePriya(input string, mem *Memory) string {
 	if strings.Contains(lower, "how are you") || strings.Contains(lower, "who are you") {
 		return whoAmI()
 	}
-	return fmt.Sprintf(`I'm Priya — I received your message:
+	return fmt.Sprintf(`I'm Bodhi — 35 specialist agents at your service.
 
-"%s"
+Your message: "%s"
 
-I can help you with any of these topics. Just ask naturally:
+Just describe what you need and I'll route to the right expert. Popular topics:
 
-  📈 Trading      — "BTC trade plan", "analyse ETH", "funding rate"
-  💼 Portfolio    — "review my portfolio", "rebalance", "DeFi yields"
-  📣 Social       — "draft a tweet", "LinkedIn post about AI", "content calendar"
-  💬 Comms        — "write email to client", "follow-up message", "negotiate my rate"
-  🗂  Organizer    — "brain dump", "daily plan", "I'm stuck on..."
-  💰 Finance      — "explain RSI", "macro briefing", "stock analysis"
-  🔍 Freelance    — "find Upwork jobs", "write proposal", "pricing strategy"
+FINANCE & MARKETS
+  📈 "BTC trade plan" / "funding rate"         (/use perp-markets)
+  💼 "review my portfolio" / "rebalance"        (/use portfolio)
+  💰 "explain RSI" / "macro briefing"           (/use finance)
+  🧾 "what tax deductions can I claim"          (/use tax)
+  🏠 "analyse this rental property"             (/use real-estate)
 
-Or type /agents to see the full list.`, input)
+BUSINESS & GROWTH
+  🚀 "how to pitch investors" / "term sheet"    (/use startup)
+  🤝 "cold outreach email" / "handle objection" (/use sales)
+  📊 "improve my SEO" / "calculate CAC"         (/use marketing)
+  ⚖️  "NDA template" / "LLC vs S-corp"          (/use legal)
+  👥 "write job description" / "interview Qs"   (/use hr)
+  🛒 "Amazon FBA product research"              (/use ecommerce)
+  📦 "find a supplier" / "safety stock"         (/use supply-chain)
+
+PRODUCTIVITY & SKILLS
+  🗂  "brain dump" / "daily plan"               (/use organizer)
+  🔍 "find Upwork jobs" / "write proposal"      (/use freelance)
+  ✍️  "improve this hook" / "edit my essay"     (/use writing)
+  📚 "explain calculus" / "teach me X"          (/use tutor)
+  🌍 "learn Spanish fast" / "translate this"    (/use language)
+  🧠 "build a habit" / "overcome procrastination"(/use mindset)
+
+TECH
+  💻 "debug this error" / "review my code"      (/use code)
+  ⚙️  "Docker setup" / "CI/CD pipeline"         (/use devops)
+  📉 "write this SQL" / "analyse this data"     (/use data)
+  🔒 "security audit" / "OWASP checklist"       (/use security)
+  ⛓️  "audit smart contract" / "DeFi risk"      (/use web3)
+
+LIFESTYLE & CONTENT
+  📣 "LinkedIn post" / "viral TikTok hook"      (/use social)
+  💬 "write cold email" / "negotiate rate"      (/use comms)
+  🏃 "workout plan" / "nutrition targets"       (/use health)
+  🍳 "meal prep plan" / "macro targets"         (/use food)
+  ✈️  "plan trip to Tokyo" / "flight deals"     (/use travel)
+  🎬 "YouTube title" / "short-form script"      (/use video)
+  🎨 "UX review" / "colour system"              (/use design)
+  🩺 "what does this symptom mean"              (/use medical)
+  🏛  "structure this business problem"          (/use consulting)
+
+Type /help for commands · /agents for the full list.`, input)
 }
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
@@ -1704,41 +1738,190 @@ func extractTopic(input string) string {
 }
 
 func greeting() string {
-	return `Namaste! I'm Priya 🌸
+	return `Namaste! I'm Bodhi 🌸
 
-Your all-in-one AI assistant — running fully offline, no keys needed.
+Your all-in-one AI assistant — 35 specialist agents, running fully offline.
 
-What I can do for you:
-  📈 Crypto trade plans + technical analysis
-  💼 Portfolio strategy + DeFi yields
-  📣 Social media content (all platforms)
-  💬 Emails, DMs, proposals, negotiation
-  🗂  Daily/weekly planning + task management
-  💰 Finance explainers + market frameworks
-  🔍 Freelance job search + proposals + rates
+FINANCE & BUSINESS
+  📈 Crypto trade plans + technical analysis  (/use perp-markets)
+  💼 Portfolio strategy + DeFi yields          (/use portfolio)
+  💰 Finance explainers + market frameworks    (/use finance)
+  🧾 Tax strategy + deductions + entity setup  (/use tax)
+  🏠 Real estate investment + cap rates        (/use real-estate)
+  🚀 Startup coaching + pitch + fundraising    (/use startup)
+  🤝 Sales pipeline + objections + closing     (/use sales)
+  📊 Marketing + SEO + CAC/LTV + growth        (/use marketing)
 
-Type /agents to see all specialists.
-Or just ask anything — I'll route to the right expert.`
+PRODUCTIVITY & CAREER
+  🗂  Daily/weekly planning + task management  (/use organizer)
+  🔍 Freelance job search + proposals + rates  (/use freelance)
+  ✍️  Writing coaching + hooks + editing       (/use writing)
+  📚 Tutoring — any subject (Socratic method)  (/use tutor)
+  🌍 Language learning + conversation practice (/use language)
+
+TECH & ANALYSIS
+  💻 Code debugging, review, architecture      (/use code)
+  🔬 Deep research + fact-checked analysis     (/use research)
+  ⚙️  CI/CD, Docker, Kubernetes, observability (/use devops)
+  📉 SQL, Python, dashboards, ML evaluation    (/use data)
+  🔒 App security, OWASP, hardening            (/use security)
+  ⛓️  Smart contracts, DeFi, Solidity          (/use web3)
+
+LIFESTYLE & COMMUNICATION
+  💬 Emails, DMs, proposals, negotiation       (/use comms)
+  📣 Social media content (all platforms)      (/use social)
+  📰 Market signals + news + trend analysis    (/use news)
+  🏃 Training, nutrition, sleep, recovery      (/use health)
+  🍳 Recipes, meal prep, macros, cooking       (/use food)
+  🧠 Habits, productivity, resilience          (/use mindset)
+  ✈️  Itineraries, flights, budget, logistics  (/use travel)
+  🎬 YouTube SEO, short-form, scripts          (/use video)
+  🎨 UX/UI, visual systems, accessibility      (/use design)
+
+PROFESSIONAL SERVICES
+  ⚖️  Contracts, IP, incorporation, compliance (/use legal)
+  👥 Hiring, performance, compensation         (/use hr)
+  🏛  MECE frameworks, strategy, slide decks   (/use consulting)
+  🩺 Health education + care navigation        (/use medical)
+  📦 Sourcing, inventory, logistics            (/use supply-chain)
+  🛒 Amazon FBA, Shopify, marketplaces         (/use ecommerce)
+
+Just ask naturally — I route automatically. Or /help to see all commands.`
 }
 
 func whoAmI() string {
-	return `I'm Priya Hub — an autonomous AI assistant that runs entirely on your machine.
+	return `I'm Bodhi Hub — an autonomous AI assistant that runs entirely on your machine.
 
 No API keys. No internet connection required. No data sent anywhere.
 All intelligence is built directly into the bot.
 
-I have 8 specialist agents inside me:
-  perp-markets  — Perpetual Markets Strategist
-  portfolio     — Portfolio Strategist
-  social        — Social Media Expert (all 7 platforms)
-  comms         — Communication Specialist
-  organizer     — Personal Organizer
-  finance       — Finance & Crypto Analyst
-  freelance     — Freelance & Jobs Advisor
-  priya         — General (that's me, the fallback)
+I have 35 specialist agents:
+
+FINANCE & BUSINESS
+  perp-markets   — Perpetual Markets Strategist
+  portfolio      — Portfolio Strategist
+  finance        — Finance & Crypto Analyst
+  tax            — Tax Strategist
+  real-estate    — Real Estate Advisor
+  startup        — Startup Coach
+  sales          — Sales Coach
+  marketing      — Marketing Strategist
+  ecommerce      — E-commerce Advisor
+
+PRODUCTIVITY & CAREER
+  organizer      — Personal Organizer
+  freelance      — Freelance & Jobs Advisor
+  writing        — Writing Coach
+  tutor          — Tutor (any subject)
+  language       — Language Coach
+
+TECH & ANALYSIS
+  code           — Code Assistant (any language)
+  research       — Research Analyst
+  devops         — DevOps Engineer
+  data           — Data Analyst
+  security       — Security Analyst
+  web3           — Web3 & Blockchain
+
+COMMUNICATION & CONTENT
+  comms          — Communication Specialist
+  social         — Social Media Expert
+  news           — News & Trends
+  video          — Video Creator
+
+LIFESTYLE
+  health         — Health & Fitness
+  food           — Food & Nutrition
+  mindset        — Mindset Coach
+  travel         — Travel Planner
+  design         — Design Advisor
+
+PROFESSIONAL SERVICES
+  legal          — Legal Advisor
+  hr             — HR & People
+  consulting     — Consulting Advisor
+  medical        — Medical Information
+  supply-chain   — Supply Chain Advisor
+
+  bodhi          — General coordinator (that's me, the fallback)
 
 I route your messages automatically. You can also force a specific agent:
-/use perp-markets BTC trade plan long`
+/use tax what deductions can I claim as a freelancer?`
+}
+
+// ── Code Assistant ────────────────────────────────────────────────────────────
+
+func handleCode(input string, mem *Memory) string {
+	lower := strings.ToLower(input)
+	switch {
+	case strings.Contains(lower, "debug") || strings.Contains(lower, "error") || strings.Contains(lower, "bug "):
+		return "Share the error message and the relevant code. I'll identify the root cause and give you a tested fix."
+	case strings.Contains(lower, "review"):
+		return "Paste the code you want reviewed. I'll assess: correctness, edge cases, performance, security, and readability."
+	case strings.Contains(lower, "refactor"):
+		return "Share the code to refactor. Tell me the goal (readability, performance, testability) and I'll rewrite it cleanly."
+	case strings.Contains(lower, "architect") || strings.Contains(lower, "design") || strings.Contains(lower, "structure"):
+		return "Describe what you're building — language, scale, constraints, team size. I'll outline the architecture with trade-offs."
+	case strings.Contains(lower, "test") || strings.Contains(lower, "unit test"):
+		return "Share the function or module. I'll write unit tests with edge cases, table-driven where appropriate."
+	case strings.Contains(lower, "algorithm") || strings.Contains(lower, "data structure"):
+		return "Describe the problem: input, output, constraints, scale. I'll pick the right algorithm and explain the complexity."
+	default:
+		return "Share your code or describe what you're building. I handle debugging, reviews, architecture, testing, and implementation in any language."
+	}
+}
+
+// ── Health & Fitness ──────────────────────────────────────────────────────────
+
+func handleHealth(input string, mem *Memory) string {
+	lower := strings.ToLower(input)
+	switch {
+	case strings.Contains(lower, "workout") || strings.Contains(lower, "gym") || strings.Contains(lower, "exercise") || strings.Contains(lower, "training"):
+		return "Tell me: goal (strength / muscle / fat loss / endurance), days per week, equipment access, and any injuries. I'll build a specific programme."
+	case strings.Contains(lower, "diet") || strings.Contains(lower, "nutrition") || strings.Contains(lower, "calorie") || strings.Contains(lower, "meal") || strings.Contains(lower, "macro"):
+		return "Share your goal, current eating habits, and any restrictions. I'll give you a practical nutrition framework with macro targets — no fad diets."
+	case strings.Contains(lower, "sleep"):
+		return "Key sleep levers: fixed wake time (anchors circadian rhythm), no screens 60 min before bed, room at 18–19°C, no caffeine after 1pm. What's your specific issue?"
+	case strings.Contains(lower, "stress") || strings.Contains(lower, "burnout") || strings.Contains(lower, "mental"):
+		return "Quick tools: box breathing (4-4-4-4), 20-min walk, single-tasking. Long-term: what's the source of the stress? Let's identify it."
+	case strings.Contains(lower, "weight loss") || strings.Contains(lower, "lose weight") || strings.Contains(lower, "cut "):
+		return "Sustainable fat loss: 300–500 kcal deficit, high protein (2g/kg body weight), resistance training to preserve muscle, 7–8h sleep. Tell me your stats and I'll calculate your numbers."
+	default:
+		return "Tell me your health goal and current routine. I give specific, evidence-based guidance — workout plans, nutrition targets, recovery protocols, and mental performance."
+	}
+}
+
+// ── Research Analyst ──────────────────────────────────────────────────────────
+
+func handleResearch(input string, mem *Memory) string {
+	lower := strings.ToLower(input)
+	topic := truncate(input, 80)
+	switch {
+	case strings.Contains(lower, "compare") || strings.Contains(lower, " vs ") || strings.Contains(lower, "versus"):
+		return fmt.Sprintf("Comparison: %q — I'll structure this as a criteria table → key differences → use-case recommendation. What criteria matter most?", topic)
+	case strings.Contains(lower, "pros and cons") || strings.Contains(lower, "trade-off") || strings.Contains(lower, "tradeoff"):
+		return fmt.Sprintf("Trade-off analysis: %q — I'll cover benefits, risks, hidden costs, and which context each option wins in.", topic)
+	case strings.Contains(lower, "summarize") || strings.Contains(lower, "summarise") || strings.Contains(lower, "breakdown"):
+		return fmt.Sprintf("Summary: %q — paste the source text and I'll produce a structured breakdown with key takeaways front-loaded.", topic)
+	default:
+		return fmt.Sprintf("Research: %q — I'll generate a structured deep-dive: background, key findings, competing perspectives, open questions. What angle interests you most?", topic)
+	}
+}
+
+// ── News & Trends ─────────────────────────────────────────────────────────────
+
+func handleNews(input string, mem *Memory) string {
+	lower := strings.ToLower(input)
+	switch {
+	case strings.Contains(lower, "crypto") || strings.Contains(lower, "bitcoin") || strings.Contains(lower, "btc") || strings.Contains(lower, "eth"):
+		return "Crypto news sources worth tracking: The Block, CoinDesk, Decrypt (news) · Glassnode, CryptoQuant (on-chain) · @WatcherGuru, @lookonchain (Twitter/X). What event are you following?"
+	case strings.Contains(lower, "ai") || strings.Contains(lower, "tech"):
+		return "AI & tech signal sources: Hacker News, arXiv cs.AI, Anthropic/OpenAI/Google DeepMind blogs, GitHub Trending. What area — models, infrastructure, products, or policy?"
+	case strings.Contains(lower, "market") || strings.Contains(lower, "stock") || strings.Contains(lower, "equity"):
+		return "Key market catalysts to watch: Fed statements, CPI/PCE, earnings surprises, DXY moves. Which market or sector? I can route deeper analysis to the Finance agent."
+	default:
+		return "What topic or sector are you tracking? I'll cut through the noise and flag what actually matters versus what's just headlines."
+	}
 }
 
 // handlePerpMarketsAgent wraps handlePerpMarkets to match Agent.Handle signature.

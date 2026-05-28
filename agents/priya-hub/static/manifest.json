@@ -1,6 +1,6 @@
 {
-  "name": "Priya — Autonomous AI Swarm",
-  "short_name": "Priya",
+  "name": "Bodhi — Autonomous AI Swarm",
+  "short_name": "Bodhi",
   "description": "On-device self-learning AI assistant. No cloud. No API keys.",
   "start_url": "/",
   "scope": "/",
@@ -11,23 +11,29 @@
   "categories": ["productivity", "utilities"],
   "icons": [
     {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
-    },
-    {
-      "src": "/icon-maskable.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
       "name": "New Chat",
       "short_name": "Chat",
-      "description": "Start a new conversation with Priya",
+      "description": "Start a new conversation with Bodhi",
       "url": "/",
       "icons": [{"src": "/icon.svg", "sizes": "any"}]
     }

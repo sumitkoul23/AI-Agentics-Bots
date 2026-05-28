@@ -21,7 +21,7 @@ const (
 	meshTTL       = 90 * time.Second
 )
 
-// Peer represents another Priya Hub node on the LAN.
+// Peer represents another Bodhi Hub node on the LAN.
 type Peer struct {
 	Addr      string    // "192.168.x.x:8080"
 	Hostname  string
@@ -318,7 +318,7 @@ func (m *Mesh) Peers() []*Peer {
 func (m *Mesh) Status() string {
 	peers := m.Peers()
 	if len(peers) == 0 {
-		return fmt.Sprintf("Mesh: this node only (%s)\nNo other Priya Hub nodes found on the LAN yet.", m.self)
+		return fmt.Sprintf("Mesh: this node only (%s)\nNo other Bodhi Hub nodes found on the LAN yet.", m.self)
 	}
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("Mesh: %s  +  %d peer(s)\n\n", m.self, len(peers)))

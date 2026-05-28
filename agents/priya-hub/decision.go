@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// DecisionEngine gives Priya explicit control over her decision-making.
+// DecisionEngine gives Bodhi explicit control over her decision-making.
 //
 // It decides:
 //   - Should she ask a clarifying/onboarding question?
@@ -14,7 +14,7 @@ import (
 //   - What assumption is she making (and should she state it)?
 //   - What context should be injected into this agent's system prompt?
 //
-// Decisions are logged so Priya can review and improve her own reasoning.
+// Decisions are logged so Bodhi can review and improve her own reasoning.
 type DecisionEngine struct {
 	mem     *Memory
 	trainer *Trainer
@@ -31,7 +31,7 @@ func NewDecisionEngine(mem *Memory, trainer *Trainer) *DecisionEngine {
 //	question   — the question text (empty if appendQ is false)
 //	sysAppend  — extra text to append to the agent's system prompt
 func (d *DecisionEngine) Decide(agentID, input string) (appendQ bool, question, sysAppend string) {
-	appendQ, question = d.trainer.ShouldAsk()
+	appendQ, question = d.trainer.ShouldAsk(agentID)
 
 	var parts []string
 
@@ -98,7 +98,7 @@ func (d *DecisionEngine) AppendOnboardQ(response, question string) string {
 	return fmt.Sprintf("%s\n\n---\n*To sharpen my responses:* **%s**", response, question)
 }
 
-// buildAssumption creates a context note when Priya has partial knowledge.
+// buildAssumption creates a context note when Bodhi has partial knowledge.
 func (d *DecisionEngine) buildAssumption(agentID string) string {
 	prefs := d.mem.GetPreferences()
 	facts := d.mem.GetFacts()

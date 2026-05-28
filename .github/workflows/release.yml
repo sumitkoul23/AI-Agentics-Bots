@@ -1,0 +1,261 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  # ── Go binaries (all platforms) ─────────────────────────────────────────────
+  build-go:
+    name: Build Go binaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: agents/priya-hub/go.mod
+          cache-dependency-path: |
+            agents/priya-hub/go.sum
+            agents/priya-app/go.sum
+
+      - name: Build bodhi-hub (all platforms)
+        working-directory: agents/priya-hub
+        run: |
+          mkdir -p dist
+          GOOS=linux   GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-linux-amd64       .
+          GOOS=linux   GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-linux-arm64       .
+          GOOS=darwin  GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-macos-arm64       .
+          GOOS=darwin  GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-macos-amd64       .
+          GOOS=windows GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-windows-amd64.exe .
+          GOOS=linux   GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-android-arm64     .
+          GOOS=linux   GOARCH=arm    GOARM=7 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-hub-android-arm32 .
+
+      - name: Build bodhi-app (all platforms)
+        working-directory: agents/priya-app
+        run: |
+          mkdir -p dist
+          GOOS=linux   GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-linux-amd64       .
+          GOOS=linux   GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-linux-arm64       .
+          GOOS=darwin  GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-macos-arm64       .
+          GOOS=darwin  GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-macos-amd64       .
+          GOOS=windows GOARCH=amd64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-windows-amd64.exe .
+          GOOS=linux   GOARCH=arm64  CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-android-arm64     .
+          GOOS=linux   GOARCH=arm    GOARM=7 CGO_ENABLED=0 go build -ldflags="-s -w" -o dist/bodhi-app-android-arm32 .
+
+      - name: Package Windows ZIP (hub + app + launcher)
+        run: |
+          mkdir -p windows-release
+          cp agents/priya-hub/dist/bodhi-hub-windows-amd64.exe windows-release/
+          cp agents/priya-app/dist/bodhi-app-windows-amd64.exe windows-release/
+          cp agents/bodhi-windows/start-bodhi.bat windows-release/
+          cd windows-release
+          zip -r ../bodhi-windows-amd64.zip .
+
+      - name: Compress non-Windows binaries
+        run: |
+          cd agents/priya-hub/dist
+          for f in bodhi-hub-linux-* bodhi-hub-macos-* bodhi-hub-android-*; do
+            tar -czf "${f}.tar.gz" "$f" && rm "$f"
+          done
+          cd ../../../agents/priya-app/dist
+          for f in bodhi-app-linux-* bodhi-app-macos-* bodhi-app-android-*; do
+            tar -czf "${f}.tar.gz" "$f" && rm "$f"
+          done
+
+      - name: Upload Go artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-binaries
+          path: |
+            agents/priya-hub/dist/
+            agents/priya-app/dist/
+            bodhi-windows-amd64.zip
+          retention-days: 1
+
+  # ── Android APK ─────────────────────────────────────────────────────────────
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Build the ARM64 and ARM32 Go binaries to embed in the APK
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: agents/priya-hub/go.mod
+
+      - name: Build Go binaries for Android
+        working-directory: agents/priya-hub
+        run: |
+          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o bodhi-hub-arm64 .
+          GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -ldflags="-s -w" -o bodhi-hub-arm32 .
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o bodhi-hub-x86_64 .
+
+      - name: Embed binaries into APK assets
+        run: |
+          # Copy Go binaries into APK asset directories (one per ABI)
+          cp agents/priya-hub/bodhi-hub-arm64  agents/bodhi-android/app/src/main/assets/arm64-v8a/bodhi-hub
+          cp agents/priya-hub/bodhi-hub-arm32  agents/bodhi-android/app/src/main/assets/armeabi-v7a/bodhi-hub
+          cp agents/priya-hub/bodhi-hub-x86_64 agents/bodhi-android/app/src/main/assets/x86_64/bodhi-hub
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK licences
+        run: yes | sdkmanager --licenses || true
+
+      - name: Install build tools
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Set version name from tag or input
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          sed -i "s/versionName \"1.0.0\"/versionName \"${VERSION}\"/" agents/bodhi-android/app/build.gradle
+
+      - name: Build debug APK (signed with debug key — no keystore needed)
+        working-directory: agents/bodhi-android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Build release APK (signed with debug key for CI)
+        working-directory: agents/bodhi-android
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Rename APK outputs
+        run: |
+          mkdir -p apk-out
+          # Universal APK (works on all ABIs)
+          cp agents/bodhi-android/app/build/outputs/apk/release/app-universal-release.apk \
+             apk-out/bodhi-android-universal.apk 2>/dev/null || \
+          cp agents/bodhi-android/app/build/outputs/apk/release/app-release.apk \
+             apk-out/bodhi-android-universal.apk 2>/dev/null || true
+          # ABI-specific APKs (smaller)
+          cp agents/bodhi-android/app/build/outputs/apk/release/app-arm64-v8a-release.apk \
+             apk-out/bodhi-android-arm64.apk 2>/dev/null || true
+          cp agents/bodhi-android/app/build/outputs/apk/release/app-armeabi-v7a-release.apk \
+             apk-out/bodhi-android-arm32.apk 2>/dev/null || true
+          ls -lh apk-out/
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: apk-out/
+          retention-days: 1
+
+  # ── GitHub Release ───────────────────────────────────────────────────────────
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-go, build-apk]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Go binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: go-binaries
+          path: release-assets/
+
+      - name: Download APKs
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+          path: release-assets/apk/
+
+      - name: Compute SHA256 checksums
+        id: checksums
+        run: |
+          find release-assets/ -type f | sort | xargs sha256sum > checksums.txt
+          cat checksums.txt
+          {
+            echo 'content<<EOF'
+            cat checksums.txt
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Bodhi v${{ github.event.inputs.version || github.ref_name }}"
+          tag_name: "v${{ github.event.inputs.version || github.ref_name }}"
+          body: |
+            ## Bodhi v${{ github.event.inputs.version || github.ref_name }} — On-device Autonomous AI Swarm
+
+            **35 specialist agents.** Single binary. No cloud. No API keys.
+            Runs entirely on your device using [Ollama](https://ollama.ai).
+
+            ---
+
+            ### Download
+
+            | Platform | File | Notes |
+            |---|---|---|
+            | **Android** | `bodhi-android-arm64.apk` | Modern phones (2017+) |
+            | **Android** | `bodhi-android-universal.apk` | All Android devices |
+            | **Windows** | `bodhi-windows-amd64.zip` | Includes launcher `.bat` |
+            | **macOS Apple Silicon** | `bodhi-hub-macos-arm64.tar.gz` + `bodhi-app-macos-arm64.tar.gz` | M1/M2/M3 |
+            | **macOS Intel** | `bodhi-hub-macos-amd64.tar.gz` + `bodhi-app-macos-amd64.tar.gz` | Intel Mac |
+            | **Linux x86_64** | `bodhi-hub-linux-amd64.tar.gz` + `bodhi-app-linux-amd64.tar.gz` | Ubuntu, Debian… |
+            | **Linux ARM64** | `bodhi-hub-linux-arm64.tar.gz` + `bodhi-app-linux-arm64.tar.gz` | Raspberry Pi 4/5 |
+
+            ---
+
+            ### Android Install
+            1. Download `bodhi-android-arm64.apk`
+            2. Enable **Install unknown apps** in Android Settings → Security
+            3. Tap the APK to install
+            4. Install [Ollama for Android](https://github.com/jmorganca/ollama) or the app will use template responses
+            5. Open **Bodhi** — 35 agents start automatically
+
+            ### Windows Install
+            1. Download and extract `bodhi-windows-amd64.zip`
+            2. (Optional) Install [Ollama for Windows](https://ollama.com/download)
+            3. Double-click `start-bodhi.bat`
+            4. Browser opens automatically at `http://localhost:9090`
+
+            ### macOS / Linux Install
+            ```bash
+            tar xzf bodhi-hub-*.tar.gz && tar xzf bodhi-app-*.tar.gz
+            chmod +x bodhi-hub bodhi-app
+            ./bodhi-hub &   # starts on :8080
+            ./bodhi-app &   # starts on :9090
+            open http://localhost:9090
+            ```
+
+            ---
+
+            ### SHA256 Checksums
+            ```
+            ${{ steps.checksums.outputs.content }}
+            ```
+          files: |
+            release-assets/agents/priya-hub/dist/*
+            release-assets/agents/priya-app/dist/*
+            release-assets/bodhi-windows-amd64.zip
+            release-assets/apk/*.apk
+            checksums.txt
+          draft: false
+          prerelease: false
