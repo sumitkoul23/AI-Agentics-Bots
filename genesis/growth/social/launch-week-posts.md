@@ -1,6 +1,6 @@
 # Launch week — 7 days of posts, ready to paste
 
-> Replace `@agenticchain` with the actual handle you secured. Each row is
+> Replace `@skymetric` with the actual handle you secured. Each row is
 > one post; the same beat is delivered in platform-native form. Schedule
 > with [Buffer free tier](https://buffer.com/) (3 channels, 10 scheduled
 > posts — fits a launch week).
@@ -11,10 +11,10 @@
 
 ### X (280 ch)
 ```
-introducing AGENTIC — a sovereign L1 for AI-agent work.
+introducing SKYMETRIC — a sovereign L1 for AI-agent work.
 
-agents stake $GEN to bid on tasks.
-users pay $GEN, get verifiable outputs.
+agents stake $SKY to bid on tasks.
+users pay $SKY, get verifiable outputs.
 proven fraud burns the agent's stake.
 
 cosmos sdk · proof of stake · 100% open · built with $0.
@@ -24,44 +24,44 @@ code: github.com/agentic-chain
 
 ### Telegram channel
 ```
-Hi everyone — welcome to AGENTIC.
+Hi everyone — welcome to SKYMETRIC.
 
-We're building a sovereign Cosmos SDK Layer 1 where AI agents stake on the quality of their own work. The native coin is $GEN.
+We're building a sovereign Cosmos SDK Layer 1 where AI agents stake on the quality of their own work. The native coin is $SKY.
 
 Why a new chain instead of a smart contract? Because the primitive — slashable agent stake — only makes sense as a first-class on-chain object, not a contract on a chain that doesn't know what an agent is.
 
-This channel is announcements-only. For chat, join @agenticchainchat.
+This channel is announcements-only. For chat, join @skymetricchat.
 
 Code is already public: github.com/agentic-chain
-Docs: agentic.dev
+Docs: skymetric.dev
 ```
 
 ### LinkedIn
 ```
-Today we're introducing AGENTIC — a sovereign Layer 1 blockchain purpose-built for the AI-agent economy.
+Today we're introducing SKYMETRIC — a sovereign Layer 1 blockchain purpose-built for the AI-agent economy.
 
-The thesis: AI agents need an accountability layer. Right now they're black boxes — no on-chain identity, no economic skin in the game, no liquid market for their outputs. AGENTIC solves all three:
+The thesis: AI agents need an accountability layer. Right now they're black boxes — no on-chain identity, no economic skin in the game, no liquid market for their outputs. SKYMETRIC solves all three:
 
-→ Agents register on-chain and bond GEN as stake
+→ Agents register on-chain and bond SKY as stake
 → Users open task escrows; agents bid
 → Provably bad outputs burn the agent's stake
 → Reputation is a soul-bound, non-transferable score
 
 We're building this end-to-end in public, on free-tier infrastructure, with a strict $0 budget. The chain is fundable by adoption alone — no VC, no private sale.
 
-Stack: Cosmos SDK v0.50 · CometBFT Proof-of-Stake · 1B GEN genesis supply · deflationary burn tail.
+Stack: Cosmos SDK v0.50 · CometBFT Proof-of-Stake · 1B SKY genesis supply · deflationary burn tail.
 
 Code is public: github.com/agentic-chain
-Docs: agentic.dev
+Docs: skymetric.dev
 ```
 
 ### Discord #announcements
 ```
 @everyone
 
-Welcome to AGENTIC.
+Welcome to SKYMETRIC.
 
-📖 Read the architecture: agentic.dev/docs/01-architecture
+📖 Read the architecture: skymetric.dev/docs/01-architecture
 🛠 The code is in the repo, right now: github.com/agentic-chain
 🎯 Our north star: 1,000 active developers on testnet, then a 10× lift at mainnet.
 
@@ -87,7 +87,7 @@ It's the only stack that gives us: sovereign economics (we own our fee market), 
 3/ Module: x/agentic.
 
 Five messages:
-• MsgRegisterAgent — bond GEN, become an on-chain agent
+• MsgRegisterAgent — bond SKY, become an on-chain agent
 • MsgCreateTask — escrow a bounty
 • MsgSubmitResponse — post the work
 • MsgSettleTask — pay out the escrow
@@ -118,7 +118,7 @@ A soul-bound counter, incremented on every settled task, reset on every slash. H
 
 Oracle Cloud (ARM Ampere) · Fly.io · GitHub Codespaces · AWS Free Tier. We hardware-diversify before we capital-diversify. (7/8)
 
-8/ Read the full architecture: agentic.dev/docs/01-architecture
+8/ Read the full architecture: skymetric.dev/docs/01-architecture
 
 Code: github.com/agentic-chain
 
@@ -126,7 +126,7 @@ Roadmap to testnet: ~4 weeks. Builders, join the Discord. (8/8)
 
 ### LinkedIn (the same thread, condensed to a single post)
 ```
-A short technical deep-dive on AGENTIC's architecture.
+A short technical deep-dive on SKYMETRIC's architecture.
 
 The thesis: slashable agent stake must be a protocol-level object, not a contract object. Slashing on a contract is just confiscation; slashing in consensus is law. That's why we built a sovereign L1 rather than ship another Ethereum contract.
 
@@ -138,7 +138,7 @@ The stack:
 
 Slashing is asymmetric. Downtime is gentle (free-tier validators will flap). Fraud-proof slashing is total stake burn — rare, large, public.
 
-Full architecture document: agentic.dev/docs/01-architecture
+Full architecture document: skymetric.dev/docs/01-architecture
 ```
 
 ---
@@ -147,7 +147,7 @@ Full architecture document: agentic.dev/docs/01-architecture
 
 ### X (280 ch)
 ```
-GEN tokenomics:
+SKY tokenomics:
 
 → 1B supply at genesis
 → 40% airdrop to Cosmos + AI builders
@@ -166,9 +166,9 @@ from `genesis/docs/02-tokenomics.md` (it reads well on Telegram).
 
 ### LinkedIn
 ```
-A note on GEN tokenomics — because every chain pretending to be "for the community" should publish its allocation publicly on day one.
+A note on SKY tokenomics — because every chain pretending to be "for the community" should publish its allocation publicly on day one.
 
-Genesis supply: 1,000,000,000 GEN.
+Genesis supply: 1,000,000,000 SKY.
 
 Allocation:
 • 40% — community airdrop (Cosmos stakers, AI-protocol users, OSS AI contributors)
@@ -182,7 +182,7 @@ Yes, 0%.
 
 Mechanics: 1–7% inflation tapering across 5 years, offset by a 20% burn on every settled agent task. The chain flips net-deflationary at approximately 800k settled tasks per year.
 
-Full breakdown: agentic.dev/docs/02-tokenomics
+Full breakdown: skymetric.dev/docs/02-tokenomics
 ```
 
 ---
@@ -191,7 +191,7 @@ Full breakdown: agentic.dev/docs/02-tokenomics
 
 ### X (280 ch)
 ```
-the entire AGENTIC validator quartet runs on $0 infra:
+the entire SKYMETRIC validator quartet runs on $0 infra:
 
 · val-1: Oracle Cloud Always-Free, ARM Ampere
 · val-2: Fly.io free
@@ -204,10 +204,10 @@ setup scripts in the repo.
 ```
 
 ### YouTube (short)
-"Setting up an AGENTIC validator on a free Oracle Cloud Ampere instance — 90-second walkthrough"
+"Setting up an SKYMETRIC validator on a free Oracle Cloud Ampere instance — 90-second walkthrough"
 
 Screen-record the contents of `genesis/deploy/oracle-cloud/setup-validator.sh`
-being executed live. End card: "Code · agentic.dev/devops".
+being executed live. End card: "Code · skymetric.dev/devops".
 
 ---
 
@@ -217,11 +217,11 @@ being executed live. End card: "Code · agentic.dev/devops".
 ```
 Genesis-Bot is now live on testnet.
 
-it's one of the 7 specialist agents from our monorepo, registered on-chain, taking real $GEN-denominated tasks.
+it's one of the 7 specialist agents from our monorepo, registered on-chain, taking real $SKY-denominated tasks.
 
 your job, if you want a testnet airdrop multiplier: register your own agent and beat its reputation score.
 
-faucet: agentic.dev/faucet
+faucet: skymetric.dev/faucet
 ```
 
 ### Discord #announcements
@@ -230,7 +230,7 @@ faucet: agentic.dev/faucet
 
 Genesis-Bot just went live on the testnet.
 
-It's the Perpetual Markets Strategist from our `agents/` directory — registered on-chain, staked, taking real tasks denominated in testnet GEN.
+It's the Perpetual Markets Strategist from our `agents/` directory — registered on-chain, staked, taking real tasks denominated in testnet SKY.
 
 This is your benchmark. Fork it, modify it, register your variant, and the leaderboard does the rest.
 
@@ -252,13 +252,13 @@ Screen recording: open the explorer, show:
 
 Caption:
 ```
-this is what the AGENTIC testnet looks like under load.
+this is what the SKYMETRIC testnet looks like under load.
 
 every "burn" event is permanent — the supply just dropped a fraction of a percent of one cent.
 
 at scale, this is what makes the chain deflationary.
 
-explorer: explorer.agentic.dev
+explorer: explorer.skymetric.dev
 ```
 
 ---
@@ -267,11 +267,11 @@ explorer: explorer.agentic.dev
 
 ### X thread (5)
 
-1/ Week 1 of AGENTIC, in numbers:
+1/ Week 1 of SKYMETRIC, in numbers:
 
 · N agents registered
 · N tasks settled
-· N GEN burned forever
+· N SKY burned forever
 · N validators (and growing)
 
 (Fill in actual numbers Sunday morning — pull from explorer.) (1/5)
@@ -299,10 +299,10 @@ Fork any of the 7 specialists in our repo, register a variant on testnet, and ou
 
 5/ Join the build:
 
-→ X: @agenticchain
+→ X: @skymetric
 → Discord: discord.gg/agentic
 → GitHub: github.com/agentic-chain
-→ Telegram: t.me/agenticchain
+→ Telegram: t.me/skymetric
 
 We ship every week, in public, in the open. See you Monday. (5/5)
 

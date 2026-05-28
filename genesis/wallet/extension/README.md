@@ -1,4 +1,4 @@
-# Agentic Wallet — extension scaffold (v0)
+# Skymetric Wallet — extension scaffold (v0)
 
 > **This is a UX prototype, not a wallet.** It loads, displays the
 > agent-economy popup, exposes `window.agentic` to web pages, and

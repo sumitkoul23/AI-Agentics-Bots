@@ -1,7 +1,7 @@
 # Devlog #1 — "Why we built a blockchain for AI agents"
 
 - **Length:** 5–7 min long-form · 60s short
-- **Working title:** *Why a chain, not a contract — meet AGENTIC*
+- **Working title:** *Why a chain, not a contract — meet SKYMETRIC*
 - **Goal:** introduce the project + the thesis to a cold technical audience.
 
 ---
@@ -11,8 +11,8 @@
 **Visual:** terminal window, full screen. The command:
 
 ```
-$ agenticd query agentic burned-total
-total_burned: 0 ugen
+$ skymetricd query agentic burned-total
+total_burned: 0 usky
 ```
 
 **VO:** "Right now this number is zero. Soon every AI agent's failure will
@@ -24,7 +24,7 @@ Hold for a beat. Cut.
 
 ## Title card (0:10 – 0:13)
 
-`AGENTIC — DEVLOG #01` over the brand banner (`assets/banner-x.svg`).
+`SKYMETRIC — DEVLOG #01` over the brand banner (`assets/banner-x.svg`).
 
 ---
 
@@ -54,7 +54,7 @@ this repo.
 ### Beat 1 — Why not just a smart contract? (0:50 – 1:30)
 
 **Visual:** split-screen — left, a stylised "smart contract" box on
-Ethereum; right, the AGENTIC node icon.
+Ethereum; right, the SKYMETRIC node icon.
 
 **VO:**
 > "Could we have done this as a contract? Yeah. But slashing in a contract
@@ -93,8 +93,8 @@ table.
 **VO:**
 > "Five messages. That's the whole surface.
 >
-> *RegisterAgent* — bond GEN, get an on-chain identity.
-> *CreateTask* — escrow a bounty in GEN.
+> *RegisterAgent* — bond SKY, get an on-chain identity.
+> *CreateTask* — escrow a bounty in SKY.
 > *SubmitResponse* — agent posts the IPFS CID of its work.
 > *SettleTask* — escrow splits 50 % agent, 30 % validators, 20 % burned.
 > *SubmitFraudProof* — validator quorum slashes the agent's stake.
@@ -110,7 +110,7 @@ table.
 **Visual:** the allocation pie-chart-ish ASCII from `02-tokenomics.md`.
 
 **VO (rapid-fire):**
-> "1 billion GEN at genesis. 40 % airdrop to Cosmos and AI builders. 25 %
+> "1 billion SKY at genesis. 40 % airdrop to Cosmos and AI builders. 25 %
 > staking rewards. 20 % treasury. 10 % contributors with a 12-month
 > cliff. 5 % liquidity bootstrap. 0 % VC.
 >
@@ -152,7 +152,7 @@ table.
 Static frame:
 
 ```
-agentic.dev          @agenticchain          discord.gg/agentic
+skymetric.dev          @skymetric          discord.gg/agentic
             github.com/agentic-chain
 ```
 
@@ -164,27 +164,27 @@ over the brand banner.
 
 | Time | Frame | Copy / VO |
 |---|---|---|
-| 0:00 – 0:05 | Terminal: `burned-total: 0 ugen` | "This number is zero." |
-| 0:05 – 0:15 | "It's the supply of GEN destroyed by failed AI agents on AGENTIC." | overlay text |
+| 0:00 – 0:05 | Terminal: `burned-total: 0 usky` | "This number is zero." |
+| 0:05 – 0:15 | "It's the supply of SKY destroyed by failed AI agents on SKYMETRIC." | overlay text |
 | 0:15 – 0:30 | Cut to the x/agentic module on screen | "Agents stake. Users pay. Validators slash on proven fraud. The slashed stake burns." |
 | 0:30 – 0:45 | Allocation pie | "0 % VC. 40 % airdrop. 100 % open source." |
 | 0:45 – 0:55 | Brand frame | "Mainnet soon. Repo's already public." |
-| 0:55 – 1:00 | End card | `agentic.dev` |
+| 0:55 – 1:00 | End card | `skymetric.dev` |
 
 ---
 
 ## YouTube description (paste verbatim)
 
 ```
-The first AGENTIC devlog — why we built a sovereign Cosmos SDK L1 instead of another contract on Ethereum.
+The first SKYMETRIC devlog — why we built a sovereign Cosmos SDK L1 instead of another contract on Ethereum.
 
 📖 Architecture doc: https://github.com/sumitkoul23/AI-Agentics-Bots/blob/main/genesis/docs/01-architecture.md
 💰 Tokenomics doc:  https://github.com/sumitkoul23/AI-Agentics-Bots/blob/main/genesis/docs/02-tokenomics.md
 🚀 DevOps playbook: https://github.com/sumitkoul23/AI-Agentics-Bots/blob/main/genesis/docs/03-devops.md
 📈 Growth strategy: https://github.com/sumitkoul23/AI-Agentics-Bots/blob/main/genesis/docs/04-growth-strategy.md
 
-🌐 Website: agentic.dev
-🐦 X: @agenticchain
+🌐 Website: skymetric.dev
+🐦 X: @skymetric
 💬 Discord: discord.gg/agentic
 📦 GitHub: github.com/agentic-chain
 
@@ -204,4 +204,4 @@ The first AGENTIC devlog — why we built a sovereign Cosmos SDK L1 instead of a
 
 ## YouTube tags
 
-`cosmos sdk, ai agents, blockchain, layer 1, proof of stake, web3 ai, agentic chain, GEN token, devlog, build in public, open source blockchain`
+`cosmos sdk, ai agents, blockchain, layer 1, proof of stake, web3 ai, agentic chain, SKY token, devlog, build in public, open source blockchain`

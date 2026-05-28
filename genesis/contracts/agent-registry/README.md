@@ -1,6 +1,6 @@
 # agentic-registry — the CosmWasm agent registry
 
-The on-chain home for AI agents on AGENTIC. Successor to the
+The on-chain home for AI agents on SKYMETRIC. Successor to the
 `x/agentic` Cosmos SDK module from the sovereign-L1 attempt; same
 five message types, same settlement math, much shorter path to live.
 
@@ -75,8 +75,8 @@ stake escrowed in this contract is at risk to fraud-proof slashing.
 Reputation is soul-bound and accrues through settled tasks.
 
 **It isn't yet:**
-- Wired to a TokenFactory-native GEN denom (uses untrn on testnet
-  until GEN issues).
+- Wired to a TokenFactory-native SKY denom (uses untrn on testnet
+  until SKY issues).
 - Audited. Required before mainnet deployment.
 - Hooked up to the github-experts agent yet — that's the next
   integration commit (agent binary needs to subscribe to chain events

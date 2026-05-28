@@ -8,7 +8,7 @@ infrastructure* for the next.
 ```
   Tier 1            Tier 2              Tier 3              Tier 4
   ───────────────   ─────────────────   ─────────────────   ──────────────────
-  AGENTIC DEX       Cross-chain         CEX-frontend on     Licensed
+  SKYMETRIC DEX       Cross-chain         CEX-frontend on     Licensed
   (x/agenticdex     aggregator          DEX rails           CEX entity
    module)          (router contract)   (order-book UX)     (Binance-class)
   ───────────────   ─────────────────   ─────────────────   ──────────────────
@@ -27,7 +27,7 @@ $100M threshold is enforceable: see "Tier 4 launch trigger" below.
 
 ---
 
-## Tier 1 — AGENTIC DEX (`x/agenticdex` module)
+## Tier 1 — SKYMETRIC DEX (`x/agenticdex` module)
 
 **Status:** scaffold shipped in this PR — `genesis/chain/x/agenticdex/`.
 
@@ -39,7 +39,7 @@ we can study but not copy verbatim.
 **Why we need it before listing anywhere else:** a chain with no native
 liquidity is a chain no aggregator will route through. The first pool must
 exist before we open IBC to Osmosis or apply to MEXC. Genesis bootstrap
-pool: `GEN / USDC.axl` (Axelar-bridged USDC) seeded from the 5 % liquidity
+pool: `SKY / USDC.axl` (Axelar-bridged USDC) seeded from the 5 % liquidity
 bootstrap bucket in `02-tokenomics.md`.
 
 **Fee structure (proposed defaults, gov-changeable):**
@@ -81,7 +81,7 @@ follow-up.
 **What it is:** a frontend (and a thin Cosmos-side router contract) that
 takes a single user order and:
 
-1. Quotes routes across AGENTIC DEX, Osmosis, Astroport (Neutron), and
+1. Quotes routes across SKYMETRIC DEX, Osmosis, Astroport (Neutron), and
    Skip Protocol's relayer mesh.
 2. Bundles the swap + the necessary IBC packets into one atomic intent.
 3. Settles on the user's source chain.
@@ -92,9 +92,9 @@ takes a single user order and:
 - Frontend: a Next.js app deployed to Cloudflare Pages free tier.
 - Custody: **none.** Every swap is a user-signed tx on each leg.
 
-**Why this matters strategically:** the aggregator is how AGENTIC stops
+**Why this matters strategically:** the aggregator is how SKYMETRIC stops
 being just one of N Cosmos app-chains and becomes the *default entry
-point* for any swap whose endpoint is a GEN-paired pool. Daily volume from
+point* for any swap whose endpoint is a SKY-paired pool. Daily volume from
 the aggregator is what makes the next listing application credible.
 
 **Roadmap to ship Tier 2:**
@@ -119,7 +119,7 @@ non-custodial DEX liquidity. Patterns to follow: Vertex Protocol, Hyperliquid
 
 **Surface:**
 - Spot order book (off-chain order book, on-chain settlement).
-- Perpetuals — funded by a perps module (Tier 3.5, future) that uses GEN as
+- Perpetuals — funded by a perps module (Tier 3.5, future) that uses SKY as
   margin currency.
 - Margin / lending — a lending module that lets LPs borrow against their
   LP shares.
@@ -177,14 +177,14 @@ become a strategic moat.
 ```cosmos
 // genesis/chain/x/agenticdex (paraphrased — full code lands at gate time)
 //
-// CEXLaunchPermitted returns true iff aggregate AGENTIC DEX liquidity
+// CEXLaunchPermitted returns true iff aggregate SKYMETRIC DEX liquidity
 // has been >= $100M (in USDC-equivalent at TWAP) for at least 30
 // consecutive days, ratified by a successful gov proposal of type
 // MsgEnableCEXLaunch.
 ```
 
 The on-chain ratchet means no maintainer can unilaterally launch a CEX
-under the AGENTIC brand. Governance + measurable on-chain TVL gate the
+under the SKYMETRIC brand. Governance + measurable on-chain TVL gate the
 trigger. This is the strongest signal-of-intent we can give the community:
 the CEX literally cannot launch until the network has earned it.
 

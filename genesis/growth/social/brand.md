@@ -1,11 +1,11 @@
-# AGENTIC brand system
+# SKYMETRIC brand system
 
 ## Colors
 
 | Role | Hex | Use |
 |---|---|---|
-| **Primary — Agentic Black** | `#0A0E1A` | Backgrounds, dark UI, dominant brand surface |
-| **Accent — GEN Electric** | `#7DF9FF` | Primary CTAs, links, the highlight color in every graphic |
+| **Primary — Skymetric Black** | `#0A0E1A` | Backgrounds, dark UI, dominant brand surface |
+| **Accent — SKY Electric** | `#7DF9FF` | Primary CTAs, links, the highlight color in every graphic |
 | **Secondary — Validator Violet** | `#A78BFA` | Validators, governance, "trust" surfaces |
 | **Stake Green** | `#22C55E` | Positive on-chain actions: stake, settle, mint |
 | **Slash Red** | `#EF4444` | Negative on-chain actions: burn, slash, jail |
@@ -43,8 +43,8 @@ Three rules:
 
 | ❌ Don't | ✅ Do |
 |---|---|
-| "AGENTIC is the future of AI 🚀🚀🚀" | "AGENTIC settles AI-agent work on-chain. Code is in the repo." |
-| "WAGMI 💎🙌 $GEN MOONING SOON 🌕" | "$GEN year-1 emission is ~70M. Burn rate at break-even is ~800k tasks/yr." |
+| "SKYMETRIC is the future of AI 🚀🚀🚀" | "SKYMETRIC settles AI-agent work on-chain. Code is in the repo." |
+| "WAGMI 💎🙌 $SKY MOONING SOON 🌕" | "$SKY year-1 emission is ~70M. Burn rate at break-even is ~800k tasks/yr." |
 | "Our incredible team is so excited to announce" | "We shipped the x/agentic keeper today. Diff is in PR #7." |
 | "Don't miss the airdrop!!!" | "Airdrop snapshot is 2025-08-01. Eligibility is computable from public on-chain data." |
 
@@ -58,7 +58,7 @@ Construction:
 ```
    ◯ ─── ◯
     \   /
-     ◉      ← the "agent" node (filled, GEN Electric)
+     ◉      ← the "agent" node (filled, SKY Electric)
     /   \
    ◯ ─── ◯
 ```
@@ -66,15 +66,15 @@ Construction:
 Allowed variants:
 - **Mono-light** — for dark backgrounds (default)
 - **Mono-dark** — for light backgrounds
-- **Wordmark** — `AGENTIC` set in Space Grotesk Bold + the mark, locked-up to the left
-- **Coin glyph** — just the central filled node, used as the `GEN` token icon
+- **Wordmark** — `SKYMETRIC` set in Space Grotesk Bold + the mark, locked-up to the left
+- **Coin glyph** — just the central filled node, used as the `SKY` token icon
 
 Do not skew, recolor outside the palette, place on busy photographs, or add
 drop shadows.
 
 ## Banner / cover image direction
 
-Every banner shares the same composition: a dark gradient background (Agentic
+Every banner shares the same composition: a dark gradient background (Skymetric
 Black → Validator Violet at 30% opacity), the wordmark left-aligned at 1/3
 horizontal, and one line of tagline (always from `bios.md`) in Ash.
 
@@ -93,5 +93,5 @@ Specific assignments:
 - `flame` — burn
 - `shield-check` — validator
 - `bot` — agent
-- `coin` — GEN
+- `coin` — SKY
 - `gavel` — governance / slashing

@@ -32,7 +32,7 @@ export function Tasks({ address, restUrl }: AgentViewProps) {
                 <Status task={t} self={address!} />
               </div>
               <div className="mt-1 text-xs text-ash font-mono">
-                bounty {fmtGen(t.bounty_ugen)} GEN
+                bounty {fmtGen(t.bounty_ugen)} SKY
                 {t.response_cid && (
                   <>
                     {" · "}cid <span className="truncate">{t.response_cid.slice(0, 14)}…</span>

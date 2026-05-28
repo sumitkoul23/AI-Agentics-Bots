@@ -9,35 +9,35 @@ import (
 
 const (
 	// AppName is the SDK app name used in version strings and home-dir defaults.
-	AppName = "agenticd"
+	AppName = "skymetricd"
 
-	// HumanCoinUnit is the user-facing denom (`GEN`).
-	HumanCoinUnit = "GEN"
+	// HumanCoinUnit is the user-facing denom (`SKY`).
+	HumanCoinUnit = "SKY"
 
-	// BaseCoinUnit is the on-chain base denom (`ugen` — micro-GEN).
-	BaseCoinUnit = "ugen"
+	// BaseCoinUnit is the on-chain base denom (`usky` — micro-SKY).
+	BaseCoinUnit = "usky"
 
-	// GenExponent is the conversion 1 GEN = 10^GenExponent ugen.
-	GenExponent = 6
+	// SkyExponent is the conversion 1 SKY = 10^SkyExponent usky.
+	SkyExponent = 6
 
 	// Bech32MainPrefix prefixes every account / validator / consensus address.
-	// Example: agentic1xyz..., agenticvaloper1xyz..., agenticvalcons1xyz...
-	Bech32MainPrefix = "agentic"
+	// Example: sky1xyz..., skyvaloper1xyz..., skyvalcons1xyz...
+	Bech32MainPrefix = "sky"
 
 	// ChainID is the genesis chain identifier for the public network.
-	ChainID = "agentic-1"
+	ChainID = "skymetric-1"
 )
 
-// DefaultNodeHome is the default home directory for `agenticd`.
+// DefaultNodeHome is the default home directory for `skymetricd`.
 var DefaultNodeHome = func() string {
 	userHome, err := os.UserHomeDir()
 	if err != nil {
-		return ".agenticd"
+		return ".skymetricd"
 	}
 	return filepath.Join(userHome, "."+AppName)
 }()
 
-// SetAddressPrefixes wires the agentic-specific bech32 prefixes into the SDK
+// SetAddressPrefixes wires the Skymetric-specific bech32 prefixes into the SDK
 // global config. Called once at process start before any address is parsed.
 func SetAddressPrefixes() {
 	cfg := sdk.GetConfig()

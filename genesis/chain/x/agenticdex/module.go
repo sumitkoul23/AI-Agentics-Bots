@@ -1,4 +1,4 @@
-// Package agenticdex wires `x/agenticdex` into the AGENTIC app via the
+// Package agenticdex wires `x/agenticdex` into the SKYMETRIC app via the
 // standard Cosmos SDK AppModule interfaces.
 package agenticdex
 

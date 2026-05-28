@@ -12,7 +12,7 @@
 | 3 | `16d1de3` | Creatives + video scripts + landing page + x/agentic Msg handlers |
 | 4 | `b04c3ac` | x/agenticdex (constant-product AMM) + 4-tier exchange strategy |
 | 5 | `c0bee85` | x/agenticperps + x/agenticrouter + DEX frontend + CI/CD + financial instruments doc |
-| 6 | `45d4d81` | Agentic Wallet — strategy + MV3 extension scaffold + agent-economy views + Keplr fork plan |
+| 6 | `45d4d81` | Skymetric Wallet — strategy + MV3 extension scaffold + agent-economy views + Keplr fork plan |
 | 7 | *this batch* | Integration: app.go wires all 4 modules; refreshed README + STATUS |
 
 ## Component status matrix
@@ -24,7 +24,7 @@
 | `x/agenticperps` | scaffold + handlers | needs proto-gen | ⚠️ none yet | — | mainnet +90d |
 | `x/agenticrouter` | scaffold (native-AMM only) | needs proto-gen | ⚠️ none yet | — | mainnet +60d |
 | `app/app.go` wiring | ✅ all 4 modules registered | needs proto-gen + module instances | — | — | — |
-| `cmd/agenticd` | ✅ root cmd + entry point | needs proto-gen | — | — | — |
+| `cmd/skymetricd` | ✅ root cmd + entry point | needs proto-gen | — | — | — |
 | Landing page (`site/`) | ✅ ready | ✅ static HTML | — | — | now |
 | DEX frontend (`frontend/dex/`) | ✅ UI scaffold | ✅ `next build` | — | — | mainnet |
 | Wallet extension scaffold | ✅ MV3 loads + popup renders | ✅ | — | — | v0 demo |
@@ -79,7 +79,7 @@ In order, smallest to largest:
 
 ### Non-blocking maintainer queue
 
-1. Decide whether to register `agentic.dev` (the one paid step in the
+1. Decide whether to register `skymetric.dev` (the one paid step in the
    playbook).
 2. Claim social handles from `growth/social/signup-checklist.md`
    (~30 minutes of your clicking).

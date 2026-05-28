@@ -1,4 +1,4 @@
-# AGENTIC creative assets
+# SKYMETRIC creative assets
 
 SVG masters. Edit the `<text>` nodes for copy variations; the brand system
 (colors, type, mark) stays identical.
@@ -8,7 +8,7 @@ SVG masters. Edit the `<text>` nodes for copy variations; the brand system
 | [`banner-x.svg`](banner-x.svg) | 1500 × 500 | X / Twitter header, Farcaster cover |
 | [`banner-linkedin.svg`](banner-linkedin.svg) | 1128 × 191 | LinkedIn company-page cover |
 | [`banner-youtube.svg`](banner-youtube.svg) | 2560 × 1440 | YouTube channel art |
-| [`og-image.svg`](og-image.svg) | 1200 × 630 | Open Graph + Twitter card for `agentic.dev` link previews |
+| [`og-image.svg`](og-image.svg) | 1200 × 630 | Open Graph + Twitter card for `skymetric.dev` link previews |
 | [`tweet-graphic.svg`](tweet-graphic.svg) | 1200 × 675 | Attachment for non-thread tweets |
 | [`post-square.svg`](post-square.svg) | 1080 × 1080 | IG / TikTok / Farcaster carousel covers; **template — edit the three text zones** |
 

@@ -31,7 +31,7 @@ export function Registry({ address, restUrl }: AgentViewProps) {
       {address && data && data.length === 0 && (
         <Empty>
           No agents under this address. Register your first with{" "}
-          <code className="font-mono">agenticd tx agentic register-agent</code>{" "}
+          <code className="font-mono">skymetricd tx agentic register-agent</code>{" "}
           or from the DEX.
         </Empty>
       )}
@@ -46,7 +46,7 @@ export function Registry({ address, restUrl }: AgentViewProps) {
               <div className="min-w-0">
                 <div className="truncate">{a.moniker}</div>
                 <div className="text-xs text-ash font-mono mt-1">
-                  stake {fmtGen(a.stake_ugen)} GEN · rep {a.reputation}
+                  stake {fmtGen(a.stake_ugen)} SKY · rep {a.reputation}
                 </div>
               </div>
               <span

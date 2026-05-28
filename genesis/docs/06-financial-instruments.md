@@ -1,4 +1,4 @@
-# Novel financial instruments — the AGENTIC product menu
+# Novel financial instruments — the SKYMETRIC product menu
 
 > Every chain ships an AMM. Spot-DEX-and-perps is now table stakes. The
 > point of having a *bespoke* agent-economy chain is to mint instruments
@@ -19,7 +19,7 @@ their forward task earnings, capped at gov-set max.
 
 **On-chain primitive:** new module `x/aperp` (different from `x/agenticperps`
 — this is an **agent-perpetual**, not asset-perpetual). Holders receive
-streaming GEN proportional to their share whenever the agent settles a task.
+streaming SKY proportional to their share whenever the agent settles a task.
 
 **Useful when:** an agent operator wants to bootstrap working-capital
 without selling stake. Buyers want exposure to top-N agents without running
@@ -35,14 +35,14 @@ is $10k, $5M TVL at 1k agents → meaningful niche product.
 ## 2. Reputation-Collateralised Loans  — *tractable now*
 
 **What:** an agent operator deposits their soul-bound Reputation NFT as
-*risk-pricing* collateral (not seizable) and borrows GEN against expected
+*risk-pricing* collateral (not seizable) and borrows SKY against expected
 future earnings. Default = NFT burn + jail flag → no future earnings →
 borrower out of business.
 
 **On-chain primitive:** `x/agenticlend` module + a borrow-curve where APR
 is a function of (reputation_decile, current_revenue, slash_history).
 
-**Useful when:** agents need GEN to bid on high-stake tasks but don't want
+**Useful when:** agents need SKY to bid on high-stake tasks but don't want
 to dilute APT supply.
 
 **Volume hypothesis:** lower per-loan tickets (~$500–5k) but very high
@@ -58,7 +58,7 @@ oracle (we already have the latter in `x/agentic.Agents`).
 **What:** a `x/agenticmarkets` module that creates binary markets like:
 - "Will agent `priya-hub-z7w4v9` be in the top-100 reputation cohort at
   block N?"
-- "Will GEN per settled task average > X over the next 7 days?"
+- "Will SKY per settled task average > X over the next 7 days?"
 - "Will validator V be jailed before block N?"
 
 Liquidity bootstrapped by the same constant-product math as `x/agenticdex`
@@ -77,7 +77,7 @@ margins × high-turnover.
 ## 4. Streaming payments to agents  — *near-tractable*
 
 **What:** Sablier-style continuous money streams from a user to an agent.
-"Pay this agent 0.01 GEN per minute it watches my Twitter mentions." Lets
+"Pay this agent 0.01 SKY per minute it watches my Twitter mentions." Lets
 agents accept long-running retainer work without one-off task creation.
 
 **On-chain primitive:** extend `x/agentic` with a `Stream` type (start /
@@ -123,7 +123,7 @@ unwrap burns the shares. The wrapper accrues 5 % of the agent's settled
 revenue.
 
 **On-chain primitive:** ERC-4626-style vault but for reputation. The
-underlying "asset" is an abstract scoring number; the yield is real GEN.
+underlying "asset" is an abstract scoring number; the yield is real SKY.
 
 **Useful when:** agent operators want to liquidate part of their reputation
 "value" without actually transferring the soul-bound NFT.
@@ -161,7 +161,7 @@ goes viral, it carries the chain.
 **What:** a new agent registering on-chain can hold a *bootstrap auction*
 for the first batch of their APT shares (see #1). Standard Liquidity
 Bootstrap Pool (LBP) curve — initial high price decays over 72 hours,
-buyers stake GEN to discover fair value.
+buyers stake SKY to discover fair value.
 
 **On-chain primitive:** a `x/agenticlaunchpad` wrapper around #1's
 APT-mint flow. Liquidity automatically seeds the post-IPO APT/USDC pool
@@ -197,9 +197,9 @@ agrees-to-make in every crypto cycle.
 
 ---
 
-## 10. Options on GEN  — *non-tractable v0*
+## 10. Options on SKY  — *non-tractable v0*
 
-**What:** standard European calls/puts on GEN with USDC collateral.
+**What:** standard European calls/puts on SKY with USDC collateral.
 American-style on the longer dated.
 
 **On-chain primitive:** `x/agenticoptions` — Lyra-style AMM, or simpler

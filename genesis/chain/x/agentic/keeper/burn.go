@@ -10,7 +10,7 @@ import (
 	"github.com/sumitkoul23/agentic-chain/x/agentic/types"
 )
 
-// BurnFromEscrow permanently removes `amount` ugen from circulation, sourced
+// BurnFromEscrow permanently removes `amount` usky from circulation, sourced
 // from the module account. Called by `SettleTask` (deflationary 20 % cut)
 // and by `SlashAgent` (full stake burn on proven fraud).
 //

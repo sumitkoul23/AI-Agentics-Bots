@@ -1,4 +1,4 @@
-# Agents catalog — specifications for the bots we want to see on AGENTIC
+# Agents catalog — specifications for the bots we want to see on SKYMETRIC
 
 > Each entry below is a *specification* for an on-chain agent: what it does,
 > what it stakes, what bounties it accepts, what fraud-proof rules apply.

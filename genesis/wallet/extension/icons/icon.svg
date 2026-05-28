@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Master icon — export to icon-16.png, icon-48.png, icon-128.png for
      manifest.json. Same construction as genesis/growth/social/logo.svg. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Agentic Wallet">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Skymetric Wallet">
   <rect width="256" height="256" rx="56" fill="#0A0E1A"/>
   <g stroke="#7DF9FF" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.85">
     <line x1="128" y1="128" x2="56" y2="56"/>

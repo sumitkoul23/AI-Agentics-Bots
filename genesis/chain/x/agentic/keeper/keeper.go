@@ -17,7 +17,7 @@ import (
 	"github.com/sumitkoul23/agentic-chain/types/jsonvalue"
 )
 
-// Keeper is the AGENTIC module's state owner.
+// Keeper is the SKYMETRIC module's state owner.
 type Keeper struct {
 	cdc          codec.BinaryCodec
 	storeService storetypes.KVStoreService

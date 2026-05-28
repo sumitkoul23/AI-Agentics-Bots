@@ -54,7 +54,7 @@ strategic round with crypto-native funds — *not* generalist VCs).
 - [ ] Liquidity provisioning programs targeting market-makers (Wintermute,
       GSR, Amber, B2C2)
 - [ ] First fiat on-ramp (EUR via SEPA through banking partner)
-- [ ] Native GEN/USDC orderbook with > $5M daily volume target
+- [ ] Native SKY/USDC orderbook with > $5M daily volume target
 - [ ] Listing program for vetted Cosmos-ecosystem tokens
 - [ ] Insurance fund seeded with 1 % of treasury (returned via protocol-fee
       diversion until fund reaches 5 % of platform AUM)
@@ -92,5 +92,5 @@ strategic round with crypto-native funds — *not* generalist VCs).
 4. **No proprietary trading against users.** Operating entity does not
    take market positions on the venue, ever. This single rule precludes
    95 % of the catastrophes of the last cycle.
-5. **No exchange token besides $GEN.** And $GEN's economics are entirely
+5. **No exchange token besides $SKY.** And $SKY's economics are entirely
    on-chain, governed by the chain — the CEX cannot mint or favour it.

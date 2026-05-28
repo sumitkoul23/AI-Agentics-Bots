@@ -6,7 +6,7 @@ Devlog format. Every video has the same skeleton:
 2. **Context (30s)** — what we're building and why this video.
 3. **Body (3–8 min)** — the actual work, mostly screen recording.
 4. **Recap (15s)** — one sentence + the next-video CTA.
-5. **End card** — `agentic.dev` + `@agenticchain` + Discord invite.
+5. **End card** — `skymetric.dev` + `@skymetric` + Discord invite.
 
 Every video gets a 60-second vertical "short" cut for YouTube Shorts,
 TikTok, IG Reels. The short uses the cold open + the most concrete 40s of

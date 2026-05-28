@@ -16,11 +16,11 @@ import (
 // `InitGenesis`.
 type GenesisState map[string]json.RawMessage
 
-// NewDefaultGenesisState builds the AGENTIC chain's default genesis state and
+// NewDefaultGenesisState builds the Skymetric chain's default genesis state and
 // overlays the tokenomics constants from `docs/02-tokenomics.md`.
 //
-//   - 1,000,000,000 GEN total supply at genesis
-//   - bond denom = "ugen"
+//   - 1,000,000,000 SKY total supply at genesis
+//   - bond denom = "usky"
 //   - mint inflation min 1 %, max 7 %, goal-bonded 67 %
 func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
 	gen := ModuleBasics.DefaultGenesis(cdc)
@@ -58,20 +58,20 @@ func overrideBankMetadata(cdc codec.JSONCodec, raw json.RawMessage) json.RawMess
 	var b banktypes.GenesisState
 	cdc.MustUnmarshalJSON(raw, &b)
 	b.DenomMetadata = append(b.DenomMetadata, banktypes.Metadata{
-		Description: "The native staking + settlement coin of the AGENTIC chain.",
+		Description: "The native staking + settlement coin of the Skymetric chain.",
 		Base:        BaseCoinUnit,
 		Display:     HumanCoinUnit,
-		Name:        "Agentic",
+		Name:        "Skymetric",
 		Symbol:      HumanCoinUnit,
 		DenomUnits: []*banktypes.DenomUnit{
 			{Denom: BaseCoinUnit, Exponent: 0, Aliases: []string{"micro-gen"}},
-			{Denom: HumanCoinUnit, Exponent: GenExponent},
+			{Denom: HumanCoinUnit, Exponent: SkyExponent},
 		},
 	})
 	return cdc.MustMarshalJSON(&b)
 }
 
-// GenesisSupply returns the canonical 1B GEN total-supply Coin used by the
+// GenesisSupply returns the canonical 1B SKY total-supply Coin used by the
 // initial-balances pre-seeding in the genesis JSON.
 func GenesisSupply() sdk.Coin {
 	return sdk.NewCoin(BaseCoinUnit, math.NewInt(1_000_000_000).MulRaw(1_000_000))

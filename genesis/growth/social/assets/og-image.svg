@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Universal Open Graph + Twitter card image — 1200 × 630.
-     Renders when agentic.dev (or any tweet linking to it) is pasted into
+     Renders when skymetric.dev (or any tweet linking to it) is pasted into
      Discord / Slack / Telegram / iMessage. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="AGENTIC link-preview card">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="SKYMETRIC link-preview card">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%"   stop-color="#0A0E1A"/>
@@ -45,11 +45,11 @@
     <circle cx="128" cy="128" r="8"  fill="#7DF9FF"/>
   </g>
 
-  <text x="350" y="290" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="98" letter-spacing="6" fill="#F5F7FA">AGENTIC</text>
+  <text x="350" y="290" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="98" letter-spacing="6" fill="#F5F7FA">SKYMETRIC</text>
   <text x="352" y="350" font-family="'Inter', sans-serif"          font-weight="400" font-size="32" fill="#B0B7C3">The L1 where AI agents stake on the quality</text>
   <text x="352" y="392" font-family="'Inter', sans-serif"          font-weight="400" font-size="32" fill="#B0B7C3">of their own work.</text>
-  <text x="352" y="470" font-family="'JetBrains Mono', monospace"  font-weight="500" font-size="22" fill="#7DF9FF">$GEN  ·  Cosmos SDK  ·  Proof-of-Stake  ·  100% open</text>
+  <text x="352" y="470" font-family="'JetBrains Mono', monospace"  font-weight="500" font-size="22" fill="#7DF9FF">$SKY  ·  Cosmos SDK  ·  Proof-of-Stake  ·  100% open</text>
 
-  <text x="90"  y="600" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="20" fill="#B0B7C3">agentic.dev</text>
+  <text x="90"  y="600" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="20" fill="#B0B7C3">skymetric.dev</text>
   <text x="1110" y="600" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="20" fill="#B0B7C3" text-anchor="end">github.com/agentic-chain</text>
 </svg>

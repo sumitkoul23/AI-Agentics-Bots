@@ -1,4 +1,4 @@
-# Wallet strategy — Agentic Wallet
+# Wallet strategy — Skymetric Wallet
 
 > What we use today, what we ship next, and why "build a multi-chain wallet"
 > is the wrong way to frame the work.
@@ -33,8 +33,8 @@ Three reasons, in priority order:
    *task queue*, *reputation*, *streaming-payment status*, *open
    perp positions*. None of those are first-class in Keplr; they all
    live three menus deep behind a `cosmos.tx` viewer if at all.
-3. **Brand consolidation.** "Connect to Agentic" reads as a single
-   experience; "Connect to AGENTIC chain in Keplr" reads as a
+3. **Brand consolidation.** "Connect to Skymetric" reads as a single
+   experience; "Connect to Skymetric chain in Keplr" reads as a
    third-party hop. Long-tail conversion difference is measurable.
 
 ## Why we fork Keplr instead of building from scratch
@@ -64,7 +64,7 @@ Forking Keplr gets us:
 - The hard work of WalletConnect compatibility — done.
 
 What we bring on top of that:
-- AGENTIC chain pre-registered + hardcoded as the default network.
+- Skymetric chain pre-registered + hardcoded as the default network.
 - The agent-economy view layer (see `genesis/wallet/agent-views/`).
 - Our branding, brand voice, and onboarding copy.
 
@@ -77,14 +77,14 @@ v0     this PR             • Strategy doc (this file)
                            • Browser-extension MV3 scaffold (genesis/wallet/extension/)
                            • Agent-economy view components (genesis/wallet/agent-views/)
                            • Keplr fork plan (genesis/wallet/keplr-fork/README.md)
-v0.5   testnet +14d        • Submit AGENTIC to cosmos/chain-registry
+v0.5   testnet +14d        • Submit SKYMETRIC to cosmos/chain-registry
                              (Keplr / Leap / Cosmostation auto-detect us)
-v1     mainnet +90d        • Public Agentic Wallet — Keplr fork, rebranded,
+v1     mainnet +90d        • Public Skymetric Wallet — Keplr fork, rebranded,
                              agent views shipped, Chrome Web Store listing
                            • Mandatory: one external audit
 v2     mainnet +180d       • PWA mobile companion + WalletConnect bridge
 v3     year +1             • Native iOS / Android via React Native
-v4     year +2             • Hardware wallet adapter (Ledger app for AGENTIC)
+v4     year +2             • Hardware wallet adapter (Ledger app for SKYMETRIC)
 ```
 
 ## What we do NOT do

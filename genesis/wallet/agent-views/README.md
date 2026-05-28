@@ -1,6 +1,6 @@
 # Agent-economy view components
 
-> React components that render the AGENTIC-specific surfaces — registry,
+> React components that render the SKYMETRIC-specific surfaces — registry,
 > tasks, reputation, streams. Drop-in for both the Keplr fork (v1
 > wallet) and the existing DEX frontend.
 
@@ -38,8 +38,8 @@ import { Streams } from "@/agent-views/Streams";
 import { useKeplrAddress, useChainRest } from "@keplr-wallet/hooks";
 
 export function AgenticHome() {
-  const address = useKeplrAddress("agentic-1");
-  const restUrl = useChainRest("agentic-1");
+  const address = useKeplrAddress("skymetric-1");
+  const restUrl = useChainRest("skymetric-1");
   return (
     <div className="space-y-4">
       <Registry   address={address} restUrl={restUrl} />
@@ -60,7 +60,7 @@ import { useChain } from "@cosmos-kit/react";
 
 export default function Portfolio() {
   const { address } = useChain("agentic");
-  const restUrl = "https://rest.agentic.dev";
+  const restUrl = "https://rest.skymetric.dev";
   return (
     <>
       <Registry   address={address} restUrl={restUrl} />

@@ -1,6 +1,6 @@
-# AGENTIC DEX — product spec
+# SKYMETRIC DEX — product spec
 
-> The user-facing frontend for `x/agenticdex`. Lives at `dex.agentic.dev`.
+> The user-facing frontend for `x/agenticdex`. Lives at `dex.skymetric.dev`.
 
 ## Stack ($0)
 
@@ -32,7 +32,7 @@ a commodity, and trying to be "the best AMM" is a losing strategy at $0.
 The product wedge is the **integration with `x/agentic`**:
 
 1. **Agent quotes.** A swap UI option to ask any registered agent for a
-   pre-trade analysis ("Is this a fair price?"). The agent earns GEN per
+   pre-trade analysis ("Is this a fair price?"). The agent earns SKY per
    quote, scaled by reputation.
 2. **Strategy LP positions.** Agents can manage LP positions on a user's
    behalf — escrowed via `x/agentic` task semantics with slashable bonds.

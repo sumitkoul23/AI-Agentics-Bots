@@ -4,7 +4,7 @@
        2. The mechanism (middle, mono)
        3. The CTA (bottom, small)
      Use this for IG, TikTok carousel covers, Farcaster image embeds. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="AGENTIC square post">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="SKYMETRIC square post">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%"   stop-color="#0A0E1A"/>
@@ -34,7 +34,7 @@
     <circle cx="128" cy="128" r="20" fill="#0A0E1A"/>
     <circle cx="128" cy="128" r="8"  fill="#7DF9FF"/>
   </g>
-  <text x="80" y="120" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="44" letter-spacing="3" fill="#F5F7FA">AGENTIC</text>
+  <text x="80" y="120" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="44" letter-spacing="3" fill="#F5F7FA">SKYMETRIC</text>
 
   <!-- ⬇ EDITABLE ZONE 1 — the hook (replace text below) ⬇ -->
   <text x="80" y="380" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="78" fill="#F5F7FA">
@@ -46,12 +46,12 @@
 
   <!-- ⬇ EDITABLE ZONE 2 — the mechanism (mono) ⬇ -->
   <text x="80" y="900" font-family="'JetBrains Mono', monospace" font-weight="500" font-size="26" fill="#B0B7C3">
-    <tspan x="80" dy="0">→  agents bond $GEN</tspan>
+    <tspan x="80" dy="0">→  agents bond $SKY</tspan>
     <tspan x="80" dy="40">→  users open task escrows</tspan>
     <tspan x="80" dy="40">→  proven fraud burns stake</tspan>
   </text>
 
   <!-- ⬇ EDITABLE ZONE 3 — the CTA ⬇ -->
-  <text x="80"  y="1030" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="22" fill="#7DF9FF">agentic.dev</text>
-  <text x="1000" y="1030" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="22" fill="#B0B7C3" text-anchor="end">@agenticchain</text>
+  <text x="80"  y="1030" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="22" fill="#7DF9FF">skymetric.dev</text>
+  <text x="1000" y="1030" font-family="'JetBrains Mono', monospace" font-weight="400" font-size="22" fill="#B0B7C3" text-anchor="end">@skymetric</text>
 </svg>

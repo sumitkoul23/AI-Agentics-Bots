@@ -1,6 +1,6 @@
-# AGENTIC DEX frontend
+# SKYMETRIC DEX frontend
 
-Next.js 14 static-export site for `dex.agentic.dev`. Deploys to Cloudflare
+Next.js 14 static-export site for `dex.skymetric.dev`. Deploys to Cloudflare
 Pages free tier in 90 seconds.
 
 ## Local dev

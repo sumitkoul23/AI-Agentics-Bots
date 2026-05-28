@@ -47,6 +47,6 @@ export async function swap(signer: OfflineSigner, args: SwapArgs) {
     accounts[0].address,
     [encodeSwap(args)],
     "auto",
-    "AGENTIC DEX swap"
+    "SKYMETRIC DEX swap"
   );
 }

@@ -20,12 +20,12 @@ the easiest to detect as Sybil farming.
 Output of this phase: the testnet faucet sees its first 100 wallets *before*
 the airdrop announcement, all organically interested.
 
-## 2. Testnet (`agentic-test-1`): the developer flywheel
+## 2. Testnet (`skymetric-test-1`): the developer flywheel
 
 ### 2.1 Faucet quest
 
 The testnet faucet doesn't dispense free tokens — it dispenses *quests*. To
-earn 1,000 test-GEN a developer must:
+earn 1,000 test-SKY a developer must:
 
 1. Register an agent with `MsgRegisterAgent`.
 2. Receive a task from the on-chain "Genesis Bot" (a public agent run by the
@@ -49,7 +49,7 @@ incentive.
 
 Apply (free) to be a track sponsor at:
 - [ETHGlobal](https://ethglobal.com/) — Cosmos × AI cross-track, prizes paid
-  in GEN from the bootstrap bucket, not USD.
+  in SKY from the bootstrap bucket, not USD.
 - [Cosmoverse](https://cosmoverse.org/) hackathon — natural fit, the Cosmos
   Foundation actively wants new app-chains to showcase.
 - [Encode Club](https://www.encode.club/) AI hack — 100% online, free
@@ -68,7 +68,7 @@ Cost: maintainer time judging.
 
 When the airdrop snapshot Merkle root publishes, **the eligibility checker is
 the landing page** — every wallet that pastes its address sees a personalised
-"you are eligible for X GEN" message and a "share your eligibility" button.
+"you are eligible for X SKY" message and a "share your eligibility" button.
 The viral coefficient on these eligibility checkers is empirically > 1.0
 across every chain that's tried it (Optimism, Arbitrum, Celestia, etc.).
 
@@ -79,8 +79,8 @@ Total cost: a single static HTML file on Cloudflare Pages.
 | Loop | Mechanic |
 |---|---|
 | **Reputation NFT envy** | Top-100 reputation agents are auto-tweeted by an on-chain bot every Monday. Public leaderboard → competition for inclusion. |
-| **Burn ticker** | Every fee-burn block emits an event; a Cloudflare Worker tweets the running total when it crosses each million-GEN milestone. Free "number go down" content. |
-| **Cross-chain agent migration** | When IBC opens to Osmosis/Neutron, existing agents on those chains can register on AGENTIC and inherit their reputation via IBC packets. Pulls users from neighbouring ecosystems. |
+| **Burn ticker** | Every fee-burn block emits an event; a Cloudflare Worker tweets the running total when it crosses each million-SKY milestone. Free "number go down" content. |
+| **Cross-chain agent migration** | When IBC opens to Osmosis/Neutron, existing agents on those chains can register on SKYMETRIC and inherit their reputation via IBC packets. Pulls users from neighbouring ecosystems. |
 | **Quadratic-funded grants** | Quarterly QF rounds (5% treasury) turn every grantee into a marketer of the chain they got funded on. |
 
 ## 5. KPIs (and the dashboard)
@@ -89,7 +89,7 @@ A free Grafana Cloud dashboard tracks the only five numbers that matter:
 
 1. Daily active addresses
 2. Tasks settled / day
-3. ugen burned / day
+3. usky burned / day
 4. Registered agents (cumulative)
 5. Validator count + bonded ratio
 
@@ -97,7 +97,7 @@ Targets:
 
 | Milestone | Time | DAA | Agents | Bonded |
 |---|---|---|---|---|
-| Testnet | week +4 | 1,000 | 50 | 1M test-GEN |
-| Mainnet day 1 | month +2 | 5,000 | 200 | 100M GEN |
-| Mainnet month 6 | month +8 | 25,000 | 1,500 | 500M GEN |
-| Mainnet year 1 | month +14 | 100,000 | 10,000 | 670M GEN (goal-bonded) |
+| Testnet | week +4 | 1,000 | 50 | 1M test-SKY |
+| Mainnet day 1 | month +2 | 5,000 | 200 | 100M SKY |
+| Mainnet month 6 | month +8 | 25,000 | 1,500 | 500M SKY |
+| Mainnet year 1 | month +14 | 100,000 | 10,000 | 670M SKY (goal-bonded) |

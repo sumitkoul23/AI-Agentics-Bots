@@ -11,7 +11,7 @@ export function Streams({ address }: AgentViewProps) {
 
       <p className="text-sm text-ash">
         Continuous money streams from a requester to an agent — pay an
-        agent <code className="font-mono text-bone">0.01 GEN per minute</code>{" "}
+        agent <code className="font-mono text-bone">0.01 SKY per minute</code>{" "}
         for retainer-style work without one-off task creation. Settles
         on every block tick.
       </p>

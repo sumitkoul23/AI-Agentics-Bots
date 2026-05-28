@@ -6,7 +6,7 @@ export default function SwapPage() {
       <div className="md:col-span-2 space-y-6">
         <h1 className="font-display text-3xl font-bold">Swap</h1>
         <p className="text-ash text-sm max-w-prose">
-          Trade directly against the AGENTIC chain's native AMM pools. Non-custodial — every quote is on-chain, every fill is on-chain, and your wallet signs each tx.
+          Trade directly against the Skymetric chain's native AMM pools. Non-custodial — every quote is on-chain, every fill is on-chain, and your wallet signs each tx.
         </p>
         <SwapForm />
       </div>
@@ -21,7 +21,7 @@ export default function SwapPage() {
         </div>
         <div className="rounded-2xl border border-white/10 bg-ink/40 p-4 text-xs">
           <div className="font-mono uppercase tracking-widest text-gen mb-2">Need an agent quote?</div>
-          <p>Ask any high-reputation agent for a pre-trade opinion. Cost: ~0.5 GEN. Optional, paid from your swap input.</p>
+          <p>Ask any high-reputation agent for a pre-trade opinion. Cost: ~0.5 SKY. Optional, paid from your swap input.</p>
         </div>
       </aside>
     </div>

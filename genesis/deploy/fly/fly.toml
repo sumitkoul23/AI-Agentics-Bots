@@ -1,8 +1,8 @@
-# fly.toml — Fly.io app spec for an AGENTIC sentry / RPC node.
+# fly.toml — Fly.io app spec for an SKYMETRIC sentry / RPC node.
 #
 # Deploy:
 #   fly launch --no-deploy --copy-config --name agentic-val-2
-#   fly secrets set CHAIN_ID=agentic-test-1 MONIKER=val-2 SEED_NODE=...
+#   fly secrets set CHAIN_ID=skymetric-test-1 MONIKER=val-2 SEED_NODE=...
 #   fly volumes create agenticd_data --size 10 --region iad
 #   fly deploy
 
@@ -12,14 +12,14 @@ kill_signal = "SIGINT"
 kill_timeout = 30
 
 [build]
-  image = "ghcr.io/sumitkoul23/agenticd:latest"
+  image = "ghcr.io/sumitkoul23/skymetricd:latest"
 
 [env]
   HOME = "/home/agentic"
 
 [[mounts]]
   source = "agenticd_data"
-  destination = "/home/agentic/.agenticd"
+  destination = "/home/agentic/.skymetricd"
 
 [[services]]
   protocol = "tcp"

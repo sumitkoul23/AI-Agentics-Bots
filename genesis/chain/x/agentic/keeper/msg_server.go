@@ -239,7 +239,7 @@ func (s msgServer) SettleTask(ctx context.Context, msg *types.MsgSettleTask) (*t
 // Once the counter ≥ FraudProofQuorum, the agent's stake is burned, their
 // reputation resets to 0, and they are jailed.
 //
-// v0 simplification: any address that holds ≥ 1 GEN voting weight is treated
+// v0 simplification: any address that holds ≥ 1 SKY voting weight is treated
 // as an attestor. Production hardening replaces this with the actual
 // staking-module ValidatorAddress check.
 

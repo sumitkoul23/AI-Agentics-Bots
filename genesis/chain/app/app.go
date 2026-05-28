@@ -1,14 +1,14 @@
-// Package app wires together the modules that make up the AGENTIC chain.
+// Package app wires together the modules that make up the Skymetric chain.
 //
 // Module composition (post-integration batch):
 //
 //	── Standard Cosmos SDK ───────────────────────────────────────────
 //	auth · bank · staking · slashing · distribution · gov · mint · genutil
 //
-//	── Bespoke AGENTIC modules ───────────────────────────────────────
+//	── Bespoke SKYMETRIC modules ───────────────────────────────────────
 //	x/agentic        — agent registry, task escrow, fraud-proof slashing
 //	x/agenticdex     — constant-product AMM, the chain's native DEX
-//	x/agenticperps   — virtual-AMM perpetuals (vAMM), GEN-margined
+//	x/agenticperps   — virtual-AMM perpetuals (vAMM), SKY-margined
 //	x/agenticrouter  — atomic multi-hop swap aggregator (Skip-style)
 //
 // This file is intentionally a slim wiring layer; the heavy lifting lives in
@@ -101,7 +101,7 @@ type AgenticApp struct {
 	*runtime.App
 }
 
-// New constructs the AGENTIC application and registers every module.
+// New constructs the SKYMETRIC application and registers every module.
 func New(
 	logger log.Logger,
 	db dbm.DB,

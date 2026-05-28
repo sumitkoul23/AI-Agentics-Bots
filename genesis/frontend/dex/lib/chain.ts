@@ -4,32 +4,32 @@
 
 import type { Chain, AssetList } from "@chain-registry/types";
 
-export const AGENTIC_CHAIN_ID = "agentic-1";
-export const AGENTIC_TESTNET_CHAIN_ID = "agentic-test-1";
+export const AGENTIC_CHAIN_ID = "skymetric-1";
+export const AGENTIC_TESTNET_CHAIN_ID = "skymetric-test-1";
 
 export const agenticChain: Chain = {
   $schema: "../chain.schema.json",
   chain_name: "agentic",
   status: "live",
   network_type: "mainnet",
-  pretty_name: "AGENTIC",
+  pretty_name: "SKYMETRIC",
   chain_id: AGENTIC_CHAIN_ID,
   bech32_prefix: "agentic",
-  daemon_name: "agenticd",
-  node_home: "$HOME/.agenticd",
+  daemon_name: "skymetricd",
+  node_home: "$HOME/.skymetricd",
   slip44: 118,
   fees: {
     fee_tokens: [
-      { denom: "ugen", fixed_min_gas_price: 0.0001, low_gas_price: 0.0001, average_gas_price: 0.0005, high_gas_price: 0.001 },
+      { denom: "usky", fixed_min_gas_price: 0.0001, low_gas_price: 0.0001, average_gas_price: 0.0005, high_gas_price: 0.001 },
     ],
   },
-  staking: { staking_tokens: [{ denom: "ugen" }] },
+  staking: { staking_tokens: [{ denom: "usky" }] },
   apis: {
-    rpc: [{ address: "https://rpc.agentic.dev" }],
-    rest: [{ address: "https://rest.agentic.dev" }],
-    grpc: [{ address: "grpc.agentic.dev:443" }],
+    rpc: [{ address: "https://rpc.skymetric.dev" }],
+    rest: [{ address: "https://rest.skymetric.dev" }],
+    grpc: [{ address: "grpc.skymetric.dev:443" }],
   },
-  explorers: [{ kind: "ping-pub", url: "https://explorer.agentic.dev" }],
+  explorers: [{ kind: "ping-pub", url: "https://explorer.skymetric.dev" }],
 };
 
 export const agenticAssets: AssetList = {
@@ -37,21 +37,21 @@ export const agenticAssets: AssetList = {
   chain_name: "agentic",
   assets: [
     {
-      description: "Native settlement coin of the AGENTIC chain.",
+      description: "Native settlement coin of the Skymetric chain.",
       denom_units: [
-        { denom: "ugen", exponent: 0 },
-        { denom: "GEN", exponent: 6 },
+        { denom: "usky", exponent: 0 },
+        { denom: "SKY", exponent: 6 },
       ],
-      base: "ugen",
-      name: "Agentic",
-      display: "GEN",
-      symbol: "GEN",
+      base: "usky",
+      name: "Skymetric",
+      display: "SKY",
+      symbol: "SKY",
       coingecko_id: "agentic",
     },
   ],
 };
 
-// Convenience for the swap form: the default GEN/USDC.axl pool seeded on
+// Convenience for the swap form: the default SKY/USDC.axl pool seeded on
 // mainnet day 0 (see docs/02-tokenomics.md liquidity bootstrap).
 export const DEFAULT_POOL_ID = 1n;
 export const QUOTE_DENOM = "uusdc"; // placeholder until Axelar bridge denom finalised

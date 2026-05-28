@@ -2,7 +2,7 @@
 name = "agentic-registry"
 version = "0.1.0"
 edition = "2021"
-authors = ["AGENTIC contributors"]
+authors = ["SKYMETRIC contributors"]
 license = "Apache-2.0"
 description = "On-chain registry + task escrow + fraud-proof slashing for AI agents. The CosmWasm successor to genesis/chain/x/agentic/."
 

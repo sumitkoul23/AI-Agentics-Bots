@@ -2,8 +2,8 @@
 <!-- X / Twitter header — 1500 × 500.
      Safe-zone: bottom ~80px is overlapped by the avatar on desktop.
      Mobile crops aggressively top + bottom; keep critical content centered. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" role="img" aria-label="AGENTIC — the L1 for AI agents">
-  <title>AGENTIC banner</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" role="img" aria-label="SKYMETRIC — the L1 for AI agents">
+  <title>SKYMETRIC banner</title>
 
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -53,7 +53,7 @@
   </g>
 
   <!-- Wordmark + tagline -->
-  <text x="370" y="240" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" font-size="96" letter-spacing="6" fill="#F5F7FA">AGENTIC</text>
+  <text x="370" y="240" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" font-size="96" letter-spacing="6" fill="#F5F7FA">SKYMETRIC</text>
   <text x="372" y="300" font-family="'Inter', system-ui, sans-serif"          font-weight="400" font-size="28" fill="#B0B7C3">The L1 where AI agents stake on the quality of their own work.</text>
-  <text x="372" y="340" font-family="'JetBrains Mono', monospace"             font-weight="500" font-size="20" fill="#7DF9FF">$GEN  ·  Cosmos SDK  ·  Proof-of-Stake  ·  100% open</text>
+  <text x="372" y="340" font-family="'JetBrains Mono', monospace"             font-weight="500" font-size="20" fill="#7DF9FF">$SKY  ·  Cosmos SDK  ·  Proof-of-Stake  ·  100% open</text>
 </svg>

@@ -1,7 +1,7 @@
 # Honest launch timeline — what stands between this scaffold and mainnet
 
 > Plain language. No persona, no "Genesis System." Just the truth about
-> what it would take to launch AGENTIC as a real Cosmos SDK L1, written
+> what it would take to launch SKYMETRIC as a real Cosmos SDK L1, written
 > from the position of having shipped the scaffold in this repo.
 
 ## TL;DR
@@ -80,7 +80,7 @@ What's needed:
    that's a couple of hundred lines of boilerplate.
 4. **gRPC query server.** Every Query handler in every module. Today
    these are mentioned in `module.go` files but not implemented.
-5. **CLI commands.** `agenticd tx agentic register-agent` etc. — these
+5. **CLI commands.** `skymetricd tx agentic register-agent` etc. — these
    are referenced in the docs but the cobra command graph isn't built.
 6. **Integration tests.** A `simapp_test.go` per module that exercises
    the happy path end-to-end at the chain level. ~500 LOC per module.
@@ -203,7 +203,7 @@ chain) or Osmosis. Trade-offs:
 
 Honest take: **this is the right choice for ~80 % of projects** that
 start with "let's build a chain." It is worth seriously considering
-whether AGENTIC needs to be sovereign. Re-read
+whether SKYMETRIC needs to be sovereign. Re-read
 [`docs/01-architecture.md`](01-architecture.md) §1 and ask "is the
 slashable-stake-in-consensus argument actually load-bearing?" If the
 honest answer is "we'd be fine with smart-contract slashing," scenario
@@ -220,11 +220,11 @@ unblocks the next; don't skip ahead.
 2. [ ] `go mod tidy` succeeds.
 3. [ ] Hand-write `app/app.go::New(...)` keeper construction —
        reference Cosmos SDK's `simapp/app.go` line-by-line.
-4. [ ] `make build` produces a working `agenticd` binary.
+4. [ ] `make build` produces a working `skymetricd` binary.
 5. [ ] `./scripts/init-chain.sh` produces a valid `genesis.json`.
 6. [ ] `./scripts/start-node.sh` produces blocks.
 7. [ ] Wire each module's Msg server into the tx router.
-8. [ ] `agenticd tx agentic register-agent` successfully registers an
+8. [ ] `skymetricd tx agentic register-agent` successfully registers an
        agent in a local devnet.
 9. [ ] Repeat #8 for every Msg in every module — register, create,
        submit, settle, swap, open, liquidate, route.
@@ -257,7 +257,7 @@ It's not technical. It's this:
 If sovereign L1 — accept the 9–14 month timeline minimum (with capital)
 or 18–24 months (without). The reason is consensus-level slashing,
 which is genuinely load-bearing for the agent-staking primitive if
-we believe the slashable-bond argument is what makes AGENTIC defensible.
+we believe the slashable-bond argument is what makes SKYMETRIC defensible.
 
 If CosmWasm on Neutron — accept the loss of the "our own chain"
 narrative in exchange for 3–4 months to live product. The agent

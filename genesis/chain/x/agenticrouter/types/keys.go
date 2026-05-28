@@ -1,11 +1,11 @@
-// Package types backs `x/agenticrouter`, the on-chain leg of the AGENTIC
+// Package types backs `x/agenticrouter`, the on-chain leg of the SKYMETRIC
 // cross-chain aggregator (Tier 2 from genesis/docs/05-exchange-strategy.md).
 //
 // What lives on-chain vs off-chain:
 //
 //   - Route discovery & quoting → OFF-CHAIN. A Skip-Protocol-style API
 //     (https://api-docs.skip.money/) computes the best route across
-//     AGENTIC DEX, Osmosis, Astroport, etc. v0 calls the free Skip
+//     SKYMETRIC DEX, Osmosis, Astroport, etc. v0 calls the free Skip
 //     endpoint; v1 ships our own quoter that respects agent-quote
 //     priorities (see docs/06-financial-instruments.md §reputation
 //     -weighted routing).

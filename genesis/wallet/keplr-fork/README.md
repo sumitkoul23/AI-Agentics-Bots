@@ -1,8 +1,8 @@
-# Keplr → Agentic Wallet fork plan
+# Keplr → Skymetric Wallet fork plan
 
 > The v1 production wallet. Apache-2.0 fork of [Keplr Wallet](https://github.com/chainapsis/keplr-wallet).
 > Inherits Keplr's audited cryptography, keyring, hardware-wallet support,
-> Chrome-Web-Store-passing codebase. Adds: AGENTIC defaults + agent-economy
+> Chrome-Web-Store-passing codebase. Adds: SKYMETRIC defaults + agent-economy
 > view layer + our branding.
 
 ## Upstream reference
@@ -18,7 +18,7 @@
 
 - [ ] `git clone https://github.com/chainapsis/keplr-wallet keplr-fork`
 - [ ] Replace every occurrence of "Keplr" / "keplr" / "KEPLR" with
-      "Agentic" / "agentic" / "AGENTIC" in:
+      "Skymetric" / "agentic" / "SKYMETRIC" in:
       - `apps/extension/manifest.json` (`name`, `short_name`, `description`)
       - `apps/extension/src/i18n/**/*.json` (all locales)
       - `packages/extension/src/**/*.tsx` (component copy + JSX text)
@@ -34,17 +34,17 @@
 - [ ] Verify `pnpm build` produces a `dist/` that loads in Chrome
       developer mode
 
-### Week 2 — Hardcode AGENTIC defaults
+### Week 2 — Hardcode SKYMETRIC defaults
 
-- [ ] Move AGENTIC chain entry to first position in
+- [ ] Move Skymetric chain entry to first position in
       `packages/extension/src/chains/embed-chains.ts`
-- [ ] Set AGENTIC as the default chain on first-run onboarding
+- [ ] Set SKYMETRIC as the default chain on first-run onboarding
 - [ ] Pre-populate the chain-registry list with our preferred IBC
       neighbours (Cosmos Hub, Osmosis, Neutron) so users have something
       to send to from day one
 - [ ] Update the default RPC/REST endpoints to our infra
-      (`rpc.agentic.dev`, `rest.agentic.dev`)
-- [ ] Add the GEN logo to `packages/extension/src/icons/chains/`
+      (`rpc.skymetric.dev`, `rest.skymetric.dev`)
+- [ ] Add the SKY logo to `packages/extension/src/icons/chains/`
 
 ### Week 3 — Inject agent-economy views
 
@@ -55,7 +55,7 @@ existing tab structure:
 - [ ] New tab: "Tasks" (`agent-views/Tasks.tsx`)
 - [ ] New tab: "Reputation" (`agent-views/Reputation.tsx`)
 - [ ] New tab: "Streams" (`agent-views/Streams.tsx`)
-- [ ] Wire each tab to the AGENTIC REST endpoints
+- [ ] Wire each tab to the SKYMETRIC REST endpoints
       (`/agentic.v1.Query/Agents`, `/agentic.v1.Query/Tasks`, etc.)
 
 ### Week 4 — Onboarding rewrite
@@ -85,7 +85,7 @@ generic. Rewrite for the agent-operator persona:
       manifest, screenshots, privacy policy.
 - [ ] Firefox Add-ons (AMO) — free.
 - [ ] Submit the wallet to:
-      - `cosmos/chain-registry` (so other wallets show AGENTIC)
+      - `cosmos/chain-registry` (so other wallets show SKYMETRIC)
       - `keplr-wallet/keplr-wallet` releases page (we are a public fork
         and should be discoverable)
       - The Cosmos Discord `#wallets` channel
@@ -128,11 +128,11 @@ the agent-economy UX is settled before the fork lands.
 
 ## Naming + brand notes
 
-- Public name: **Agentic Wallet**
+- Public name: **Skymetric Wallet**
 - Wordmark style: same as the rest of our brand — Space Grotesk bold,
   widely letter-spaced
 - Tagline (every store listing): *"The wallet built for AI-agent
   operators."*
-- We do **not** name it "Agentic Keplr" or any other dependent name —
+- We do **not** name it "Skymetric Keplr" or any other dependent name —
   the upstream is a license obligation to disclose, not a brand to
   share.

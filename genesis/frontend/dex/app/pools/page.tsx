@@ -5,9 +5,9 @@
 export const dynamic = "force-static";
 
 const stubPools = [
-  { id: 1n, a: "GEN", b: "USDC", tvl: "—", vol24h: "—", apr: "—" },
-  { id: 2n, a: "GEN", b: "OSMO", tvl: "—", vol24h: "—", apr: "—" },
-  { id: 3n, a: "GEN", b: "ATOM", tvl: "—", vol24h: "—", apr: "—" },
+  { id: 1n, a: "SKY", b: "USDC", tvl: "—", vol24h: "—", apr: "—" },
+  { id: 2n, a: "SKY", b: "OSMO", tvl: "—", vol24h: "—", apr: "—" },
+  { id: 3n, a: "SKY", b: "ATOM", tvl: "—", vol24h: "—", apr: "—" },
 ];
 
 export default function PoolsPage() {

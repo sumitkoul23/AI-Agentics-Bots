@@ -18,8 +18,8 @@ agent-staking logic Agent 2 will implement.
 
 - **Validator set:** 4 at genesis, capped at 100 active by month 12.
 - **Block time target:** 3 s.
-- **Bond denom:** `ugen`.
-- **Min self-delegation:** 1 GEN (low to allow CI / Codespaces validators).
+- **Bond denom:** `usky`.
+- **Min self-delegation:** 1 SKY (low to allow CI / Codespaces validators).
 - **Unbonding period:** 14 days (half of Cosmos Hub's 21 — friendlier for an
   agent-velocity chain, still long enough to make long-range attacks
   uneconomical).
@@ -34,7 +34,7 @@ indefinitely.
 
 ```
                       ┌────────────────────┐
-                      │   seed.agentic.dev │  (Oracle Cloud Always-Free, ARM)
+                      │   seed.skymetric.dev │  (Oracle Cloud Always-Free, ARM)
                       └─────────┬──────────┘
                                 │ p2p :26656
         ┌───────────────────────┼─────────────────────────┐
@@ -86,8 +86,8 @@ of equity capital, which is the entire point.
 |---|---|---|
 | 0 — *now* | week 0 | This scaffold compiles to a single-node devnet |
 | 1 — Devnet  | week 2 | `x/agentic` module skeleton, 4-validator devnet on free tiers |
-| 2 — Public testnet `agentic-test-1` | month 2 | Faucet, explorer, first agents from this repo staking GEN |
-| 3 — Mainnet `agentic-1` | month 6 | Audited via open-source toolchain (Slither for EVM contracts isn't applicable; we'll use [`Cosmos-SDK`'s built-in invariants](https://docs.cosmos.network/v0.50/build/building-modules/invariants) and community review) |
+| 2 — Public testnet `skymetric-test-1` | month 2 | Faucet, explorer, first agents from this repo staking SKY |
+| 3 — Mainnet `skymetric-1` | month 6 | Audited via open-source toolchain (Slither for EVM contracts isn't applicable; we'll use [`Cosmos-SDK`'s built-in invariants](https://docs.cosmos.network/v0.50/build/building-modules/invariants) and community review) |
 | 4 — IBC | month 9 | Open IBC channels to Osmosis, Neutron |
 | 5 — Agent VM | year 1+ | CosmWasm or custom executor for on-chain agent logic |
 
@@ -99,4 +99,4 @@ of equity capital, which is the entire point.
 | Sybil airdrop farming | Eligibility scoped to verifiable on-chain history (Cosmos staker / Ethereum AI-protocol user) |
 | Key compromise on shared dev infra | Genesis keys generated **offline**, only the operator-account keys live on free-tier hosts |
 | Lack of liquidity at mainnet | Liquidity bootstrap pool seeded from the testnet-faucet flip strategy in `04-growth-strategy.md` |
-| No audit budget | Public bug-bounty in GEN; module-level invariants enforced at every block; long unbonding to make exploits unprofitable |
+| No audit budget | Public bug-bounty in SKY; module-level invariants enforced at every block; long unbonding to make exploits unprofitable |

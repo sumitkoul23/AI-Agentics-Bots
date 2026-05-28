@@ -3,16 +3,16 @@
 #
 # Useful flags to tweak via env:
 #   MIN_GAS_PRICES   default "0.0001ugen"
-#   AGENTICD_HOME    default $HOME/.agenticd
+#   AGENTICD_HOME    default $HOME/.skymetricd
 #   LOG_LEVEL        default "info"
 set -euo pipefail
 
-AGENTICD_HOME="${AGENTICD_HOME:-$HOME/.agenticd}"
+AGENTICD_HOME="${AGENTICD_HOME:-$HOME/.skymetricd}"
 MIN_GAS_PRICES="${MIN_GAS_PRICES:-0.0001ugen}"
 LOG_LEVEL="${LOG_LEVEL:-info}"
 
-echo "▶ agenticd start (home=${AGENTICD_HOME})"
-exec agenticd start \
+echo "▶ skymetricd start (home=${AGENTICD_HOME})"
+exec skymetricd start \
     --home "${AGENTICD_HOME}" \
     --minimum-gas-prices "${MIN_GAS_PRICES}" \
     --log_level "${LOG_LEVEL}" \

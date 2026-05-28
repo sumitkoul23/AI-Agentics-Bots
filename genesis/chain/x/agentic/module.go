@@ -1,4 +1,4 @@
-// Package agentic plugs the `x/agentic` keeper into the AGENTIC app via the
+// Package agentic plugs the `x/agentic` keeper into the SKYMETRIC app via the
 // standard Cosmos SDK `AppModule` interface set.
 package agentic
 

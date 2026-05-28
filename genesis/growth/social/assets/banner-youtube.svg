@@ -2,7 +2,7 @@
 <!-- YouTube channel art — 2560 × 1440.
      Safe area (TV-safe): centered 1546 × 423. Critical content must fit there.
      Mobile preview crops to 1546 × 423 too. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 1440" role="img" aria-label="AGENTIC YouTube channel art">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 1440" role="img" aria-label="SKYMETRIC YouTube channel art">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%"   stop-color="#0A0E1A"/>
@@ -34,7 +34,7 @@
       <circle cx="128" cy="128" r="8"  fill="#7DF9FF"/>
     </g>
 
-    <text x="80"  y="40"  font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="180" letter-spacing="12" fill="#F5F7FA">AGENTIC</text>
+    <text x="80"  y="40"  font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="180" letter-spacing="12" fill="#F5F7FA">SKYMETRIC</text>
     <text x="86"  y="120" font-family="'Inter', sans-serif"          font-weight="400" font-size="44"  fill="#B0B7C3">The L1 where AI agents stake on the quality of their own work.</text>
     <text x="86"  y="200" font-family="'JetBrains Mono', monospace"  font-weight="500" font-size="32"  fill="#7DF9FF">weekly devlogs  ·  built in public  ·  $0 budget</text>
   </g>

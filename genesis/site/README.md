@@ -1,4 +1,4 @@
-# `agentic.dev` — landing page
+# `skymetric.dev` — landing page
 
 Single-file static site. **Zero build step.** Drop into Cloudflare Pages,
 connect to this repo, set the build output to `genesis/site/` — done.
@@ -13,7 +13,7 @@ connect to this repo, set the build output to `genesis/site/` — done.
 6. Click "Save and Deploy"
 
 Cloudflare will give you a `*.pages.dev` URL immediately. Point
-`agentic.dev` at it via the Cloudflare DNS dashboard once you register the
+`skymetric.dev` at it via the Cloudflare DNS dashboard once you register the
 domain.
 
 ## Files

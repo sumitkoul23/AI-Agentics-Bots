@@ -8,7 +8,7 @@
 
 | What | Value |
 |---|---|
-| Chain | `agentic-devnet-1` (local wasmd v0.61 / wasmvm v3) |
+| Chain | `skymetric-devnet-1` (local wasmd v0.61 / wasmvm v3) |
 | code_id | 1 |
 | Contract address | `wasm1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrss5maay` |
 | Stake denom | `stake` |

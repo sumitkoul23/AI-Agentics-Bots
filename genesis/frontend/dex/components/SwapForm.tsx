@@ -10,7 +10,7 @@ import { ArrowDownUp } from "lucide-react";
 
 export default function SwapForm() {
   const [fromAmount, setFromAmount] = useState("");
-  const [fromDenom, setFromDenom] = useState("GEN");
+  const [fromDenom, setFromDenom] = useState("SKY");
   const [toDenom, setToDenom] = useState("USDC");
   const [slippageBps, setSlippageBps] = useState(50); // 0.5 % default
 

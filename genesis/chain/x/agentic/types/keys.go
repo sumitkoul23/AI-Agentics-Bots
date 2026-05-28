@@ -1,12 +1,12 @@
 // Package types holds the protobuf-generated and hand-written types for the
-// `x/agentic` module — the bespoke piece of the AGENTIC chain that turns AI
+// `x/agentic` module — the bespoke piece of the Skymetric chain that turns AI
 // agents into first-class on-chain citizens.
 //
 // Design summary (full spec in `genesis/docs/01-architecture.md`):
 //
 //   - Every AI agent registers an `AgentRecord` keyed by its operator address.
-//   - The operator bonds `MinAgentStake` `ugen` into the module account.
-//   - Users open `Task` escrows funded in `ugen`; the chosen agent's stake
+//   - The operator bonds `MinAgentStake` `usky` into the module account.
+//   - Users open `Task` escrows funded in `usky`; the chosen agent's stake
 //     covers slashing if the response is later proven fraudulent via the
 //     `MsgSubmitFraudProof` quorum mechanism.
 //   - Successful tasks split the escrow: 50 % agent / 30 % validators / 20 %
@@ -42,5 +42,5 @@ var (
 	TaskCounterKey    = collections.NewPrefix(0x21)
 	FraudProofsKey    = collections.NewPrefix(0x30) // key: (taskID, attestor)
 	ReputationNFTKey  = collections.NewPrefix(0x40) // key: agent address
-	BurnedTotalKey    = collections.NewPrefix(0x50) // running total of burned ugen
+	BurnedTotalKey    = collections.NewPrefix(0x50) // running total of burned usky
 )

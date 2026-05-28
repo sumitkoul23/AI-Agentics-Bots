@@ -9,7 +9,7 @@ import (
 // Params govern the `x/agentic` module's economic knobs. Changeable via a
 // standard `MsgUpdateParams` gov proposal.
 type Params struct {
-	// MinAgentStake is the floor (in ugen) an operator must bond to register
+	// MinAgentStake is the floor (in usky) an operator must bond to register
 	// an agent. Halves with every +100 reputation points until it hits the
 	// `MinAgentStakeFloor` below.
 	MinAgentStake     math.Int `json:"min_agent_stake"`
@@ -34,8 +34,8 @@ type Params struct {
 // from `genesis/docs/02-tokenomics.md`.
 func DefaultParams() Params {
 	return Params{
-		MinAgentStake:         math.NewInt(100).MulRaw(1_000_000),  // 100 GEN
-		MinAgentStakeFloor:    math.NewInt(10).MulRaw(1_000_000),   // 10 GEN
+		MinAgentStake:         math.NewInt(100).MulRaw(1_000_000),  // 100 SKY
+		MinAgentStakeFloor:    math.NewInt(10).MulRaw(1_000_000),   // 10 SKY
 		SplitAgent:            math.LegacyNewDecWithPrec(50, 2),    // 50%
 		SplitValidators:       math.LegacyNewDecWithPrec(30, 2),    // 30%
 		SplitBurn:             math.LegacyNewDecWithPrec(20, 2),    // 20%

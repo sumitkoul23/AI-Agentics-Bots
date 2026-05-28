@@ -8,16 +8,16 @@
 // Keplr's so the fork lands as a drop-in.
 
 const STATE = {
-  defaultChainId: "agentic-1",
+  defaultChainId: "skymetric-1",
   chains: {
-    "agentic-1": {
-      chainId: "agentic-1",
-      chainName: "AGENTIC",
-      rpc: "https://rpc.agentic.dev",
-      rest: "https://rest.agentic.dev",
+    "skymetric-1": {
+      chainId: "skymetric-1",
+      chainName: "SKYMETRIC",
+      rpc: "https://rpc.skymetric.dev",
+      rest: "https://rest.skymetric.dev",
       bech32Prefix: "agentic",
       coinType: 118,
-      stakeCurrency: { coinDenom: "GEN", coinMinimalDenom: "ugen", coinDecimals: 6 },
+      stakeCurrency: { coinDenom: "SKY", coinMinimalDenom: "usky", coinDecimals: 6 },
     },
     // Users can chrome.storage-persist additional chains; v0 hardcodes
     // a couple of well-known Cosmos chains as defaults so the wallet
@@ -84,7 +84,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       // v0: emphatically refuse to sign anything. Real signing lands in
       // v1.
       sendResponse({
-        error: "Agentic Wallet v0 scaffold cannot sign. Install Keplr or Leap until the v1 fork ships.",
+        error: "Skymetric Wallet v0 scaffold cannot sign. Install Keplr or Leap until the v1 fork ships.",
       });
       return;
 

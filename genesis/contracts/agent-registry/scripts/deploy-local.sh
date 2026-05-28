@@ -16,7 +16,7 @@ set -euo pipefail
 WASMD="${WASMD:-/tmp/wasmd/build/wasmd}"
 HOME_DIR="${HOME_DIR:-/tmp/wasmd-data}"
 NODE="${NODE:-tcp://localhost:26657}"
-CHAIN_ID="${CHAIN_ID:-agentic-devnet-1}"
+CHAIN_ID="${CHAIN_ID:-skymetric-devnet-1}"
 DENOM="${DENOM:-stake}"
 WASM_PATH="${WASM_PATH:-target/wasm32-unknown-unknown/release/agentic_registry.wasm}"
 

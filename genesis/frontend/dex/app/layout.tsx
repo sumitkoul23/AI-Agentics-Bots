@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://dex.agentic.dev"),
-  title: "AGENTIC DEX — swap, pool, earn",
-  description: "The native DEX for the AGENTIC chain. Constant-product AMM, on-chain agent reputation routing.",
+  metadataBase: new URL("https://dex.skymetric.dev"),
+  title: "SKYMETRIC DEX — swap, pool, earn",
+  description: "The native DEX for the Skymetric chain. Constant-product AMM, on-chain agent reputation routing.",
   openGraph: {
-    title: "AGENTIC DEX",
-    description: "Swap, provide liquidity, earn GEN.",
+    title: "SKYMETRIC DEX",
+    description: "Swap, provide liquidity, earn SKY.",
     images: ["/og-image.svg"],
   },
 };
@@ -27,7 +27,7 @@ function Header() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur bg-ink/70 border-b border-white/5">
       <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between text-sm">
-        <a href="/" className="font-display font-bold tracking-widest text-lg">AGENTIC DEX</a>
+        <a href="/" className="font-display font-bold tracking-widest text-lg">SKYMETRIC DEX</a>
         <div className="hidden md:flex items-center gap-6 text-ash">
           <a href="/" className="hover:text-bone">Swap</a>
           <a href="/pools" className="hover:text-bone">Pools</a>

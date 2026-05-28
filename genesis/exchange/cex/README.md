@@ -1,4 +1,4 @@
-# AGENTIC CEX — Tier 4 roadmap
+# SKYMETRIC CEX — Tier 4 roadmap
 
 > **Status: NOT BUILDING YET.** This folder is the plan we follow *if and
 > when* DEX liquidity crosses $100M and the treasury can fund the regulatory
@@ -35,11 +35,11 @@ The on-chain trigger that gates Tier 4. From
 `docs/05-exchange-strategy.md`:
 
 ```
-CEXLaunchPermitted returns true iff aggregate AGENTIC DEX liquidity
+CEXLaunchPermitted returns true iff aggregate SKYMETRIC DEX liquidity
 has been >= $100M (in USDC-equivalent at TWAP) for at least 30
 consecutive days, ratified by a successful gov proposal of type
 MsgEnableCEXLaunch.
 ```
 
 This is the strongest commitment device available — the CEX cannot launch
-under the AGENTIC name until the chain itself has earned it on-chain.
+under the SKYMETRIC name until the chain itself has earned it on-chain.

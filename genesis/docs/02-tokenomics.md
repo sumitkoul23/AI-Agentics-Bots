@@ -1,11 +1,11 @@
-# Agent 3 — Tokenomics Engineer: GEN Token Economy
+# Agent 3 — Tokenomics Engineer: SKY Token Economy
 
 ## 1. Supply
 
 | Metric | Value |
 |---|---|
-| Total supply at genesis | **1,000,000,000 GEN** |
-| Base denom | `ugen` (1 GEN = 10⁶ ugen) |
+| Total supply at genesis | **1,000,000,000 SKY** |
+| Base denom | `usky` (1 SKY = 10⁶ usky) |
 | Supply cap | None at protocol level; effective cap emerges from the burn ↔ mint equilibrium below |
 | Decimals on listings | 6 |
 
@@ -45,7 +45,7 @@ Standard Cosmos `x/mint` parameters (already encoded in
 | `goal_bonded` | 67 % | Push toward Cosmos-typical bonded ratio |
 | `blocks_per_year` | 10,512,000 | ≈ 3-second blocks |
 
-Year-1 emission, at goal-bonded 67 %, is ≈ 70 M GEN. Real-yield staker APR is
+Year-1 emission, at goal-bonded 67 %, is ≈ 70 M SKY. Real-yield staker APR is
 inflation / bonded ratio ≈ **10.4 %** at genesis, sliding to ≈ **1.5 %** by
 year 5 as inflation tapers and bonded ratio normalises.
 
@@ -65,7 +65,7 @@ annual_tx_burn  +  annual_slashing_burn   >   annual_emission
 ```
 
 Modelled break-even (see `growth/economics-model.md` once the growth agent
-seeds it) lands at ~ 800k settled tasks / year at an average bounty of 50 GEN
+seeds it) lands at ~ 800k settled tasks / year at an average bounty of 50 SKY
 — well within the addressable market of the seven specialists already in this
 repo plus a public testnet flywheel.
 
@@ -78,10 +78,10 @@ form, no Discord** — so distribution is a pure SQL job over open data:
 
 | Cohort | Source | Cap per address |
 |---|---|---|
-| Cosmos stakers (any Cosmos-SDK chain, ≥ 30 days bonded at snapshot) | Numia / public LCD endpoints | 250 GEN |
-| Ethereum AI-protocol users (Bittensor, Akash, Ritual, Hyperbolic) | Public Ethereum logs | 250 GEN |
-| Active GitHub contributors to OSS AI repos (≥ 5 merged PRs in 2025) | GitHub API | 500 GEN |
-| Holders of any Cosmos NFT collection ≥ 6 months | NFT registry snapshot | 100 GEN |
+| Cosmos stakers (any Cosmos-SDK chain, ≥ 30 days bonded at snapshot) | Numia / public LCD endpoints | 250 SKY |
+| Ethereum AI-protocol users (Bittensor, Akash, Ritual, Hyperbolic) | Public Ethereum logs | 250 SKY |
+| Active GitHub contributors to OSS AI repos (≥ 5 merged PRs in 2025) | GitHub API | 500 SKY |
+| Holders of any Cosmos NFT collection ≥ 6 months | NFT registry snapshot | 100 SKY |
 
 Snapshot is a Cloudflare Worker (free tier) that publishes a Merkle root.
 Claims happen on-chain via a `MsgClaimAirdrop` against the published root —
@@ -91,7 +91,7 @@ Claims happen on-chain via a `MsgClaimAirdrop` against the published root —
 
 Every testnet `MsgCreateTask` settlement above a reputation threshold mints a
 soul-bound "GenesisProof" NFT on mainnet for the agent operator. Holders
-receive a fixed pro-rata mainnet GEN drop. Mechanically encourages real usage
+receive a fixed pro-rata mainnet SKY drop. Mechanically encourages real usage
 during testnet rather than empty wallet-spinning.
 
 ### c. Public goods quadratic match
@@ -105,7 +105,7 @@ single grantee from treasury directly.
 ## 6. Listing path (still $0)
 
 - **Day 0:** Open IBC channels to Osmosis + Neutron via standard gov proposal
-  (free). Bootstrap a GEN/OSMO 50/50 LP from the 5 % liquidity bucket.
+  (free). Bootstrap a SKY/OSMO 50/50 LP from the 5 % liquidity bucket.
 - **Day 30:** Apply to MEXC / Gate.io free listing programs (they comp the
   fee for chains with > 10k active addresses, which the airdrop guarantees).
 - **Day 90:** CoinGecko + CoinMarketCap listings — both have free self-serve

@@ -25,7 +25,7 @@ That sentence does three things at zero marginal cost:
    that flows from CEX licensing arrives *after* LPs have made their bet.
    No one can monetise the CEX path until LPs have already won.
 2. **It makes the LP's position non-dilutable.** Liquidity that flows to
-   the AGENTIC DEX cannot be siphoned into the CEX before the threshold —
+   the SKYMETRIC DEX cannot be siphoned into the CEX before the threshold —
    the chain literally rejects the launch transaction.
 3. **It produces a measurable, public KPI.** Anyone can verify the gate
    state by reading on-chain. No PR claim required, no audit firm involved.
@@ -72,7 +72,7 @@ Concretely, what does the strict gate prevent us from doing?
 The single most repeatable narrative we can ship is:
 
 > "Other chains promise decentralised governance and then launch a
-> centralised exchange behind their LPs' backs. AGENTIC literally cannot
+> centralised exchange behind their LPs' backs. SKYMETRIC literally cannot
 > do that until governance votes to release the gate, and only after
 > sustained on-chain proof of community ownership."
 

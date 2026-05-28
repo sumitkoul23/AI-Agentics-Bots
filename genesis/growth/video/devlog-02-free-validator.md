@@ -1,4 +1,4 @@
-# Devlog #2 — "Setting up an AGENTIC validator on a free Oracle Cloud ARM box"
+# Devlog #2 — "Setting up an SKYMETRIC validator on a free Oracle Cloud ARM box"
 
 - **Length:** 7–10 min long-form · 60s short
 - **Working title:** *From zero to validator in 8 minutes, for $0*
@@ -19,7 +19,7 @@
 
 ## Title card (0:10 – 0:13)
 
-`AGENTIC — DEVLOG #02 — free validator`
+`SKYMETRIC — DEVLOG #02 — free validator`
 
 ---
 
@@ -28,7 +28,7 @@
 **Visual:** the validator quartet diagram from `genesis/docs/01-architecture.md`.
 
 **VO:**
-> "Last week we shipped the architecture for AGENTIC. This week we put
+> "Last week we shipped the architecture for SKYMETRIC. This week we put
 > our money where the architecture is — except there's no money, because
 > the validator we're setting up today runs entirely on a provider's
 > free tier.
@@ -79,20 +79,20 @@ sudo ufw --force enable
 
 ```bash
 export MONIKER=devlog-validator
-export CHAIN_ID=agentic-test-1
-export SEED_NODE="<seed-node-id>@seed.agentic.dev:26656"
+export CHAIN_ID=skymetric-test-1
+export SEED_NODE="<seed-node-id>@seed.skymetric.dev:26656"
 curl -fsSL https://raw.githubusercontent.com/sumitkoul23/AI-Agentics-Bots/main/genesis/deploy/oracle-cloud/setup-validator.sh | sudo bash
 ```
 
 **Cut to the script's output as it runs:**
 - apt installing dependencies
 - downloading the binary
-- `agenticd init`
+- `skymetricd init`
 - pulling the live genesis.json
 - writing the systemd unit
-- `systemctl start agenticd`
+- `systemctl start skymetricd`
 
-Hold on `journalctl -fu agenticd` showing blocks being committed.
+Hold on `journalctl -fu skymetricd` showing blocks being committed.
 
 **VO:**
 > "Eight minutes ago this box didn't exist. Right now it's catching up
@@ -103,29 +103,29 @@ Hold on `journalctl -fu agenticd` showing blocks being committed.
 
 **Terminal:**
 ```bash
-sudo -u agentic agenticd keys add validator --home /var/lib/agenticd
+sudo -u agentic skymetricd keys add validator --home /var/lib/skymetricd
 # (write down the mnemonic on a piece of paper, off camera)
 
 # Fund the address via the testnet faucet quest (cut to browser briefly)
 # Then create the validator
-sudo -u agentic agenticd tx staking create-validator \
+sudo -u agentic skymetricd tx staking create-validator \
   --amount 1000000000ugen \
-  --pubkey "$(agenticd tendermint show-validator)" \
+  --pubkey "$(skymetricd tendermint show-validator)" \
   --moniker devlog-validator \
   --commission-rate 0.05 \
   --commission-max-rate 0.2 \
   --commission-max-change-rate 0.01 \
   --min-self-delegation 1 \
   --from validator \
-  --chain-id agentic-test-1
+  --chain-id skymetric-test-1
 ```
 
-Cut to the explorer (`explorer.agentic.dev`) showing the new validator
+Cut to the explorer (`explorer.skymetric.dev`) showing the new validator
 appearing in the active set.
 
 **VO:**
 > "And there we are. We're in the active set. From this point on, every
-> block we sign earns us a slice of the block reward — paid in GEN,
+> block we sign earns us a slice of the block reward — paid in SKY,
 > minted by `x/mint`."
 
 ### Beat 5 — Monitoring (6:30 – 7:30)
@@ -178,15 +178,15 @@ Same as devlog 01.
 | 0:00 – 0:08 | Oracle Cloud $0.00 bill | "This is the bill for my blockchain validator." |
 | 0:08 – 0:20 | Sped-up provisioning | "4 cores, 24 GB RAM, 200 GB disk. Free, indefinitely." |
 | 0:20 – 0:40 | Sped-up `curl ... bash`, then `journalctl` blocks | "One curl-bash command and 8 minutes." |
-| 0:40 – 0:55 | Explorer showing validator in the active set | "Now I'm in the active set, earning $GEN." |
-| 0:55 – 1:00 | End card | `agentic.dev` |
+| 0:40 – 0:55 | Explorer showing validator in the active set | "Now I'm in the active set, earning $SKY." |
+| 0:55 – 1:00 | End card | `skymetric.dev` |
 
 ---
 
 ## YouTube description
 
 ```
-We stand up a brand-new AGENTIC validator on a $0/month Oracle Cloud Always Free ARM box, live, end to end.
+We stand up a brand-new SKYMETRIC validator on a $0/month Oracle Cloud Always Free ARM box, live, end to end.
 
 Scripts used: https://github.com/sumitkoul23/AI-Agentics-Bots/tree/main/genesis/deploy/oracle-cloud
 DevOps playbook: https://github.com/sumitkoul23/AI-Agentics-Bots/blob/main/genesis/docs/03-devops.md
@@ -199,8 +199,8 @@ DevOps playbook: https://github.com/sumitkoul23/AI-Agentics-Bots/blob/main/genes
 06:30 Monitoring (also free)
 07:30 What can go wrong
 
-🌐 agentic.dev
-🐦 @agenticchain
+🌐 skymetric.dev
+🐦 @skymetric
 💬 discord.gg/agentic
 📦 github.com/agentic-chain
 

@@ -22,7 +22,7 @@
 
 1. Sign up: https://x.com/i/flow/signup
 2. Try handles in order from `handles.md` → X section.
-3. Display name: `AGENTIC`
+3. Display name: `SKYMETRIC`
 4. Bio: paste the "Primary (158 chars)" from `bios.md`.
 5. Profile pic: `logo.png` (400×400).
 6. Banner: `banner-x.png` (1500×500).
@@ -41,13 +41,13 @@
 ## Step 3 · Telegram (3 min)
 
 1. Channel (broadcast): https://t.me/+ → "New Channel"
-   - Name: `AGENTIC`
+   - Name: `SKYMETRIC`
    - Description: from `bios.md` Telegram section
-   - Type: Public, link `t.me/agenticchain` (or fallback)
+   - Type: Public, link `t.me/skymetric` (or fallback)
    - Photo: `logo.png` (512×512)
 2. Group (chat): https://t.me/+ → "New Group"
-   - Name: `AGENTIC · Chat`
-   - Public link: `t.me/agenticchainchat` (or fallback)
+   - Name: `SKYMETRIC · Chat`
+   - Public link: `t.me/skymetricchat` (or fallback)
    - Permissions: Allow members to send messages; disable forwarded messages
      from new accounts; enable slow-mode 5s to deter spam.
 3. Pin in both: link to the X handle + the GitHub repo.
@@ -55,7 +55,7 @@
 ## Step 4 · Discord (5 min)
 
 1. Sign in at https://discord.com/ and create a server.
-2. Server name: `AGENTIC`
+2. Server name: `SKYMETRIC`
 3. Upload `logo.png` (512×512) as server icon.
 4. Create the channel structure from `bios.md` → Discord section.
 5. Roles to create:
@@ -80,8 +80,8 @@
 ## Step 6 · YouTube (3 min)
 
 1. Sign in to YouTube → Create channel: https://youtube.com/create_channel
-2. Channel handle: try `@agenticchain` first.
-3. Display name: `AGENTIC`
+2. Channel handle: try `@skymetric` first.
+3. Display name: `SKYMETRIC`
 4. About: paste from `bios.md` → YouTube section.
 5. Channel art: `banner-youtube.png` (2560×1440).
 6. Avatar: `logo.png` (800×800).
@@ -92,7 +92,7 @@
 
 1. https://www.linkedin.com/company/setup/new/
 2. Page type: Company → Small business
-3. Name: `AGENTIC`
+3. Name: `SKYMETRIC`
 4. Vanity URL: `agentic-chain` (fallbacks in `handles.md`)
 5. Industry: `Blockchain Services`
 6. Tagline: from `bios.md` → LinkedIn tagline.
@@ -103,8 +103,8 @@
 ## Step 8 · Medium / Mirror (3 min)
 
 **Medium** — https://medium.com/m/signin → settings → public profile name →
-set to `agenticchain`. Create a Publication: Settings → Publications → New →
-name `AGENTIC`, URL slug `agenticchain`. Add bio from `bios.md`.
+set to `skymetric`. Create a Publication: Settings → Publications → New →
+name `SKYMETRIC`, URL slug `skymetric`. Add bio from `bios.md`.
 
 **Mirror.xyz** — https://mirror.xyz/dashboard → "Create entry". Sign in with
 the maintainer wallet. Claim subdomain `agentic.mirror.xyz`. The first post
@@ -131,20 +131,20 @@ from `bios.md` and use the same `logo.png` + cover image.
 DM me a list like:
 
 ```
-X:         @agenticchain
+X:         @skymetric
 GitHub:    agentic-chain
-Telegram:  @agenticchain (channel), @agenticchainchat (group)
+Telegram:  @skymetric (channel), @skymetricchat (group)
 Discord:   discord.gg/xY3z9pQ
 Farcaster: @agentic
-YouTube:   @agenticchain
+YouTube:   @skymetric
 LinkedIn:  linkedin.com/company/agentic-chain
-Medium:    @agenticchain
+Medium:    @skymetric
 Mirror:    agentic.mirror.xyz
 Reddit:    r/AgenticChain
 ```
 
 I will then:
-1. Update every `agentic.dev` / `@agenticchain` placeholder in the repo's
+1. Update every `skymetric.dev` / `@skymetric` placeholder in the repo's
    docs, bios, and READMEs to point at the real handles.
 2. Generate the first week of platform-specific posts in
    [`launch-week-posts.md`](launch-week-posts.md) with the correct handles.

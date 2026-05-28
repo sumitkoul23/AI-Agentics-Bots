@@ -1,4 +1,4 @@
-//! AGENTIC agent registry — the CosmWasm successor to `genesis/chain/x/agentic/`.
+//! SKYMETRIC agent registry — the CosmWasm successor to `genesis/chain/x/agentic/`.
 //!
 //! State model:
 //!  - `AgentRecord` keyed by operator address. Holds bonded stake (escrowed

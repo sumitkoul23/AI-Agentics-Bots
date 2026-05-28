@@ -2,13 +2,13 @@
 
 This is the stack we build *when* the on-chain gate opens. Designed to be
 operationally indistinguishable from a top-10 venue, while custody and
-settlement stay rooted in AGENTIC.
+settlement stay rooted in SKYMETRIC.
 
 ## High-level topology
 
 ```
             ┌──────────────────────────────────────────────────────────┐
-            │              cex.agentic.dev (Next.js, edge)              │
+            │              cex.skymetric.dev (Next.js, edge)              │
             └─────┬────────────────────────┬──────────────────┬────────┘
                   │ REST                   │ WS               │ FIX
                   ▼                        ▼                  ▼
@@ -55,7 +55,7 @@ failures.
 
 ## Components
 
-### Frontend — `cex.agentic.dev`
+### Frontend — `cex.skymetric.dev`
 
 - Next.js 14 with App Router + RSC
 - TradingView Advanced Charts (free for non-broker use)
@@ -87,7 +87,7 @@ failures.
 
 ### Settlement Service
 
-- Watches the match-engine event bus; signs an AGENTIC tx to
+- Watches the match-engine event bus; signs an SKYMETRIC tx to
   `x/agenticdex` for each fill batch (every 100 ms)
 - Treats on-chain settlement as the source of truth — if the match
   engine claims a fill that doesn't settle, balances roll back

@@ -1,4 +1,4 @@
-// Shared React-Query hooks against AGENTIC's REST endpoints.
+// Shared React-Query hooks against SKYMETRIC's REST endpoints.
 // Each hook accepts an explicit `restUrl` so the components stay
 // wallet-agnostic (Keplr fork vs Cosmos Kit vs anything else).
 
@@ -86,11 +86,11 @@ export function useReputation(restUrl: string, address: string | undefined) {
   });
 }
 
-// Convenience: format ugen → GEN string with 6 decimals.
-export function fmtGen(ugen: string | undefined): string {
-  if (!ugen) return "—";
+// Convenience: format usky → SKY string with 6 decimals.
+export function fmtGen(usky: string | undefined): string {
+  if (!usky) return "—";
   try {
-    const n = BigInt(ugen);
+    const n = BigInt(usky);
     const whole = n / 1_000_000n;
     const frac = (n % 1_000_000n).toString().padStart(6, "0").slice(0, 3);
     return `${whole.toLocaleString()}.${frac}`;

@@ -1,10 +1,10 @@
 // popup.js — renders the five panels (Assets, Agents, Tasks, Reputation,
 // Streams) into the popup. In v0 every panel pulls from a fixture; v1
-// swaps the fixtures for live queries against the AGENTIC REST endpoint.
+// swaps the fixtures for live queries against the SKYMETRIC REST endpoint.
 
 const FIXTURES = {
   assets: [
-    { denom: "GEN", amount: "—", note: "native" },
+    { denom: "SKY", amount: "—", note: "native" },
     { denom: "USDC.axl", amount: "—", note: "IBC" },
     { denom: "pool/1", amount: "—", note: "LP" },
   ],
@@ -77,7 +77,7 @@ function renderRegistry() {
       <div class="empty">
         No agents registered under this address.<br><br>
         Use the DEX or run<br>
-        <span class="mono">agenticd tx agentic register-agent</span><br>
+        <span class="mono">skymetricd tx agentic register-agent</span><br>
         to register your first agent.
       </div>`;
     return;
@@ -90,7 +90,7 @@ function renderRegistry() {
       <div class="row">
         <div>
           <div>${esc(a.moniker)}</div>
-          <div class="muted mono" style="font-size:11px">stake ${esc(a.stake)} GEN</div>
+          <div class="muted mono" style="font-size:11px">stake ${esc(a.stake)} SKY</div>
         </div>
         <div class="pill ${a.jailed ? "bad" : "good"}">${a.jailed ? "JAILED" : "active"}</div>
       </div>`,

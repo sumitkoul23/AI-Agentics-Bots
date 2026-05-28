@@ -6,7 +6,7 @@
 
 ## What changed
 
-Previously: the AGENTIC chain was being scaffolded as a sovereign Cosmos
+Previously: the Skymetric chain was being scaffolded as a sovereign Cosmos
 SDK L1 (own validators, own consensus, own fee market). After the
 honest-launch-timeline assessment in
 [`09-honest-launch-timeline.md`](09-honest-launch-timeline.md) and an
@@ -14,7 +14,7 @@ hour of real compile-fixing in
 [the chain code](../chain/), the sovereign-L1 path is no longer the
 correct bet for this team's resources.
 
-New direction: **AGENTIC ships as a suite of CosmWasm smart contracts on
+New direction: **SKYMETRIC ships as a suite of CosmWasm smart contracts on
 Neutron.** Same name, same brand, same token economics — different
 substrate.
 
@@ -40,7 +40,7 @@ doesn't ship the product. Time-to-market beats narrative — by a lot.
 Almost everything. The pivot changes *where* contracts run, not *what
 they do*:
 
-- **GEN coin** — issues as a CW20 on Neutron, or via Token Factory.
+- **SKY coin** — issues as a CW20 on Neutron, or via Token Factory.
   Same supply (1B), same vesting schedule, same burn mechanics.
 - **`x/agentic` semantics** → `contracts/agent-registry/` —
   RegisterAgent, CreateTask, SubmitResponse, SettleTask, SubmitFraudProof.
@@ -74,7 +74,7 @@ they do*:
 | 0 — now | This doc + first contract (`agent-registry`) compiling | session +0 |
 | 1 — week +2 | `agent-registry` deployed to Neutron testnet | 2 weeks |
 | 2 — week +6 | `agentic-dex` contract OR Astroport integration spec | 6 weeks |
-| 3 — week +10 | First GEN airdrop snapshot + claim contract | 10 weeks |
+| 3 — week +10 | First SKY airdrop snapshot + claim contract | 10 weeks |
 | 4 — week +14 | Mainnet deployment to Neutron — **live product** | 14 weeks |
 
 That's 3.5 months to mainnet. Sovereign L1 from the prior path was
@@ -87,9 +87,9 @@ single subprotocol), we run a sovereign-L1 migration event. This is the
 exact path Berachain and Celestia followed and it became a marketing
 moment in both cases:
 
-1. Snapshot AGENTIC contract state on Neutron.
+1. Snapshot SKYMETRIC contract state on Neutron.
 2. Launch sovereign chain seeded with the snapshot.
-3. Open a one-way migration bridge (Neutron → AGENTIC L1).
+3. Open a one-way migration bridge (Neutron → Skymetric L1).
 4. Sunset the Neutron contracts.
 
 This is a year-out problem. We do not over-commit to it now. **The right
@@ -99,12 +99,12 @@ the sovereign-L1 narrative as optional.
 ## Open questions deliberately left for later
 
 - **Astroport partnership vs own DEX contract?** Probably partner first,
-  build later. The DEX is not the AGENTIC moat — the agent registry +
+  build later. The DEX is not the SKYMETRIC moat — the agent registry +
   reputation layer is.
 - **Token Factory vs CW20?** Token Factory is cleaner (native denom
-  semantics) but newer. CW20 is battle-tested. Pick at GEN-issuance
+  semantics) but newer. CW20 is battle-tested. Pick at SKY-issuance
   time, not now.
-- **Multi-chain expansion?** Neutron has full IBC; AGENTIC contracts on
+- **Multi-chain expansion?** Neutron has full IBC; SKYMETRIC contracts on
   Neutron are reachable from every Cosmos chain. We don't need to
   re-deploy on Osmosis / Stargaze / Sei. If product-market fit demands
   it, do it then.

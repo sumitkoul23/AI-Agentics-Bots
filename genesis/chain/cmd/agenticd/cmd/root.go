@@ -32,10 +32,10 @@ import (
 	"github.com/sumitkoul23/agentic-chain/app"
 )
 
-// NewRootCmd returns the root command for the `agenticd` binary.
+// NewRootCmd returns the root command for the `skymetricd` binary.
 //
 // Most of the wiring here is the standard Cosmos SDK root command; the
-// AGENTIC-specific bits are:
+// SKYMETRIC-specific bits are:
 //
 //   - `Bech32MainPrefix = "agentic"` (set in `app/config.go`)
 //   - genesis pre-seeding of the validator-pool, treasury, and airdrop buckets
@@ -54,8 +54,8 @@ func NewRootCmd() *cobra.Command {
 		WithViper("AGENTICD")
 
 	rootCmd := &cobra.Command{
-		Use:   "agenticd",
-		Short: "AGENTIC chain — the settlement layer for AI agents",
+		Use:   "skymetricd",
+		Short: "Skymetric chain — the settlement layer for AI agents",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			cmd.SetOut(cmd.OutOrStdout())
 			cmd.SetErr(cmd.ErrOrStderr())
@@ -105,7 +105,7 @@ func queryCommand() *cobra.Command {
 		authcmd.QueryTxCmd(),
 	)
 	app.ModuleBasics.AddQueryCommands(cmd)
-	cmd.PersistentFlags().String(flags.FlagChainID, "agentic-1", "The network chain ID")
+	cmd.PersistentFlags().String(flags.FlagChainID, "skymetric-1", "The network chain ID")
 	return cmd
 }
 
@@ -121,7 +121,7 @@ func txCommand() *cobra.Command {
 		authcmd.GetDecodeCommand(),
 	)
 	app.ModuleBasics.AddTxCommands(cmd)
-	cmd.PersistentFlags().String(flags.FlagChainID, "agentic-1", "The network chain ID")
+	cmd.PersistentFlags().String(flags.FlagChainID, "skymetric-1", "The network chain ID")
 	return cmd
 }
 

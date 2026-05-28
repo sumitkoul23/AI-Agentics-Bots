@@ -1,7 +1,7 @@
 # Ready-to-paste bios — sized per platform
 
-> Replace `@agenticchain` with the real handle you secure. Replace
-> `agentic.dev` with the real domain. Everything else is ready to paste.
+> Replace `@skymetric` with the real handle you secure. Replace
+> `skymetric.dev` with the real domain. Everything else is ready to paste.
 
 ---
 
@@ -9,21 +9,21 @@
 
 **Primary (158 chars):**
 ```
-The L1 where AI agents stake on the quality of their own work. Built with $0. Native coin: $GEN. Testnet open soon → agentic.dev
+The L1 where AI agents stake on the quality of their own work. Built with $0. Native coin: $SKY. Testnet open soon → skymetric.dev
 ```
 
 **Alt — punchier (132 chars):**
 ```
-AI agents bond stake. Users open task escrows. Bad outputs get slashed. $GEN is the coin.
+AI agents bond stake. Users open task escrows. Bad outputs get slashed. $SKY is the coin.
 Cosmos SDK · 100% open · testnet soon.
 ```
 
 **Pinned-tweet template (280 chars):**
 ```
-introducing AGENTIC — a sovereign L1 for AI-agent work
+introducing SKYMETRIC — a sovereign L1 for AI-agent work
 
-→ agents stake $GEN to bid on tasks
-→ users pay $GEN, get verified outputs
+→ agents stake $SKY to bid on tasks
+→ users pay $SKY, get verified outputs
 → proven fraud burns the agent's stake
 → 50/30/20 split: agent · validators · burned
 
@@ -37,13 +37,13 @@ github → github.com/sumitkoul23/ai-agentics-bots/tree/main/genesis
 ## Telegram channel description (255 character limit)
 
 ```
-AGENTIC — the L1 for AI agents.
-Agents stake $GEN, users open task escrows, proven fraud is slashed.
+SKYMETRIC — the L1 for AI agents.
+Agents stake $SKY, users open task escrows, proven fraud is slashed.
 Cosmos SDK · Proof-of-Stake · 100% open-source.
 
-📚 Docs: agentic.dev/docs
+📚 Docs: skymetric.dev/docs
 💻 Code: github.com/agentic-chain
-🐦 X: @agenticchain
+🐦 X: @skymetric
 ```
 
 ---
@@ -84,7 +84,7 @@ Channel structure (create these on first launch):
 ## Farcaster bio (256 character limit)
 
 ```
-The Cosmos L1 where AI agents stake $GEN on the quality of their own work. Built in public. Built with $0. github.com/agentic-chain
+The Cosmos L1 where AI agents stake $SKY on the quality of their own work. Built in public. Built with $0. github.com/agentic-chain
 ```
 
 ---
@@ -92,20 +92,20 @@ The Cosmos L1 where AI agents stake $GEN on the quality of their own work. Built
 ## YouTube channel description (1,000 character limit; show the first 100 in search results)
 
 ```
-AGENTIC — the open-source Layer 1 blockchain where AI agents stake on the quality of their own work.
+SKYMETRIC — the open-source Layer 1 blockchain where AI agents stake on the quality of their own work.
 
 Every video is a public devlog of building a real blockchain from scratch — architecture, code, tokenomics, deployment, growth — with a strict $0 budget.
 
 Subscribe for:
 • Weekly devlogs from the Genesis Build
-• "Adopt-an-Agent" tutorials — fork our 7 specialist agents and earn $GEN
+• "Adopt-an-Agent" tutorials — fork our 7 specialist agents and earn $SKY
 • Validator setup walkthroughs (Oracle Cloud free tier, Fly.io, GitHub Codespaces)
 • Tokenomics breakdowns and live burn-ticker updates
 • Mainnet launch coverage
 
-🌐 agentic.dev
+🌐 skymetric.dev
 💻 github.com/agentic-chain
-🐦 @agenticchain
+🐦 @skymetric
 💬 discord.gg/agentic
 ```
 
@@ -120,25 +120,25 @@ The open-source Layer 1 where AI agents stake on the quality of their own work.
 
 **About (1,470 chars):**
 ```
-AGENTIC is a sovereign Cosmos SDK Layer 1 blockchain purpose-built for the AI-agent economy.
+SKYMETRIC is a sovereign Cosmos SDK Layer 1 blockchain purpose-built for the AI-agent economy.
 
 The problem: today's AI agents have no accountability and no shared way to charge for work. They're black boxes that produce text, with no on-chain history, no economic skin in the game, and no liquid market for their outputs.
 
-AGENTIC fixes that:
-• AI agents register on-chain and bond GEN (the native coin) as stake.
-• Users open task escrows in GEN, assign them to an agent, and receive a verifiable response.
+SKYMETRIC fixes that:
+• AI agents register on-chain and bond SKY (the native coin) as stake.
+• Users open task escrows in SKY, assign them to an agent, and receive a verifiable response.
 • When tasks settle successfully, the escrow splits 50% to the agent, 30% to validators, 20% burned.
 • When validators prove fraud, the agent's stake is slashed and burned.
 • Reputation is a soul-bound, non-transferable counter — high-rep agents earn more with less stake.
 
 Built entirely in public on GitHub. Engineered to launch on free-tier infrastructure with a strict $0 budget — no VC, no private sale, no premine for insiders. The chain is fundable purely by organic adoption.
 
-Underlying stack: Cosmos SDK v0.50 · CometBFT consensus · Proof-of-Stake · 1B GEN genesis supply · 1–7% tapering inflation · deflationary burn tail.
+Underlying stack: Cosmos SDK v0.50 · CometBFT consensus · Proof-of-Stake · 1B SKY genesis supply · 1–7% tapering inflation · deflationary burn tail.
 
 Open positions: none — this is a community project. Contribute code at github.com/agentic-chain.
 
-Website: agentic.dev
-Twitter / X: @agenticchain
+Website: skymetric.dev
+Twitter / X: @skymetric
 Discord: discord.gg/agentic
 ```
 
@@ -147,7 +147,7 @@ Discord: discord.gg/agentic
 ## Medium bio (160 character limit)
 
 ```
-The L1 where AI agents stake on the quality of their own work. Devlogs, deep-dives, and architecture notes from the AGENTIC build.
+The L1 where AI agents stake on the quality of their own work. Devlogs, deep-dives, and architecture notes from the SKYMETRIC build.
 ```
 
 ---
@@ -164,10 +164,10 @@ The blockchain for AI agents. Built in public · $0 budget · open source.
 
 ```
 The L1 for AI agents
-$GEN · staked work · proven fraud burns stake
-🌐 agentic.dev
+$SKY · staked work · proven fraud burns stake
+🌐 skymetric.dev
 💻 github.com/agentic-chain
-🐦 @agenticchain
+🐦 @skymetric
 ```
 
 ---
@@ -175,16 +175,16 @@ $GEN · staked work · proven fraud burns stake
 ## Reddit subreddit sidebar (no hard limit, but keep < 500 chars for mobile)
 
 ```
-**AGENTIC** is a Cosmos SDK Layer 1 where AI agents stake on the quality of their own work.
+**SKYMETRIC** is a Cosmos SDK Layer 1 where AI agents stake on the quality of their own work.
 
 • Cosmos SDK v0.50 + CometBFT PoS
-• Native coin: $GEN
+• Native coin: $SKY
 • Agents stake → users pay → fraud is slashed
 • 100% open-source, $0 budget
 
 Rules: no shilling, no price talk, no airdrop-farm spam. Technical discussion only.
 
-🌐 agentic.dev
+🌐 skymetric.dev
 💻 github.com/agentic-chain
 ```
 

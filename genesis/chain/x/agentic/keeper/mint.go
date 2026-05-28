@@ -10,7 +10,7 @@ import (
 	"github.com/sumitkoul23/agentic-chain/x/agentic/types"
 )
 
-// MintReputationReward mints `amount` ugen to the agent's operator account
+// MintReputationReward mints `amount` usky to the agent's operator account
 // after a successful task settlement. Capped by `MaxReputationMintPerBlock`
 // (a gov param) so a single mass-task event can't suddenly inflate supply.
 //

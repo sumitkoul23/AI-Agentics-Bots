@@ -1,5 +1,5 @@
 // Package types defines the storage keys and shared types for the
-// `x/agenticdex` module — the AGENTIC chain's native on-chain AMM.
+// `x/agenticdex` module — the Skymetric chain's native on-chain AMM.
 //
 // Design notes:
 //   - Constant-product (x*y=k) curve only at v0. Concentrated liquidity is

@@ -44,7 +44,7 @@ the canvas size changes:
 
 ## Open Graph / link preview cards
 
-When someone pastes `agentic.dev` or a tweet into Discord / Slack / Telegram,
+When someone pastes `skymetric.dev` or a tweet into Discord / Slack / Telegram,
 this is what they see. **One image, used everywhere:**
 
 | Slot | Size | Notes |

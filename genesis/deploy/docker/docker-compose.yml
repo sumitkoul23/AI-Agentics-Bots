@@ -7,7 +7,7 @@ services:
     build:
       context: ../../chain
       dockerfile: ../deploy/docker/Dockerfile
-    image: ghcr.io/sumitkoul23/agenticd:dev
+    image: ghcr.io/sumitkoul23/skymetricd:dev
     container_name: agentic-val-1
     command: ["start", "--minimum-gas-prices", "0.0001ugen", "--rpc.laddr", "tcp://0.0.0.0:26657"]
     ports:
@@ -15,23 +15,23 @@ services:
       - "1317:1317"
       - "9090:9090"
     volumes:
-      - val1_data:/home/agentic/.agenticd
+      - val1_data:/home/agentic/.skymetricd
 
   val-2:
-    image: ghcr.io/sumitkoul23/agenticd:dev
+    image: ghcr.io/sumitkoul23/skymetricd:dev
     container_name: agentic-val-2
     depends_on: [val-1]
     command: ["start", "--minimum-gas-prices", "0.0001ugen", "--p2p.seeds", "AGENTIC_SEED_NODE_ID@val-1:26656"]
     volumes:
-      - val2_data:/home/agentic/.agenticd
+      - val2_data:/home/agentic/.skymetricd
 
   val-3:
-    image: ghcr.io/sumitkoul23/agenticd:dev
+    image: ghcr.io/sumitkoul23/skymetricd:dev
     container_name: agentic-val-3
     depends_on: [val-1]
     command: ["start", "--minimum-gas-prices", "0.0001ugen", "--p2p.seeds", "AGENTIC_SEED_NODE_ID@val-1:26656"]
     volumes:
-      - val3_data:/home/agentic/.agenticd
+      - val3_data:/home/agentic/.skymetricd
 
   explorer:
     image: ghcr.io/ping-pub/explorer:latest

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- AGENTIC chain — primary mark
+<!-- Skymetric chain — primary mark
      Construction: a central "agent" node radiating four links to "peer"
      nodes — the agent ↔ user ↔ validator ↔ burn topology that powers every
      task settlement. Single-color so it inverts cleanly to mono-dark by
      swapping `currentColor`.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="AGENTIC logo">
-  <title>AGENTIC</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="SKYMETRIC logo">
+  <title>SKYMETRIC</title>
 
   <!-- Background plate (transparent by default; uncomment for filled variant) -->
   <!-- <rect width="256" height="256" rx="48" fill="#0A0E1A"/> -->

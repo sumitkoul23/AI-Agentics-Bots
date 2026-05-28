@@ -24,7 +24,7 @@
 #   NODE             default "https://rpc-falcron.pion-1.ntrn.tech:443"
 #   WALLET           default "deployer"
 #   STAKE_DENOM      default "untrn"  (Neutron's native token, used as stake
-#                                      denom until GEN issues as TokenFactory)
+#                                      denom until SKY issues as TokenFactory)
 #   GAS_PRICES       default "0.05untrn"
 #   TREASURY         default = $(neutrond keys show $WALLET -a)
 #   BURN_SINK        default "neutron1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkqyfk7"

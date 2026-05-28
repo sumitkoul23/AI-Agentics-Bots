@@ -4,7 +4,7 @@
 //!
 //!   1. Instantiate the contract with realistic params.
 //!   2. Two simulated users: `operator` (the AI agent) and `requester`
-//!      (the human paying for work). Each is funded with native GEN.
+//!      (the human paying for work). Each is funded with native SKY.
 //!   3. Operator calls RegisterAgent — verifies on-chain that stake was
 //!      escrowed from the operator's wallet into the contract's wallet.
 //!   4. Requester calls CreateTask — bounty moves requester → contract.
@@ -28,7 +28,7 @@ use agentic_registry::msg::{
     OpenTasksForAgentResponse, QueryMsg, TaskResponse,
 };
 
-const DENOM: &str = "ugen";
+const DENOM: &str = "usky";
 
 // Helper: build the contract wrapper for cw-multi-test.
 fn registry_code() -> Box<dyn cw_multi_test::Contract<cosmwasm_std::Empty>> {
@@ -115,7 +115,7 @@ fn full_happy_path_register_create_submit_settle() {
     let registry = instantiate_registry(&mut app, &admin, &treasury, &burn_sink);
     assert_eq!(bal(&app, &registry), 0);
 
-    // 1. Operator registers — bonds 250 GEN.
+    // 1. Operator registers — bonds 250 SKY.
     let stake = 250_000_000u128;
     app.execute_contract(
         operator.clone(),
@@ -132,7 +132,7 @@ fn full_happy_path_register_create_submit_settle() {
     assert_eq!(bal(&app, &operator), 1_000_000_000_000 - stake);
     assert_eq!(bal(&app, &registry), stake);
 
-    // 2. Requester creates a task with 1000 ugen bounty (small but exact
+    // 2. Requester creates a task with 1000 usky bounty (small but exact
     //    for the split math).
     let bounty = 1_000u128;
     app.execute_contract(
@@ -370,7 +370,7 @@ fn fraud_proof_quorum_slashes_agent() {
 
     let registry = instantiate_registry(&mut app, &admin, &treasury, &burn_sink);
 
-    // Operator registers with 500 GEN stake.
+    // Operator registers with 500 SKY stake.
     let stake = 500_000_000u128;
     app.execute_contract(
         operator.clone(),
@@ -383,7 +383,7 @@ fn fraud_proof_quorum_slashes_agent() {
     )
     .unwrap();
 
-    // Requester creates a 1000 ugen task.
+    // Requester creates a 1000 usky task.
     let bounty = 1_000u128;
     app.execute_contract(
         requester.clone(),

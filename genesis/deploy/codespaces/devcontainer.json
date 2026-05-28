@@ -9,8 +9,8 @@
   "postCreateCommand": "cd genesis/chain && make install && ./scripts/init-chain.sh",
   "postStartCommand": "echo 'Ready. Run:  cd genesis/chain && ./scripts/start-node.sh'",
   "remoteEnv": {
-    "AGENTICD_HOME": "${containerWorkspaceFolder}/.agenticd",
-    "CHAIN_ID": "agentic-devnet-1"
+    "AGENTICD_HOME": "${containerWorkspaceFolder}/.skymetricd",
+    "CHAIN_ID": "skymetric-devnet-1"
   },
   "customizations": {
     "vscode": {

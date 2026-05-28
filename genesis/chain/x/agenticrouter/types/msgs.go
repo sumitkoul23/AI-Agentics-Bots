@@ -55,7 +55,7 @@ type MsgRouteSwapResponse struct {
 // Params govern router-wide settings.
 type Params struct {
 	// Router fee on the user's input, in basis points. Default 5 bps.
-	// 100 % of this fee routes to the AGENTIC treasury.
+	// 100 % of this fee routes to the SKYMETRIC treasury.
 	RouterFeeBps uint32 `json:"router_fee_bps"`
 
 	// Whitelist of IBC channels the router is allowed to use. Prevents

@@ -8,7 +8,7 @@
 set -euo pipefail
 
 WASMD="${WASMD:-/tmp/wasmd/build/wasmd}"
-CHAIN_ID="${CHAIN_ID:-agentic-devnet-1}"
+CHAIN_ID="${CHAIN_ID:-skymetric-devnet-1}"
 HOME_DIR="${HOME_DIR:-/tmp/wasmd-data}"
 DENOM="${DENOM:-stake}"
 RPC_PORT="${RPC_PORT:-26657}"

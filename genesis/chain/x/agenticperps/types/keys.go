@@ -1,5 +1,5 @@
 // Package types defines storage keys and shared types for `x/agenticperps`,
-// the AGENTIC chain's native perpetual-futures module.
+// the Skymetric chain's native perpetual-futures module.
 //
 // Design — virtual-AMM (vAMM) à la dYdX v1 / Perpetual Protocol v1.
 //
@@ -35,7 +35,7 @@ const (
 
 var (
 	ParamsKey         = collections.NewPrefix(0x00)
-	MarketsKey        = collections.NewPrefix(0x10) // key: market_id (string, e.g. "GEN-PERP")
+	MarketsKey        = collections.NewPrefix(0x10) // key: market_id (string, e.g. "SKY-PERP")
 	PositionsKey      = collections.NewPrefix(0x20) // key: (market_id, trader)
 	PositionsByMarket = collections.NewPrefix(0x21) // secondary index
 	FundingIndexKey   = collections.NewPrefix(0x30) // key: market_id → cumulative funding index

@@ -6,15 +6,15 @@ import (
 	"cosmossdk.io/math"
 )
 
-// Market is a single perp instrument (e.g. "GEN-PERP", "BTC-PERP").
+// Market is a single perp instrument (e.g. "SKY-PERP", "BTC-PERP").
 //
 // Pricing uses a *virtual* constant-product curve — `VirtualBaseReserve`
 // and `VirtualQuoteReserve` are abstract numbers, not real holdings. The
 // product k = base * quote is held constant on every trade; the price is
 // the ratio. Real collateral (USDC) sits in the module account.
 type Market struct {
-	ID                  string         `json:"id"`                    // e.g. "GEN-PERP"
-	BaseDenom           string         `json:"base_denom"`            // e.g. "ugen" — the conceptual underlying
+	ID                  string         `json:"id"`                    // e.g. "SKY-PERP"
+	BaseDenom           string         `json:"base_denom"`            // e.g. "usky" — the conceptual underlying
 	MarginDenom         string         `json:"margin_denom"`          // e.g. "uusdc" — what traders deposit
 	VirtualBaseReserve  math.LegacyDec `json:"virtual_base_reserve"`  // initial: target liquidity in base units
 	VirtualQuoteReserve math.LegacyDec `json:"virtual_quote_reserve"` // initial: target liquidity in quote units

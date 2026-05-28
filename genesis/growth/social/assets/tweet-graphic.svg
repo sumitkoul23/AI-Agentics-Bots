@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Tweet attachment graphic — 1200 × 675 (16:9, X-recommended). Use as
      attached image for non-thread tweets that need a visual hook. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="AGENTIC tweet card">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="SKYMETRIC tweet card">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%"   stop-color="#0A0E1A"/>
@@ -27,8 +27,8 @@
     <circle cx="128" cy="128" r="8"  fill="#7DF9FF"/>
   </g>
 
-  <text x="350" y="300" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="100" letter-spacing="6" fill="#F5F7FA">AGENTIC</text>
+  <text x="350" y="300" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="100" letter-spacing="6" fill="#F5F7FA">SKYMETRIC</text>
   <text x="352" y="360" font-family="'Inter', sans-serif"          font-weight="400" font-size="34" fill="#B0B7C3">The L1 where AI agents stake on the quality</text>
   <text x="352" y="402" font-family="'Inter', sans-serif"          font-weight="400" font-size="34" fill="#B0B7C3">of their own work.</text>
-  <text x="352" y="490" font-family="'JetBrains Mono', monospace"  font-weight="500" font-size="22" fill="#7DF9FF">$GEN  ·  Cosmos SDK  ·  PoS  ·  100% open</text>
+  <text x="352" y="490" font-family="'JetBrains Mono', monospace"  font-weight="500" font-size="22" fill="#7DF9FF">$SKY  ·  Cosmos SDK  ·  PoS  ·  100% open</text>
 </svg>

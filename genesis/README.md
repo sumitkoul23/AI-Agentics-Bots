@@ -1,4 +1,4 @@
-# AGENTIC — agent economy on Neutron (CosmWasm), GEN as the settlement coin
+# SKYMETRIC — agent economy on Neutron (CosmWasm), SKY as the settlement coin
 
 > **Current direction:** ship as CosmWasm contracts on Neutron. The
 > sovereign-L1 path is preserved in `chain/` for historical reference
@@ -6,8 +6,8 @@
 > [`docs/10-cosmwasm-pivot.md`](docs/10-cosmwasm-pivot.md) for the
 > decision rationale.
 >
-> AGENTIC is an open agent-economy: AI agents register on-chain, bond
-> GEN, accept escrowed tasks, and earn (or lose) reputation through
+> SKYMETRIC is an open agent-economy: AI agents register on-chain, bond
+> SKY, accept escrowed tasks, and earn (or lose) reputation through
 > verifiable work. Built end-to-end with a **$0.00 budget** on open-
 > source infrastructure.
 
@@ -20,24 +20,24 @@ genesis/
 ├── docs/                         ← 10 docs: architecture → wallet → cosmwasm-pivot
 ├── contracts/                    ← ★ CosmWasm contracts (the active build)
 │   └── agent-registry/           ← compiles + 5 unit tests pass
-├── agents-catalog/               ← specs for agents to operate on AGENTIC
+├── agents-catalog/               ← specs for agents to operate on SKYMETRIC
 │   └── github-experts.md         ← 8 GitHub-specialist agent specs
 ├── chain/                        ← (deprecated) Cosmos SDK sovereign-L1 attempt
 ├── deploy/                       ← Docker, Cloudflare, hosting recipes
-├── site/                         ← agentic.dev landing page (static)
-├── frontend/dex/                 ← dex.agentic.dev (Next.js)
-├── wallet/                       ← Agentic Wallet — extension + Keplr fork plan
+├── site/                         ← skymetric.dev landing page (static)
+├── frontend/dex/                 ← dex.skymetric.dev (Next.js)
+├── wallet/                       ← Skymetric Wallet — extension + Keplr fork plan
 ├── exchange/                     ← DEX product spec + CEX roadmap
 └── growth/                       ← Social handles, bios, brand, video scripts
 ```
 
 ## TL;DR
 
-- **Chain ID:** `agentic-1`
+- **Chain ID:** `skymetric-1`
 - **Framework:** Cosmos SDK v0.50 + CometBFT PoS
 - **Consensus:** Proof-of-Stake, 4 free-tier validators at genesis
-- **Native coin:** `GEN` (`ugen`, 1 GEN = 10⁶ ugen)
-- **Supply:** 1,000,000,000 GEN at genesis · 1–7 % tapering inflation · 20 % burn per settled task
+- **Native coin:** `SKY` (`usky`, 1 SKY = 10⁶ usky)
+- **Supply:** 1,000,000,000 SKY at genesis · 1–7 % tapering inflation · 20 % burn per settled task
 - **Utility:** Stake / slash / settle / reputation layer for AI agents
 - **Budget:** $0.00
 
@@ -62,7 +62,7 @@ genesis/
 ```
 chain/
 ├── app/                  ← runtime wiring (config.go, encoding.go, genesis.go, app.go)
-├── cmd/agenticd/         ← the binary entry point + CLI root cmd
+├── cmd/skymetricd/         ← the binary entry point + CLI root cmd
 ├── x/agentic/            ← agent registry · tasks · fraud-proof slashing
 ├── x/agenticdex/         ← constant-product AMM (the chain's native DEX)
 ├── x/agenticperps/       ← virtual-AMM perpetuals with funding-rate accrual
@@ -73,7 +73,7 @@ chain/
 ├── go.mod · Makefile
 ```
 
-### `wallet/` — Agentic Wallet (3-stage rollout)
+### `wallet/` — Skymetric Wallet (3-stage rollout)
 
 ```
 wallet/
@@ -87,7 +87,7 @@ wallet/
 
 ```
 exchange/
-├── dex/README.md         ← Tier 1 product spec (DEX frontend at dex.agentic.dev)
+├── dex/README.md         ← Tier 1 product spec (DEX frontend at dex.skymetric.dev)
 └── cex/                  ← Tier 4 docs (Binance-class licensed CEX, gated at $100M TVL)
     ├── README.md
     ├── roadmap.md
@@ -163,10 +163,10 @@ and is also tracked in PR #7 as the source of truth for the genesis branch.
 Priorities for the next batch (ordered by leverage):
 
 1. Wire `buf generate` for proto-gen → flips CI from advisory to hard-fail.
-2. Submit AGENTIC to `cosmos/chain-registry` so Keplr / Leap auto-detect.
+2. Submit SKYMETRIC to `cosmos/chain-registry` so Keplr / Leap auto-detect.
 3. Ship financial instrument **#4 streaming payments** (smallest module,
    largest unlock — see `docs/06-financial-instruments.md`).
-4. Bootstrap the testnet `agentic-test-1` per `docs/03-devops.md`.
+4. Bootstrap the testnet `skymetric-test-1` per `docs/03-devops.md`.
 
 ## License
 

@@ -480,10 +480,10 @@ mod tests {
     fn default_params() -> InstantiateMsg {
         InstantiateMsg {
             admin: None,
-            stake_denom: "ugen".into(),
+            stake_denom: "usky".into(),
             burn_sink: Addr::unchecked("cosmos1burn"),
             treasury: Addr::unchecked("cosmos1treasury"),
-            min_agent_stake: Uint128::new(100_000_000), // 100 GEN
+            min_agent_stake: Uint128::new(100_000_000), // 100 SKY
             min_agent_stake_floor: Uint128::new(10_000_000),
             split_agent: Decimal::percent(50),
             split_treasury: Decimal::percent(30),
@@ -503,7 +503,7 @@ mod tests {
         assert!(res.attributes.iter().any(|a| a.key == "action"));
 
         let p = PARAMS.load(deps.as_ref().storage).unwrap();
-        assert_eq!(p.stake_denom, "ugen");
+        assert_eq!(p.stake_denom, "usky");
         assert_eq!(p.split_agent + p.split_treasury + p.split_burn, Decimal::one());
     }
 
@@ -531,7 +531,7 @@ mod tests {
         .unwrap();
 
         let operator = deps.api.addr_make("operator");
-        let info = mock_info(operator.as_str(), &coins(100_000_000, "ugen"));
+        let info = mock_info(operator.as_str(), &coins(100_000_000, "usky"));
         let res = execute(
             deps.as_mut(),
             mock_env(),
@@ -563,7 +563,7 @@ mod tests {
         .unwrap();
 
         let operator = deps.api.addr_make("operator");
-        let info = mock_info(operator.as_str(), &coins(1_000_000, "ugen")); // 1 GEN, below 100
+        let info = mock_info(operator.as_str(), &coins(1_000_000, "usky")); // 1 SKY, below 100
         let err = execute(
             deps.as_mut(),
             mock_env(),
@@ -593,7 +593,7 @@ mod tests {
         execute(
             deps.as_mut(),
             mock_env(),
-            mock_info(agent.as_str(), &coins(100_000_000, "ugen")),
+            mock_info(agent.as_str(), &coins(100_000_000, "usky")),
             ExecuteMsg::RegisterAgent {
                 moniker: "a".into(),
                 endpoint: "x".into(),
@@ -606,7 +606,7 @@ mod tests {
         execute(
             deps.as_mut(),
             mock_env(),
-            mock_info(requester.as_str(), &coins(1_000, "ugen")),
+            mock_info(requester.as_str(), &coins(1_000, "usky")),
             ExecuteMsg::CreateTask {
                 agent: agent.clone(),
                 spec: "test".into(),

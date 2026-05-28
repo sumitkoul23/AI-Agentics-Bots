@@ -17,7 +17,7 @@ import (
 func TestCalcOutGivenIn(t *testing.T) {
 	pool := types.Pool{
 		ID:          1,
-		AssetA:      sdk.NewCoin("ugen", math.NewInt(1_000_000_000_000)),  // 1M GEN
+		AssetA:      sdk.NewCoin("usky", math.NewInt(1_000_000_000_000)),  // 1M SKY
 		AssetB:      sdk.NewCoin("uusdc", math.NewInt(1_000_000_000_000)), // 1M USDC (assuming 6dp)
 		TotalShares: math.NewInt(1_000_000_000_000),
 		SwapFee:     math.LegacyNewDecWithPrec(3, 3), // 0.30 %
@@ -28,13 +28,13 @@ func TestCalcOutGivenIn(t *testing.T) {
 		amountIn    int64
 		minOutBound int64 // lower bound — actual will be slightly higher pre-fee
 	}{
-		{"1k GEN in", 1_000_000_000, 990_000_000},          // ~1k USDC out, with ~0.3% slippage+fee
-		{"1M GEN in (large slippage)", 1_000_000_000_000, 480_000_000_000}, // 50% price impact
+		{"1k SKY in", 1_000_000_000, 990_000_000},          // ~1k USDC out, with ~0.3% slippage+fee
+		{"1M SKY in (large slippage)", 1_000_000_000_000, 480_000_000_000}, // 50% price impact
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			out, fee, err := pool.CalcOutGivenIn("ugen", "uusdc", math.NewInt(tc.amountIn))
+			out, fee, err := pool.CalcOutGivenIn("usky", "uusdc", math.NewInt(tc.amountIn))
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}

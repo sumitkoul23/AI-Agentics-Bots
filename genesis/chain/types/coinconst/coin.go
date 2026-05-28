@@ -9,16 +9,16 @@
 package coinconst
 
 const (
-	// HumanCoinUnit is the user-facing denom ("GEN").
-	HumanCoinUnit = "GEN"
+	// HumanCoinUnit is the user-facing denom ("SKY").
+	HumanCoinUnit = "SKY"
 
-	// BaseCoinUnit is the on-chain base denom ("ugen" — micro-GEN).
-	BaseCoinUnit = "ugen"
+	// BaseCoinUnit is the on-chain base denom ("usky" — micro-SKY).
+	BaseCoinUnit = "usky"
 
-	// GenExponent is the conversion 1 GEN = 10^GenExponent ugen.
-	GenExponent = 6
+	// SkyExponent is the conversion 1 SKY = 10^SkyExponent usky.
+	SkyExponent = 6
 
 	// Bech32MainPrefix prefixes every account / validator / consensus
-	// address (e.g. "agentic1...", "agenticvaloper1...").
-	Bech32MainPrefix = "agentic"
+	// address on the Skymetric chain (e.g. "sky1...", "skyvaloper1...").
+	Bech32MainPrefix = "sky"
 )

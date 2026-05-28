@@ -1,12 +1,12 @@
-# Agentic Wallet
+# Skymetric Wallet
 
-> The native wallet for the AGENTIC chain. Forked from Keplr (Apache 2.0),
+> The native wallet for the Skymetric chain. Forked from Keplr (Apache 2.0),
 > rebranded, with agent-economy UX layered on top.
 
 | Folder | Purpose |
 |---|---|
 | [`extension/`](extension/) | Minimal MV3 browser-extension scaffold — manifest, popup, content script, background service worker. Demonstrates the dApp-injection model and the agent-economy view shell. |
-| [`keplr-fork/`](keplr-fork/) | Fork plan + checklist: clone, rebrand, hardcode AGENTIC, ship to Chrome Web Store |
+| [`keplr-fork/`](keplr-fork/) | Fork plan + checklist: clone, rebrand, hardcode SKYMETRIC, ship to Chrome Web Store |
 | [`agent-views/`](agent-views/) | React components for the agent-economy surfaces — registry, reputation, tasks, streams. Drop-in for the wallet popup and the DEX frontend. |
 
 ## Status
@@ -23,7 +23,7 @@ crypto plumbing (the Keplr fork). That ordering is deliberate:
 
 1. The brand surface is the cheapest thing to validate — a hundred
    developers see the popup before any signing risk exists.
-2. The differentiated views are what makes "Agentic Wallet" worth
+2. The differentiated views are what makes "Skymetric Wallet" worth
    installing over Keplr — those need to be ready *before* we ship the
    fork, otherwise we ship a worse Keplr.
 3. The Keplr fork itself is mostly *configuration* once the views and
@@ -40,7 +40,7 @@ file in this folder as a UX prototype.
 A line we will write into the v1 release notes and onto every distribution
 page:
 
-> Agentic Wallet is a fork of Keplr (Chainapsis, Apache 2.0). The
+> Skymetric Wallet is a fork of Keplr (Chainapsis, Apache 2.0). The
 > cryptographic primitives are unchanged. Changes are: branding, default
 > chain selection, and the agent-economy view layer. Diff is public at
 > github.com/agentic-chain/wallet.
