@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - 'v*'
+    paths:
+      - 'VERSION'
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       version:
@@ -123,10 +127,12 @@ jobs:
       - name: Install build tools
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Set version name from tag or input
+      - name: Set version name from tag, input, or VERSION file
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             VERSION="${{ github.event.inputs.version }}"
+          elif [ -f "VERSION" ]; then
+            VERSION="$(cat VERSION | tr -d '[:space:]')"
           else
             VERSION="${GITHUB_REF_NAME#v}"
           fi
@@ -199,10 +205,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: "Bodhi v${{ github.event.inputs.version || github.ref_name }}"
-          tag_name: "v${{ github.event.inputs.version || github.ref_name }}"
+          name: "Bodhi v${{ env.VERSION || github.event.inputs.version || github.ref_name }}"
+          tag_name: "v${{ env.VERSION || github.event.inputs.version || github.ref_name }}"
           body: |
-            ## Bodhi v${{ github.event.inputs.version || github.ref_name }} — On-device Autonomous AI Swarm
+            ## Bodhi v${{ env.VERSION || github.event.inputs.version || github.ref_name }} — On-device Autonomous AI Swarm
 
             **35 specialist agents.** Single binary. No cloud. No API keys.
             Runs entirely on your device using [Ollama](https://ollama.ai).
