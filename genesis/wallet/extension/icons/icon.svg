@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Master icon — export to icon-16.png, icon-48.png, icon-128.png for
+     manifest.json. Same construction as genesis/growth/social/logo.svg. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Skymetric Wallet">
+  <rect width="256" height="256" rx="56" fill="#0A0E1A"/>
+  <g stroke="#7DF9FF" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.85">
+    <line x1="128" y1="128" x2="56" y2="56"/>
+    <line x1="128" y1="128" x2="200" y2="56"/>
+    <line x1="128" y1="128" x2="56" y2="200"/>
+    <line x1="128" y1="128" x2="200" y2="200"/>
+  </g>
+  <g fill="#A78BFA">
+    <circle cx="56" cy="56" r="18"/><circle cx="200" cy="56" r="18"/>
+    <circle cx="56" cy="200" r="18"/><circle cx="200" cy="200" r="18"/>
+  </g>
+  <circle cx="128" cy="128" r="36" fill="#7DF9FF"/>
+  <circle cx="128" cy="128" r="22" fill="#0A0E1A"/>
+  <circle cx="128" cy="128" r="10" fill="#7DF9FF"/>
+</svg>

@@ -1,0 +1,42 @@
+# fly.toml — Fly.io app spec for an SKYMETRIC sentry / RPC node.
+#
+# Deploy:
+#   fly launch --no-deploy --copy-config --name agentic-val-2
+#   fly secrets set CHAIN_ID=skymetric-test-1 MONIKER=val-2 SEED_NODE=...
+#   fly volumes create agenticd_data --size 10 --region iad
+#   fly deploy
+
+app = "agentic-val-2"
+primary_region = "iad"
+kill_signal = "SIGINT"
+kill_timeout = 30
+
+[build]
+  image = "ghcr.io/sumitkoul23/skymetricd:latest"
+
+[env]
+  HOME = "/home/agentic"
+
+[[mounts]]
+  source = "agenticd_data"
+  destination = "/home/agentic/.skymetricd"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 26657
+  [[services.ports]]
+    port = 26657
+    handlers = ["tls"]
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 200
+    soft_limit = 100
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 26656
+  [[services.ports]]
+    port = 26656
+
+[experimental]
+  cmd = ["start", "--minimum-gas-prices", "0.0001ugen"]

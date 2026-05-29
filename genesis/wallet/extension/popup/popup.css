@@ -1,0 +1,116 @@
+/* Same brand tokens as everywhere else in the repo. */
+:root {
+  --ink:    #0A0E1A;
+  --plum:   #1A1233;
+  --gen:    #7DF9FF;
+  --violet: #A78BFA;
+  --stake:  #22C55E;
+  --slash:  #EF4444;
+  --ash:    #B0B7C3;
+  --bone:   #F5F7FA;
+  --line:   rgba(255,255,255,0.08);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 360px;
+  min-height: 540px;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: radial-gradient(ellipse at top right, var(--plum) 0%, var(--ink) 70%);
+  color: var(--bone);
+  font-size: 13px;
+}
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 8px; }
+.mark { width: 22px; height: 22px; }
+.wordmark { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: 2px; }
+.chain-switch {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--line);
+  color: var(--ash);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.balance { padding: 18px 16px; border-bottom: 1px solid var(--line); }
+.addr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ash);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  cursor: pointer;
+}
+.amount {
+  margin-top: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.amount .denom { font-size: 14px; color: var(--ash); font-weight: 500; }
+.actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+.actions button {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--line);
+  color: var(--bone);
+  padding: 8px 0;
+  border-radius: 10px;
+  font: inherit; font-weight: 500;
+  cursor: pointer;
+}
+.actions button:hover { background: rgba(125, 249, 255, 0.08); }
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+}
+.tab {
+  background: transparent;
+  border: 0;
+  color: var(--ash);
+  padding: 10px 12px;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
+.tab.active { color: var(--bone); border-bottom-color: var(--gen); }
+
+.panel { padding: 14px 16px; min-height: 260px; }
+.panel h3 { font-family: 'Space Grotesk', sans-serif; margin: 0 0 8px; font-size: 14px; }
+.panel .row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px dashed var(--line);
+}
+.panel .row:last-child { border-bottom: 0; }
+.panel .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.panel .muted { color: var(--ash); }
+.panel .pill {
+  font-size: 10px; padding: 2px 8px; border-radius: 999px;
+  background: rgba(125, 249, 255, 0.1); color: var(--gen);
+}
+.panel .pill.bad { background: rgba(239, 68, 68, 0.1); color: var(--slash); }
+.panel .pill.good { background: rgba(34, 197, 94, 0.1); color: var(--stake); }
+.panel .empty {
+  text-align: center; padding: 24px 8px; color: var(--ash);
+}
+
+.warn {
+  position: sticky; bottom: 0;
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--slash);
+  padding: 8px 12px;
+  font-size: 11px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+}

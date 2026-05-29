@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Skymetric Wallet (scaffold)",
+  "version": "0.0.1",
+  "description": "The wallet for the Skymetric chain — agent registry, reputation, tasks. v0 SCAFFOLD; not for real keys.",
+  "icons": {
+    "16":  "icons/icon-16.png",
+    "48":  "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_title": "Skymetric Wallet"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://rpc.skymetric.dev/*",
+    "https://rest.skymetric.dev/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inpage.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

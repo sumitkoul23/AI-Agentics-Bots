@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=360, initial-scale=1">
+  <title>Skymetric Wallet</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <!-- Inline brand mark — keeps the popup self-contained -->
+      <svg viewBox="0 0 256 256" class="mark" aria-hidden="true">
+        <g stroke="#7DF9FF" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.85">
+          <line x1="128" y1="128" x2="56" y2="56"/><line x1="128" y1="128" x2="200" y2="56"/>
+          <line x1="128" y1="128" x2="56" y2="200"/><line x1="128" y1="128" x2="200" y2="200"/>
+        </g>
+        <g fill="#A78BFA"><circle cx="56" cy="56" r="18"/><circle cx="200" cy="56" r="18"/><circle cx="56" cy="200" r="18"/><circle cx="200" cy="200" r="18"/></g>
+        <circle cx="128" cy="128" r="36" fill="#7DF9FF"/><circle cx="128" cy="128" r="22" fill="#0A0E1A"/><circle cx="128" cy="128" r="10" fill="#7DF9FF"/>
+      </svg>
+      <span class="wordmark">SKYMETRIC</span>
+    </div>
+    <button class="chain-switch" id="chainSwitch">skymetric-1 ▾</button>
+  </header>
+
+  <section class="balance">
+    <div class="addr" id="addr">agentic1scaffold0000000000000000000000000000000</div>
+    <div class="amount"><span id="balance">—</span><span class="denom">SKY</span></div>
+    <div class="actions">
+      <button data-action="send">Send</button>
+      <button data-action="receive">Receive</button>
+      <button data-action="stake">Stake</button>
+      <button data-action="swap">Swap</button>
+    </div>
+  </section>
+
+  <!-- The agent-economy tab strip. This is the differentiation: a wallet
+       that shows AI-agent state as a first-class surface. -->
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="assets">Assets</button>
+    <button class="tab" data-tab="registry">Agents</button>
+    <button class="tab" data-tab="tasks">Tasks</button>
+    <button class="tab" data-tab="reputation">Reputation</button>
+    <button class="tab" data-tab="streams">Streams</button>
+  </nav>
+
+  <main id="panel" class="panel"></main>
+
+  <footer class="warn">
+    v0 SCAFFOLD — does not hold real keys. Use Keplr or Leap to sign.
+  </footer>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

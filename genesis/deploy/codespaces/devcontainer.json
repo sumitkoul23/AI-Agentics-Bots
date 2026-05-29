@@ -1,0 +1,20 @@
+{
+  "name": "agentic-chain-devnet",
+  "image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "forwardPorts": [26657, 1317, 9090, 8080],
+  "postCreateCommand": "cd genesis/chain && make install && ./scripts/init-chain.sh",
+  "postStartCommand": "echo 'Ready. Run:  cd genesis/chain && ./scripts/start-node.sh'",
+  "remoteEnv": {
+    "AGENTICD_HOME": "${containerWorkspaceFolder}/.skymetricd",
+    "CHAIN_ID": "skymetric-devnet-1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["golang.go", "tamasfe.even-better-toml", "redhat.vscode-yaml"]
+    }
+  }
+}

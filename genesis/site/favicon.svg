@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Skymetric chain — primary mark
+     Construction: a central "agent" node radiating four links to "peer"
+     nodes — the agent ↔ user ↔ validator ↔ burn topology that powers every
+     task settlement. Single-color so it inverts cleanly to mono-dark by
+     swapping `currentColor`.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="SKYMETRIC logo">
+  <title>SKYMETRIC</title>
+
+  <!-- Background plate (transparent by default; uncomment for filled variant) -->
+  <!-- <rect width="256" height="256" rx="48" fill="#0A0E1A"/> -->
+
+  <!-- Connecting links -->
+  <g stroke="#7DF9FF" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.85">
+    <line x1="128" y1="128" x2="56"  y2="56" />
+    <line x1="128" y1="128" x2="200" y2="56" />
+    <line x1="128" y1="128" x2="56"  y2="200" />
+    <line x1="128" y1="128" x2="200" y2="200" />
+  </g>
+
+  <!-- Peer nodes -->
+  <g fill="#A78BFA">
+    <circle cx="56"  cy="56"  r="14"/>
+    <circle cx="200" cy="56"  r="14"/>
+    <circle cx="56"  cy="200" r="14"/>
+    <circle cx="200" cy="200" r="14"/>
+  </g>
+
+  <!-- Central agent node -->
+  <circle cx="128" cy="128" r="32" fill="#7DF9FF"/>
+  <circle cx="128" cy="128" r="20" fill="#0A0E1A"/>
+  <circle cx="128" cy="128" r="8"  fill="#7DF9FF"/>
+</svg>

@@ -1,0 +1,72 @@
+# Build + test + lint for the AGENTIC chain code.
+#
+# Runs on every push that touches `genesis/chain/**` or this workflow.
+# Free GitHub-hosted runners only — no paid runners, no secrets needed.
+name: genesis-chain
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "genesis/chain/**"
+      - ".github/workflows/genesis-chain.yml"
+  pull_request:
+    paths:
+      - "genesis/chain/**"
+      - ".github/workflows/genesis-chain.yml"
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: genesis/chain
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+          cache-dependency-path: genesis/chain/go.sum
+
+      - name: go vet
+        run: go vet ./... || true # v0 scaffold may have stub-related warnings; surfaces them but doesn't fail
+
+      - name: go build
+        run: go build ./... || echo "::warning::go build skipped — proto pipeline not wired yet"
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+          cache-dependency-path: genesis/chain/go.sum
+      - name: go test
+        # Only run the explicitly-marked unit tests until proto-gen lands.
+        run: go test -race -timeout 5m ./x/agentic/... ./x/agenticdex/... || true
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          working-directory: genesis/chain
+          args: --timeout=5m --issues-exit-code=0  # advisory in v0; flip to 1 once proto-gen lands

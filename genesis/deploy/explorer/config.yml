@@ -1,0 +1,20 @@
+# Ping.pub chain config for the SKYMETRIC network.
+# Drop this into `chains/mainnet/agentic.yml` of a ping-pub fork before
+# deploying to Cloudflare Pages.
+
+chain_name: agentic
+api:
+  - https://rest.skymetric.dev
+rpc:
+  - https://rpc.skymetric.dev
+sdk_version: "0.50"
+coin_type: 118
+min_tx_fee: "200"
+addr_prefix: agentic
+logo: /logos/agentic.svg
+assets:
+  - base: usky
+    symbol: SKY
+    exponent: 6
+    coingecko_id: agentic
+    logo: /logos/agentic.svg

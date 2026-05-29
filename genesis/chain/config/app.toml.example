@@ -1,0 +1,31 @@
+# Example `~/.agenticd/config/app.toml` overrides.
+#
+# Only the keys we deliberately change from SDK defaults are included.
+# Merge into the file `agenticd init` generated rather than replacing it.
+
+minimum-gas-prices = "0.0001ugen"
+
+# Pruning: keep the chain footprint small enough for free-tier disks.
+pruning = "custom"
+pruning-keep-recent = "100"
+pruning-interval = "10"
+
+[telemetry]
+enabled = false  # explorer scrapes /status instead of /metrics on devnet
+
+[api]
+enable = true
+swagger = true
+address = "tcp://0.0.0.0:1317"
+
+[grpc]
+enable = true
+address = "0.0.0.0:9090"
+
+[grpc-web]
+enable = true
+address = "0.0.0.0:9091"
+
+[state-sync]
+snapshot-interval = 1000
+snapshot-keep-recent = 2
