@@ -1,0 +1,74 @@
+{
+  "name": "FusionAI",
+  "agent_id": "fusion-ai-f4s9n1",
+  "short_description": "Claude + Gemini + Codex capabilities in one agent. Auto-routes to the best free AI model for code, analysis, writing, and math.",
+  "description": "## FusionAI — Multi-Model Intelligence\n\nFusionAI combines the best capabilities of the world's leading AI models into a single agent on the Teneo network:\n\n- **Code & Debugging** — Gemini 2.0 Flash or GPT-4o (OpenAI Codex successor). Generates, debugs, and refactors code in any language.\n- **Deep Analysis & Writing** — Claude Sonnet (Anthropic). Best-in-class reasoning, research summaries, and long-form writing.\n- **Fast Q&A** — Llama 3.3 70B via Groq. Lightning-fast responses for general questions.\n- **Math & Science** — Gemini Flash. Strong on equations, proofs, and technical explanations.\n- **Local / Private** — Ollama (any local model). On-device inference, no data leaves your machine.\n\n### Smart Routing\n\nFusionAI automatically classifies each query and routes it to the best available model:\n\n| Query type | Primary model | Fallback |\n|---|---|---|\n| Code / debugging | Gemini 2.0 Flash | GPT-4o mini |\n| Analysis / research | Claude Sonnet | Gemini |\n| Creative writing | Claude Sonnet | Gemini |\n| Mathematics | Gemini Flash | Claude |\n| General / fast | Gemini Flash | Groq Llama |\n\nIf the preferred model is unavailable (API key not set), FusionAI falls through to the next best option automatically.\n\n### Free-first design\n\nFusionAI works 100% free out of the box using:\n- **Gemini 2.0 Flash** — free API from Google (15 req/min)\n- **Groq Llama 3.3 70B** — free API from Groq\n- **Ollama** — local model, zero cost\n\nPremium models (Claude, GPT-4o) unlock when API keys are configured.\n\n### Pricing\nFirst query free. 0.5 USDC per query; 1.5 USDC for complex multi-step tasks (deep code review, research reports).",
+  "agent_type": "nlp",
+  "categories": [
+    "AI Assistant",
+    "Code",
+    "Analysis",
+    "Writing",
+    "Math",
+    "Productivity",
+    "Multi-Model"
+  ],
+  "capabilities": [
+    {
+      "name": "code_generation",
+      "description": "Generates, debugs, and refactors code in any programming language. Explains algorithms, reviews pull requests, and writes tests."
+    },
+    {
+      "name": "deep_analysis",
+      "description": "Performs detailed research summaries, comparative analysis, pros/cons breakdowns, and multi-step logical reasoning."
+    },
+    {
+      "name": "creative_writing",
+      "description": "Writes essays, stories, blog posts, marketing copy, and any other long-form creative content."
+    },
+    {
+      "name": "math_and_science",
+      "description": "Solves equations, explains proofs, handles statistics, calculus, physics, and other STEM topics."
+    },
+    {
+      "name": "smart_routing",
+      "description": "Automatically selects the best AI model (Gemini, Groq, Claude, OpenAI, Ollama) for each query type without user input."
+    },
+    {
+      "name": "general_assistant",
+      "description": "Handles any general knowledge question, summarisation, translation, or conversational task."
+    }
+  ],
+  "commands": [
+    {"command": "/model",  "description": "Force a specific model — /model gemini|groq|claude|openai|ollama <message>"},
+    {"command": "/models", "description": "List available models and their status"},
+    {"command": "/code",   "description": "Code mode — /code <language> <task>"},
+    {"command": "/analyze","description": "Deep analysis mode — /analyze <topic>"},
+    {"command": "/write",  "description": "Writing mode — /write <type> <topic>"},
+    {"command": "/math",   "description": "Math mode — /math <problem>"},
+    {"command": "/help",   "description": "Show all commands and routing logic"}
+  ],
+  "nlp_fallback": true,
+  "faq_items": [
+    {
+      "question": "Which AI models does FusionAI use?",
+      "answer": "FusionAI can use Google Gemini 2.0 Flash (free), Groq Llama 3.3 70B (free), Anthropic Claude Sonnet, OpenAI GPT-4o mini, and local Ollama models. It automatically picks the best available model for each query type."
+    },
+    {
+      "question": "Is it really free?",
+      "answer": "FusionAI itself charges 0.5 USDC per query on the Teneo network (first query free). The underlying AI models it uses include free-tier APIs (Gemini, Groq) and free local models (Ollama), so the operator cost is minimal."
+    },
+    {
+      "question": "How does model routing work?",
+      "answer": "FusionAI classifies each message by type (code, analysis, creative, math, general) and routes it to the model with the best strengths for that category. For code, it prefers Gemini or GPT-4o. For deep reasoning, it prefers Claude. For speed, it prefers Groq."
+    },
+    {
+      "question": "Can I force a specific model?",
+      "answer": "Yes. Use /model gemini, /model groq, /model claude, /model openai, or /model ollama followed by your message to bypass auto-routing."
+    },
+    {
+      "question": "What happens if a model is unavailable?",
+      "answer": "FusionAI automatically falls back to the next best available model in the priority chain. You'll always get a response as long as at least one model is configured."
+    }
+  ]
+}
