@@ -1,0 +1,19 @@
+version: v2
+modules:
+  - path: .
+    name: buf.build/sumitkoul23/agentic-chain
+deps:
+  - buf.build/cosmos/cosmos-sdk
+  - buf.build/cosmos/cosmos-proto
+  - buf.build/cosmos/gogo-proto
+lint:
+  use:
+    - DEFAULT
+  except:
+    - PACKAGE_VERSION_SUFFIX
+    - RPC_REQUEST_RESPONSE_UNIQUE
+  ignore:
+    - gogoproto
+breaking:
+  use:
+    - FILE
