@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Chain Deployment Studio — spin up a new SKYMETRIC chain (Cosmos SDK + CometBFT) with a guided, professional workflow." />
+  <title>Chain Deployment Studio · SKYMETRIC</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <!-- ============ Header ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">🌌</span>
+      <div class="brand-text">
+        <strong>Chain Deployment Studio</strong>
+        <span>SKYMETRIC · Cosmos SDK + CometBFT</span>
+      </div>
+    </div>
+    <nav class="topnav">
+      <span class="engine-pill" id="enginePill" title="Chain framework">
+        <span class="dot"></span> connecting…
+      </span>
+      <a class="ghost-btn" href="https://github.com/sumitkoul23/ai-agentics-bots/tree/main/genesis" target="_blank" rel="noreferrer">Docs</a>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <!-- ============ Left: Wizard ============ -->
+    <section class="panel wizard" aria-label="Deployment wizard">
+      <div class="panel-head">
+        <h1>Deploy a new chain</h1>
+        <p>Spin up a sovereign SKYMETRIC chain in five guided steps — and walk away with ready-to-run config.</p>
+      </div>
+
+      <ol class="stepper" id="stepper">
+        <li data-step="1" class="active"><span>1</span> Identity</li>
+        <li data-step="2"><span>2</span> Tokenomics</li>
+        <li data-step="3"><span>3</span> Validators</li>
+        <li data-step="4"><span>4</span> Target</li>
+        <li data-step="5"><span>5</span> Review</li>
+      </ol>
+
+      <form id="wizardForm" autocomplete="off">
+        <!-- Step 1: Identity -->
+        <fieldset class="step active" data-step="1">
+          <legend>Chain identity</legend>
+          <label class="field">
+            <span>Chain ID</span>
+            <input type="text" id="chain_id" name="chain_id" value="skymetric-1" placeholder="e.g. skymetric-1" maxlength="48" required />
+            <small class="hint">Lowercase name ending in a revision number, e.g. <code>mychain-1</code>.</small>
+          </label>
+          <label class="field">
+            <span>Validator moniker</span>
+            <input type="text" id="moniker" name="moniker" value="genesis-node" placeholder="e.g. genesis-node" maxlength="70" required />
+            <small class="hint">The public name of your genesis node.</small>
+          </label>
+          <label class="field">
+            <span>Description <em>(optional)</em></span>
+            <textarea id="description" name="description" rows="3" maxlength="280" placeholder="What is this chain for?"></textarea>
+          </label>
+          <div class="callout">Native coin: <strong>SKY</strong> · base denom <code>usky</code> · 1 SKY = 1,000,000 usky</div>
+        </fieldset>
+
+        <!-- Step 2: Tokenomics -->
+        <fieldset class="step" data-step="2">
+          <legend>Tokenomics</legend>
+          <label class="field">
+            <span>Total supply (SKY)</span>
+            <input type="number" id="total_supply_sky" name="total_supply_sky" min="1" step="1" value="1000000000" />
+            <small class="hint">Total SKY minted at genesis.</small>
+          </label>
+          <div class="two-col">
+            <label class="field">
+              <span>Min inflation · <output id="infMinOut">1%</output></span>
+              <input type="range" id="inflation_min" name="inflation_min" min="0" max="0.5" step="0.01" value="0.01" />
+            </label>
+            <label class="field">
+              <span>Max inflation · <output id="infMaxOut">7%</output></span>
+              <input type="range" id="inflation_max" name="inflation_max" min="0" max="0.5" step="0.01" value="0.07" />
+            </label>
+          </div>
+          <label class="field">
+            <span>Goal bonded · <output id="goalOut">67%</output></span>
+            <input type="range" id="goal_bonded" name="goal_bonded" min="0.1" max="1" step="0.01" value="0.67" />
+            <small class="hint">Target share of supply staked by validators.</small>
+          </label>
+          <label class="field">
+            <span>Task burn fraction · <output id="burnOut">20%</output></span>
+            <input type="range" id="task_burn_fraction" name="task_burn_fraction" min="0" max="1" step="0.01" value="0.20" />
+            <small class="hint">SKY burned on every settled agent task (deflationary pressure).</small>
+          </label>
+        </fieldset>
+
+        <!-- Step 3: Validators -->
+        <fieldset class="step" data-step="3">
+          <legend>Validators & staking</legend>
+          <div class="two-col">
+            <label class="field">
+              <span>Genesis validators</span>
+              <input type="number" id="validators" name="validators" min="1" max="100" value="4" />
+              <small class="hint">Validators present at launch.</small>
+            </label>
+            <label class="field">
+              <span>Max validators</span>
+              <input type="number" id="max_validators" name="max_validators" min="1" max="1000" value="100" />
+              <small class="hint">Active set cap.</small>
+            </label>
+          </div>
+          <div class="two-col">
+            <label class="field">
+              <span>Validator stake (SKY)</span>
+              <input type="number" id="validator_stake_sky" name="validator_stake_sky" min="0" step="1000" value="100000" />
+            </label>
+            <label class="field">
+              <span>Faucet balance (SKY)</span>
+              <input type="number" id="faucet_balance_sky" name="faucet_balance_sky" min="0" step="1000" value="500000" />
+            </label>
+          </div>
+          <div class="two-col">
+            <label class="field">
+              <span>Unbonding period (days)</span>
+              <input type="number" id="unbonding_days" name="unbonding_days" min="1" max="90" value="21" />
+            </label>
+            <label class="field">
+              <span>Fraud slash · <output id="slashOut">50%</output></span>
+              <input type="range" id="slash_fraction_fraud" name="slash_fraction_fraud" min="0" max="1" step="0.01" value="0.50" />
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Step 4: Target -->
+        <fieldset class="step" data-step="4">
+          <legend>Deploy target</legend>
+          <div class="network-grid" id="targetGrid" role="radiogroup" aria-label="Deploy target">
+            <!-- populated by JS -->
+          </div>
+        </fieldset>
+
+        <!-- Step 5: Review -->
+        <fieldset class="step" data-step="5">
+          <legend>Review & deploy</legend>
+          <div class="review" id="reviewBox"><!-- populated by JS --></div>
+          <label class="confirm">
+            <input type="checkbox" id="confirm" />
+            <span>I've reviewed the configuration and want to generate this chain.</span>
+          </label>
+        </fieldset>
+
+        <div class="wizard-actions">
+          <button type="button" class="btn secondary" id="backBtn" disabled>Back</button>
+          <button type="button" class="btn primary" id="nextBtn">Next</button>
+          <button type="submit" class="btn deploy" id="deployBtn" hidden>🚀 Deploy chain</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ Right: Console / Result ============ -->
+    <aside class="panel console" aria-label="Deployment console">
+      <div class="panel-head row">
+        <h2>Deployment console</h2>
+        <span class="status-chip" id="statusChip">idle</span>
+      </div>
+
+      <div class="console-body" id="consoleBody">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-glyph">🛰️</div>
+          <p>Your deployment log will appear here.</p>
+          <span>Configure your chain and hit <strong>Deploy</strong>.</span>
+        </div>
+
+        <ul class="log" id="deployLog" hidden></ul>
+
+        <div class="result" id="resultBox" hidden></div>
+      </div>
+
+      <div class="stat-strip" id="statStrip">
+        <div><span id="statDeploys">0</span><label>chains</label></div>
+        <div><span id="statValidators">0</span><label>validators</label></div>
+        <div><span id="statSupply">0</span><label>SKY planned</label></div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <span>SKYMETRIC · Chain Deployment Studio</span>
+    <span>Spin up a sovereign agent-economy chain on Cosmos SDK</span>
+  </footer>
+
+  <div class="toast" id="toast" role="alert" hidden></div>
+
+  <script src="/assets/js/app.js" defer></script>
+</body>
+</html>
