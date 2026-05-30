@@ -3,6 +3,15 @@
 > The native wallet for the Skymetric chain. Forked from Keplr (Apache 2.0),
 > rebranded, with agent-economy UX layered on top.
 
+## 👉 Need a wallet right now?
+
+See [**HOW_TO_GET_A_WALLET_TODAY.md**](HOW_TO_GET_A_WALLET_TODAY.md) — the
+v1 Skymetric Wallet isn't shipped yet, but you can have a fully-functional
+wallet for Skymetric in 5 minutes using Keplr (which the v1 wallet forks
+from anyway — same mnemonic carries over).
+
+## Folder layout
+
 | Folder | Purpose |
 |---|---|
 | [`extension/`](extension/) | Minimal MV3 browser-extension scaffold — manifest, popup, content script, background service worker. Demonstrates the dApp-injection model and the agent-economy view shell. |

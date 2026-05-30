@@ -53,6 +53,7 @@ genesis/
 | [`docs/06-financial-instruments.md`](docs/06-financial-instruments.md) | 10 novel instruments ranked by tractability × differentiation |
 | [`docs/07-cex-gate-rationale.md`](docs/07-cex-gate-rationale.md) | Why the strict CEX-launch gate is the cheapest LP-acquisition strategy |
 | [`docs/08-wallet-strategy.md`](docs/08-wallet-strategy.md) | Why fork Keplr instead of building from scratch |
+| [`wallet/HOW_TO_GET_A_WALLET_TODAY.md`](wallet/HOW_TO_GET_A_WALLET_TODAY.md) | **Practical 5-min path to a working Skymetric wallet today.** Same mnemonic works in the v1 branded wallet later. |
 | [`docs/09-honest-launch-timeline.md`](docs/09-honest-launch-timeline.md) | **What stands between this scaffold and mainnet — read this before asking "when can we launch."** |
 
 ## Code map

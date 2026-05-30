@@ -106,7 +106,7 @@ skymetricd-cli register \
     --catalog gh.review.code-quality \
     --moniker "alpha-reviewer" \
     --endpoint "https://my-pr-reviewer.example.com" \
-    --stake 250000000ugen
+    --stake 250000000usky
 
 # Then the operator's binary watches an MQTT topic / WebSocket / RPC
 # for incoming MsgCreateTask events targeting their address and
