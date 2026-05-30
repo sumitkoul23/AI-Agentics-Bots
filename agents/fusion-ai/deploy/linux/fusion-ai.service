@@ -1,0 +1,16 @@
+[Unit]
+Description=FusionAI Multi-Model Teneo Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=teneo
+WorkingDirectory=/opt/fusion-ai
+EnvironmentFile=/opt/fusion-ai/.env
+ExecStart=/opt/fusion-ai/deploy/linux/start-agent.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
