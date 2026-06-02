@@ -52,18 +52,51 @@ Open the generated file in any browser — the five-step wizard runs live and
 still generates/downloads the real `genesis-overrides.json`, `init-chain.sh`,
 and `.env`.
 
+## 🌐 Free hosting (Cloudflare Pages)
+
+The same offline build doubles as the **static site** — the whole wizard runs
+client-side, so it hosts anywhere with zero backend, **free hosting + a free
+`*.pages.dev` domain**. This mirrors how [`genesis/site`](../genesis/site)
+deploys.
+
+Build the publishable directory locally:
+
+```bash
+python web/build_standalone.py --site   # -> web/dist/ (index.html + _headers + robots.txt)
+```
+
+Deploy in ~90 seconds:
+
+1. <https://pages.cloudflare.com> → **Create a project** → **Connect to Git**
+2. Pick `sumitkoul23/ai-agentics-bots`
+3. **Build command:** `python web/build_standalone.py --site`
+4. **Build output directory:** `web/dist`
+5. **Save and Deploy**
+
+Cloudflare hands you a live `https://<project>.pages.dev` URL immediately and
+auto-redeploys on every push. To use a custom domain later, add it under the
+project's **Custom domains** tab and point DNS at Cloudflare — still free.
+
+`web/_headers` ships sensible security headers (CSP, `X-Frame-Options`, etc.)
+that Cloudflare Pages applies automatically.
+
 ## 🧩 Architecture
 
 ```
 web/
 ├── index.html            # Single-page app shell
 ├── server.py             # Zero-dependency HTTP server + JSON API + static serving
+├── build_standalone.py   # Inlines everything -> offline file / Cloudflare Pages dist
+├── _headers              # Security headers for Cloudflare Pages
+├── robots.txt
 ├── assets/
 │   ├── css/styles.css    # Cosmic dark theme
-│   └── js/app.js         # Wizard + console controller
+│   └── js/
+│       ├── app.js         # Wizard + console controller (server-backed)
+│       └── standalone.js  # Offline JS port of the deployer (no API calls)
 └── backend/
     ├── __init__.py
-    └── deployer.py        # Bridges the web app to the core Genesis Protocol
+    └── deployer.py        # Validates requests and emits real chain artifacts
 ```
 
 ### API
