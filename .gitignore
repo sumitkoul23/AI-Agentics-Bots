@@ -16,6 +16,9 @@
 __pycache__/
 *.py[cod]
 
+# Generated build artifacts
+web/dist/
+
 # Compiled agent binaries
 agents/priya-hub/priya-hub
 agents/priya-hub/priya-hub-*

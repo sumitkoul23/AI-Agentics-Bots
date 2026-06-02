@@ -38,6 +38,20 @@ python web/server.py --host 0.0.0.0 --port 9000
 
 > Requires Python 3.8+. No `pip install` needed.
 
+### Offline single-file build
+
+Don't want to run a server? Build a fully self-contained HTML file (CSS + an
+offline JS port of the deployer inlined) that runs the whole wizard from
+`file://` with no network:
+
+```bash
+python web/build_standalone.py     # -> web/dist/chain-deployment-studio.html
+```
+
+Open the generated file in any browser — the five-step wizard runs live and
+still generates/downloads the real `genesis-overrides.json`, `init-chain.sh`,
+and `.env`.
+
 ## 🧩 Architecture
 
 ```
