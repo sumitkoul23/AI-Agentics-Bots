@@ -12,6 +12,10 @@
 **/.gocache/
 **/.gopath/
 
+# Python bytecode
+__pycache__/
+*.py[cod]
+
 # Compiled agent binaries
 agents/priya-hub/priya-hub
 agents/priya-hub/priya-hub-*
