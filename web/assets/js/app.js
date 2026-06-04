@@ -161,7 +161,38 @@
       task_burn_fraction: parseFloat($("#task_burn_fraction").value) || 0,
       slash_fraction_fraud: parseFloat($("#slash_fraction_fraud").value) || 0,
       unbonding_days: parseInt($("#unbonding_days").value, 10) || 0,
+      authority_address: $("#authority_address")?.value?.trim() || "",
     };
+  }
+
+  // ---------- Wallet connect ----------
+  function connectedWalletAddress() {
+    try {
+      const raw = localStorage.getItem("skymetric_wallet_v1");
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      return obj.address || null;
+    } catch { return null; }
+  }
+
+  function wireConnectWallet() {
+    const btn = $("#connectWalletBtn");
+    const input = $("#authority_address");
+    if (!btn || !input) return;
+    const refresh = () => {
+      const addr = connectedWalletAddress();
+      if (addr && !input.value) input.value = addr;
+      if (addr) { btn.textContent = "✓ " + addr.slice(0,10) + "…" + addr.slice(-6); btn.title = addr; }
+      else      { btn.textContent = "👛 Connect"; btn.title = "Open the SKYMETRIC wallet to create or unlock an account"; }
+    };
+    btn.addEventListener("click", () => {
+      const addr = connectedWalletAddress();
+      if (addr) { input.value = addr; refresh(); toast("Authority address filled from connected wallet."); }
+      else      { window.open("/wallet", "skymetric-wallet", "width=480,height=720"); }
+    });
+    // Watch for the wallet popup to finish setup
+    window.addEventListener("storage", e => { if (e.key === "skymetric_wallet_v1") refresh(); });
+    refresh();
   }
 
   function buildReview() {
@@ -412,6 +443,7 @@
 
     syncOutputs();
     showStep(1);
+    wireConnectWallet();
   }
 
   document.addEventListener("DOMContentLoaded", init);

@@ -69,6 +69,14 @@
             <span>Description <em>(optional)</em></span>
             <textarea id="description" name="description" rows="3" maxlength="280" placeholder="What is this chain for?"></textarea>
           </label>
+          <label class="field">
+            <span>Chain authority <em>(optional)</em></span>
+            <div style="display:flex;gap:8px;align-items:stretch">
+              <input type="text" id="authority_address" name="authority_address" placeholder="agentic1… (or connect wallet)" style="flex:1;font-family:monospace;font-size:12px" />
+              <button type="button" id="connectWalletBtn" class="ghost-btn" style="white-space:nowrap">👛 Connect</button>
+            </div>
+            <small class="hint">Address that will own the chain — auto-filled when you connect your SKYMETRIC wallet.</small>
+          </label>
           <div class="callout">Native coin: <strong>SKY</strong> · base denom <code>usky</code> · 1 SKY = 1,000,000 usky</div>
         </fieldset>
 

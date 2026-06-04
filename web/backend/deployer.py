@@ -150,6 +150,10 @@ def validate_request(payload: Dict) -> Dict:
             "Validators × stake exceeds total supply. Lower the stake or validator count."
         )
 
+    authority = str(payload.get("authority_address", "")).strip()
+    if authority and not (authority.startswith("agentic1") and 39 <= len(authority) <= 90):
+        raise DeploymentError("Authority address must be a bech32 'agentic1…' address.")
+
     return {
         "chain_id": chain_id,
         "moniker": moniker,
@@ -168,6 +172,7 @@ def validate_request(payload: Dict) -> Dict:
         "slash_fraction_fraud": slash_fraction,
         "unbonding_days": unbonding_days,
         "description": str(payload.get("description", "")).strip()[:280],
+        "authority_address": authority or None,
     }
 
 
