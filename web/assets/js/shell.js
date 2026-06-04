@@ -12,10 +12,11 @@
     String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   const NAV = [
-    { href: "/deploy", icon: "🚀", label: "Deploy" },
-    { href: "/chains", icon: "▦", label: "Chains" },
-    { href: "/dashboard", icon: "📊", label: "Dashboard" },
-    { href: "/admin", icon: "🛠️", label: "Admin" },
+    { href: "/deploy",   icon: "🚀", label: "Deploy" },
+    { href: "/chains",   icon: "▦",  label: "Chains" },
+    { href: "/dashboard",icon: "📊", label: "Dashboard" },
+    { href: "/wallet",   icon: "👛", label: "Wallet" },
+    { href: "/admin",    icon: "🛠️", label: "Admin" },
   ];
 
   function mountShell(active) {

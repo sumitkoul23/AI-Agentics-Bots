@@ -55,6 +55,7 @@ APP_ROUTES = {
     "/chains": "app/chains.html",
     "/dashboard": "app/dashboard.html",
     "/admin": "app/admin.html",
+    "/wallet": "app/wallet.html",
 }
 
 

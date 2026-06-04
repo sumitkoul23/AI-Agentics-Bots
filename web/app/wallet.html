@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wallet · SKYMETRIC Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/design/design-system.css" />
+<style>
+/* ── Layout ─────────────────────────────────────────────────────────── */
+.wrap { max-width: 480px; margin: 0 auto; padding: var(--s6); }
+.logo { display:flex; align-items:center; gap:10px; }
+.logo b { font-size:15px; }
+.logo span { font-size:11px; color:var(--muted); display:block; }
+.brandmark { font-size:22px; filter:drop-shadow(0 0 8px rgba(124,92,255,.6)); }
+#appnav { display:flex; gap:6px; }
+@media(max-width:1024px) { #appnav { display:none; } }
+
+/* ── Status bar ─────────────────────────────────────────────────────── */
+.w-status { font-size:12px; padding:8px 12px; border-radius:var(--r-sm); margin-bottom:12px; }
+.w-status.ok  { background:rgba(61,220,151,.12); color:var(--green); border:1px solid rgba(61,220,151,.2); }
+.w-status.err { background:rgba(255,107,129,.12); color:var(--red);   border:1px solid rgba(255,107,129,.2); }
+
+/* ── Onboarding cards ───────────────────────────────────────────────── */
+.setup-hero { text-align:center; padding:32px 0 20px; }
+.setup-hero .logo-glyph { font-size:56px; filter:drop-shadow(0 0 18px rgba(124,92,255,.5)); margin-bottom:12px; }
+.setup-hero h2 { font-size:var(--fs-h1); margin:0 0 6px; }
+.setup-hero p  { color:var(--muted); font-size:var(--fs-sm); margin:0; }
+.setup-btns { display:grid; gap:10px; margin-top:20px; }
+
+/* ── Mnemonic grid ──────────────────────────────────────────────────── */
+.mnemonic-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:16px 0; }
+.mword {
+  background:rgba(124,92,255,.08); border:1px solid rgba(124,92,255,.2);
+  border-radius:var(--r-sm); padding:6px 8px; font-size:12px; font-family:var(--mono);
+  display:flex; align-items:center; gap:6px;
+}
+.mword em { color:var(--muted); font-size:10px; font-style:normal; min-width:14px; }
+
+/* ── Fields ─────────────────────────────────────────────────────────── */
+.w-field { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
+.w-field span { font-size:12px; color:var(--muted); font-weight:500; }
+.w-field em   { font-weight:400; color:var(--muted); font-style:normal; }
+.w-field input, .w-field textarea {
+  background:rgba(8,10,22,.6); border:1px solid var(--border); color:var(--text);
+  border-radius:var(--r-sm); padding:9px 12px; font:var(--fs-sm)/1.4 var(--sans);
+  outline:none; transition:border-color .15s;
+}
+.w-field input:focus, .w-field textarea:focus { border-color:var(--accent); }
+.w-field textarea { resize:vertical; min-height:80px; font-family:var(--mono); font-size:12px; }
+
+/* ── Lock screen ────────────────────────────────────────────────────── */
+.lock-card { max-width:340px; margin:60px auto 0; }
+
+/* ── Main wallet ────────────────────────────────────────────────────── */
+.w-topbar {
+  background:rgba(8,10,22,.7); border-bottom:1px solid var(--border);
+  padding:10px 16px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:52px; z-index:10; backdrop-filter:blur(12px);
+}
+.w-addr-pill {
+  font-family:var(--mono); font-size:11px; color:var(--muted);
+  cursor:pointer; transition:color .15s; padding:4px 8px;
+  background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:999px;
+}
+.w-addr-pill:hover { color:var(--text); }
+.w-balance-box { text-align:center; padding:24px 0 16px; }
+.w-balance-box .amount { font-size:40px; font-weight:800; background:var(--accent-grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+.w-balance-box .denom  { font-size:14px; color:var(--muted); margin-top:4px; }
+.w-action-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
+.w-action-bar button {
+  background:rgba(255,255,255,.04); border:1px solid var(--border); color:var(--text);
+  border-radius:var(--r); padding:10px 4px 8px; font-size:12px; font-weight:500;
+  cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px;
+  transition:background .15s, border-color .15s;
+}
+.w-action-bar button:hover { background:rgba(124,92,255,.12); border-color:rgba(124,92,255,.3); }
+.w-action-bar button .aico { font-size:18px; }
+
+/* ── Tab strip ──────────────────────────────────────────────────────── */
+.w-tabs { display:flex; border-bottom:1px solid var(--border); overflow-x:auto; margin-bottom:16px; }
+.wtab {
+  background:transparent; border:0; color:var(--muted);
+  padding:10px 14px; font:500 var(--fs-sm)/1 var(--sans); cursor:pointer; white-space:nowrap;
+  border-bottom:2px solid transparent; transition:color .15s, border-color .15s;
+}
+.wtab.active { color:var(--text); border-bottom-color:var(--accent); }
+.wtab:hover:not(.active) { color:var(--text); }
+
+/* ── Asset list ─────────────────────────────────────────────────────── */
+.w-asset-list { display:flex; flex-direction:column; gap:8px; }
+.w-asset-row { display:flex; align-items:center; gap:12px; padding:12px 14px; background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:var(--r); }
+.w-asset-icon { font-size:22px; width:36px; text-align:center; }
+.w-asset-info { flex:1; }
+.w-asset-info b { display:block; font-size:13px; }
+.w-asset-info span { font-size:11px; color:var(--muted); }
+.w-asset-amount { font-family:var(--mono); font-size:13px; font-weight:600; }
+
+/* ── Transaction list ───────────────────────────────────────────────── */
+.w-tx-list { display:flex; flex-direction:column; gap:6px; }
+.w-tx-row { display:flex; align-items:center; gap:12px; padding:11px 14px; background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:var(--r); }
+.w-tx-icon { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; font-size:15px; font-weight:700; flex-shrink:0; }
+.w-tx-icon.green { background:rgba(61,220,151,.12); color:var(--green); }
+.w-tx-icon.amber { background:rgba(255,180,84,.12); color:var(--amber); }
+.w-tx-info { flex:1; }
+.w-tx-info b   { display:block; font-size:13px; }
+.w-tx-info span{ font-size:11px; }
+.w-tx-right { text-align:right; }
+.w-tx-right b    { display:block; font-size:13px; font-family:var(--mono); }
+.w-tx-right span { font-size:11px; color:var(--muted); }
+
+/* ── Fee hint / alerts ──────────────────────────────────────────────── */
+.w-fee-hint { font-size:11px; color:var(--muted); margin-bottom:8px; }
+.w-alert { padding:12px 14px; border-radius:var(--r-sm); font-size:13px; margin-top:12px; }
+.w-alert.ok  { background:rgba(61,220,151,.1); border:1px solid rgba(61,220,151,.2); }
+.w-alert.err { background:rgba(255,107,129,.1); border:1px solid rgba(255,107,129,.2); color:var(--red); }
+.w-section-title { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.green { color:var(--green); }
+.amber { color:var(--amber); }
+.dim   { color:var(--muted); }
+.mono  { font-family:var(--mono); }
+.hint  { color:var(--muted); font-size:11px; }
+.row   { display:flex; align-items:center; }
+.between { justify-content:space-between; }
+</style>
+</head>
+<body>
+
+<!-- ── App shell header ──────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="logo"><span class="brandmark">🌌</span><div><b>SKYMETRIC Wallet</b><span>Cosmos SDK · CometBFT</span></div></div>
+  <nav id="appnav"></nav>
+  <div style="display:flex;align-items:center;gap:8px">
+    <select id="netPicker" class="input" style="font-size:12px;padding:5px 8px;width:auto;background:rgba(8,10,22,.7)">
+      <option value="skymetric-1">SKYMETRIC</option>
+      <option value="cosmoshub-4">Cosmos Hub</option>
+      <option value="osmosis-1">Osmosis</option>
+    </select>
+  </div>
+</div>
+
+<!-- ── Status bar (shared across views) ─────────────────────────────── -->
+<div class="wrap">
+  <p id="wStatus" class="w-status" hidden></p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  VIEW: Setup (first run)                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="vSetup" class="view wrap">
+  <div class="setup-hero">
+    <div class="logo-glyph">🌌</div>
+    <h2>SKYMETRIC Wallet</h2>
+    <p>Your gateway to the agent-economy chain. Send, receive, and manage SKY — plus register agents, track tasks, and watch your reputation grow.</p>
+  </div>
+  <div class="setup-btns">
+    <button class="btn btn-primary" onclick="startCreate()">Create a new wallet</button>
+    <button class="btn btn-ghost"   onclick="_goImport()">Import existing wallet</button>
+  </div>
+  <div class="dim" style="font-size:11px;text-align:center;margin-top:16px">
+    Keys are stored encrypted in this browser only — never sent to any server.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  VIEW: Backup mnemonic                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="vBackup" class="view wrap" hidden>
+  <h2 style="font-size:var(--fs-h1);margin:0 0 6px">Save your recovery phrase</h2>
+  <p class="dim" style="margin:0 0 16px">Write these 24 words down in order. This is the <strong>only way</strong> to recover your wallet. Never share it with anyone.</p>
+  <div class="card" style="padding:16px;background:rgba(124,92,255,.04);border-color:rgba(124,92,255,.25)">
+    <div class="mnemonic-grid" id="mnemonicGrid"></div>
+  </div>
+  <div class="w-alert ok" style="margin:12px 0">
+    Store this phrase offline — in a password manager, on paper, or hardware. Screenshots can be stolen.
+  </div>
+  <button class="btn btn-primary" style="width:100%" onclick="confirmBackup()">I've saved it — continue</button>
+  <button class="btn btn-ghost"   style="width:100%;margin-top:8px" onclick="_goSetup()">Back</button>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  VIEW: Confirm mnemonic                                            -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="vConfirm" class="view wrap" hidden>
+  <h2 style="font-size:var(--fs-h1);margin:0 0 6px">Verify your backup</h2>
+  <p id="confirmHint" class="dim" style="margin:0 0 16px"></p>
+  <div class="card" style="padding:16px 20px">
+    <div id="confirmInputs"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="_goPassword()">Verify &amp; continue</button>
+  </div>
+  <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="show('vBackup')">Back</button>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  VIEW: Import mnemonic                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="vImport" class="view wrap" hidden>
+  <h2 style="font-size:var(--fs-h1);margin:0 0 6px">Import wallet</h2>
+  <p class="dim" style="margin:0 0 16px">Enter your 24-word SKYMETRIC recovery phrase, separated by spaces.</p>
+  <div class="card" style="padding:16px 20px">
+    <label class="w-field">
+      <span>Recovery phrase</span>
+      <textarea id="importPhrase" rows="5" placeholder="word1 word2 word3 … word24" autocomplete="off" spellcheck="false"></textarea>
+    </label>
+    <button class="btn btn-primary" style="width:100%" onclick="importWallet()">Import wallet</button>
+  </div>
+  <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="_goSetup()">Back</button>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  VIEW: Set password                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="vPassword" class="view wrap" hidden>
+  <h2 style="font-size:var(--fs-h1);margin:0 0 6px">Secure your wallet</h2>
+  <p id="pwTitle" class="dim" style="margin:0 0 16px">Set a password to protect your wallet on this device. You'll need it each time you open the wallet.</p>
+  <div class="card" style="padding:16px 20px">
+    <label class="w-field">
+      <span>Password <em>(min 8 characters)</em></span>
+      <input type="password" id="pw1" placeholder="••••••••••••" />
+    </label>
+    <label class="w-field">
+      <span>Confirm password</span>
+      <input type="password" id="pw2" placeholder="••••••••••••" />
+    </label>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="saveWithPassword()">Create wallet</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  VIEW: Locked                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="vLock" class="view" hidden>
+  <div class="lock-card card" style="padding:28px 24px;text-align:center">
+    <div style="font-size:40px;margin-bottom:12px">🔒</div>
+    <h2 style="font-size:var(--fs-h1);margin:0 0 4px">Welcome back</h2>
+    <p class="dim" style="margin:0 0 20px;font-size:var(--fs-sm)">Enter your password to unlock</p>
+    <input type="password" id="lockPw" class="input" placeholder="Password" style="width:100%;margin-bottom:10px" />
+    <button class="btn btn-primary" style="width:100%" onclick="unlock()">Unlock</button>
+    <button class="btn btn-ghost"   style="width:100%;margin-top:8px;font-size:12px" onclick="_resetWallet()">Forgot password? Reset wallet</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  VIEW: Main wallet                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="vMain" class="view" hidden>
+
+  <!-- Address + network bar -->
+  <div class="w-topbar">
+    <span class="w-addr-pill" id="wAddrShort" title="Click to copy full address">Loading…</span>
+    <span id="wNetLabel" class="chip" style="font-size:11px">SKYMETRIC</span>
+    <button class="btn btn-ghost btn-sm" onclick="lockWallet()">🔒 Lock</button>
+  </div>
+
+  <!-- Hidden full address for clipboard -->
+  <span id="wAddr" style="display:none"></span>
+
+  <div class="wrap">
+    <!-- Balance hero -->
+    <div class="w-balance-box">
+      <div class="amount" id="wBalance">—</div>
+      <div class="denom">SKY · skymetric-1</div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="w-action-bar">
+      <button onclick="switchTab('send')">
+        <span class="aico">↑</span>Send
+      </button>
+      <button onclick="switchTab('receive')">
+        <span class="aico">↓</span>Receive
+      </button>
+      <button onclick="switchTab('history')">
+        <span class="aico">📋</span>History
+      </button>
+      <button onclick="switchTab('agents')">
+        <span class="aico">🤖</span>Agents
+      </button>
+    </div>
+
+    <!-- Tab strip -->
+    <div class="w-tabs">
+      <button class="wtab active" data-tab="overview">Overview</button>
+      <button class="wtab" data-tab="send">Send</button>
+      <button class="wtab" data-tab="receive">Receive</button>
+      <button class="wtab" data-tab="history">History</button>
+      <button class="wtab" data-tab="agents">Agents</button>
+      <button class="wtab" data-tab="rep">Reputation</button>
+    </div>
+
+    <!-- Panel (content injected by JS) -->
+    <div id="wPanel"></div>
+
+    <!-- Reset link -->
+    <div style="text-align:center;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)">
+      <button class="btn btn-ghost btn-sm" onclick="_resetWallet()" style="color:var(--muted);font-size:11px">Reset wallet</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Mobile tab bar ────────────────────────────────────────────────── -->
+<nav class="tabbar" id="apptabs"></nav>
+
+<script src="/assets/js/shell.js"></script>
+<script>
+  mountShell("/wallet");
+</script>
+<script src="/assets/js/wallet.js"></script>
+</body>
+</html>
