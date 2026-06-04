@@ -93,18 +93,37 @@ web/
 │   ├── css/styles.css    # Cosmic dark theme
 │   └── js/
 │       ├── app.js         # Wizard + console controller (server-backed)
+│       ├── shell.js       # Shared app nav + mobile tab bar + API helper
 │       └── standalone.js  # Offline JS port of the deployer (no API calls)
+├── app/                  # Multi-page app (clean routes, live data from the API)
+│   ├── chains.html        # /chains    — ecosystem home (grid + stats + search)
+│   ├── dashboard.html     # /dashboard — per-chain console (?id=…)
+│   └── admin.html         # /admin     — members, audit log, targets, danger zone
+├── design/               # Research + design system + Stitch/AI Studio handoff
+│   ├── competitor-research.md
+│   ├── design-system.css
+│   └── stitch-aistudio-handoff.md
+├── mockups/index.html    # Static design gallery (all surfaces, switchable)
 └── backend/
     ├── __init__.py
     └── deployer.py        # Validates requests and emits real chain artifacts
 ```
+
+### Routes (clean URLs → pages)
+
+| Route | Page |
+|-------|------|
+| `/` or `/deploy` | Deployment wizard (`index.html`) |
+| `/chains` | Ecosystem home — live grid of deployments |
+| `/dashboard` (`?id=…`) | Per-chain console — metrics, endpoints, artifacts |
+| `/admin` | Admin panel — members, audit log, targets |
 
 ### API
 
 | Method | Endpoint                  | Description                          |
 |--------|---------------------------|--------------------------------------|
 | GET    | `/api/health`             | Liveness probe                       |
-| GET    | `/api/networks`           | Supported networks                   |
+| GET    | `/api/targets`            | Supported deploy targets             |
 | GET    | `/api/stats`              | Aggregate deployment stats           |
 | GET    | `/api/deployments`        | List deployments (newest first)      |
 | GET    | `/api/deployments/<id>`   | Single deployment record             |
@@ -114,13 +133,20 @@ web/
 
 ```json
 {
-  "chain_name": "Nebula Genesis",
-  "symbol": "NEB",
-  "network": "devnet",
-  "agents": { "trader": 3, "governor": 2, "builder": 2 },
-  "treasury_sol": 10,
-  "token_supply": 1000000,
-  "mutation_rate": 0.1
+  "chain_id": "skymetric-1",
+  "moniker": "genesis-node",
+  "target": "local",
+  "total_supply_sky": 1000000000,
+  "validators": 4,
+  "max_validators": 100,
+  "validator_stake_sky": 100000,
+  "faucet_balance_sky": 500000,
+  "inflation_min": 0.01,
+  "inflation_max": 0.07,
+  "goal_bonded": 0.67,
+  "task_burn_fraction": 0.2,
+  "slash_fraction_fraud": 0.5,
+  "unbonding_days": 21
 }
 ```
 

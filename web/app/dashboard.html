@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard · SKYMETRIC Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/design/design-system.css" />
+<style>
+  .wrap { max-width: var(--container); margin: 0 auto; padding: var(--s6); }
+  .logo{display:flex;align-items:center;gap:10px}.logo b{font-size:15px}.logo span{font-size:11px;color:var(--muted);display:block}
+  .brandmark{font-size:22px;filter:drop-shadow(0 0 8px rgba(124,92,255,.6))}
+  #appnav{display:flex;gap:6px}@media(max-width:1024px){#appnav{display:none}}
+  .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s4)}
+  @media(max-width:1024px){.metric-grid{grid-template-columns:repeat(2,1fr)}}
+  .two{display:grid;grid-template-columns:2fr 1fr;gap:var(--s4);margin-top:var(--s5)}
+  @media(max-width:768px){.two{grid-template-columns:1fr}}
+  .spark{height:60px;display:flex;align-items:flex-end;gap:3px;margin-top:var(--s3)}
+  .spark i{flex:1;background:var(--accent-grad);border-radius:2px;opacity:.85}
+  .ep{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(8,10,22,.5);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px}
+  pre{margin:0;padding:12px 14px;background:rgba(8,10,22,.6);border:1px solid var(--border);border-radius:var(--r-sm);overflow-x:auto;font-family:var(--mono);font-size:12px;max-height:220px}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><span class="brandmark">🌌</span><div><b>SKYMETRIC Studio</b><span>Cosmos SDK · CometBFT</span></div></div>
+    <nav id="appnav"></nav>
+    <a class="btn btn-ghost btn-sm" href="/chains">← All chains</a>
+  </div>
+
+  <div class="wrap" id="root"><p class="muted">Loading…</p></div>
+  <nav class="tabbar" id="apptabs"></nav>
+
+  <script src="/assets/js/shell.js"></script>
+  <script>
+    mountShell("/dashboard");
+    const qs = new URLSearchParams(location.search);
+    const id = qs.get("id");
+
+    function spark(n=18){let h="";for(let i=0;i<n;i++){h+=`<i style="height:${40+Math.round(Math.abs(Math.sin(i*1.3))*55)}%"></i>`;}return h;}
+    function metric(label,val,delta){return `<div class="card stat"><span class="label">${label}</span><span class="value">${val}</span>${delta?`<span class="delta">${delta}</span>`:""}</div>`;}
+
+    function render(d) {
+      const s = d.summary || {}, a = d.artifacts || {};
+      const status = d.status === "ready" ? "live" : d.status;
+      document.getElementById("root").innerHTML = `
+        <div class="row between" style="margin-bottom:var(--s5)">
+          <div><h2 style="font-size:var(--fs-h1);margin:0">${esc(s.chain_id||d.id)} <span class="chip live"><span class="dot"></span>${esc(status)}</span></h2>
+          <p class="dim mono" style="font-size:var(--fs-xs);margin:6px 0 0">${esc(d.target_label||"")} · created ${esc((d.created_at||"").slice(0,16).replace("T"," "))}</p></div>
+          <div class="row"><button class="btn btn-ghost btn-sm" onclick="alert('Explorer link is generated per-network in the artifacts.')">⎘ Explorer</button></div>
+        </div>
+        <div class="metric-grid">
+          ${metric("Total supply", esc(s.total_supply||"—"))}
+          ${metric("Validators", esc(String(s.validators??"—")), esc(s.bonded_at_genesis||""))}
+          ${metric("Inflation", esc(s.inflation||"—"), "goal "+esc(s.task_burn||""))}
+          ${metric("Task burn", esc(s.task_burn||"—"))}
+        </div>
+        <div class="two">
+          <div class="card"><div class="row between"><h3 style="font-size:var(--fs-h2);margin:0">Block production <span class="hint">(illustrative)</span></h3>
+            <div class="seg" style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm">1H</button><button class="btn btn-primary btn-sm">24H</button><button class="btn btn-ghost btn-sm">7D</button></div></div>
+            <div class="spark">${spark()}</div></div>
+          <div class="card"><h3 style="font-size:var(--fs-h2);margin:0 0 var(--s3)">Endpoints</h3>
+            <div class="ep"><span class="mono">RPC ${esc(a.rpc||"—")}</span><button class="btn btn-ghost btn-sm" data-copy="${esc(a.rpc||"")}">copy</button></div>
+            <div class="ep"><span class="mono">REST ${esc(a.rest||"—")}</span><button class="btn btn-ghost btn-sm" data-copy="${esc(a.rest||"")}">copy</button></div>
+            <div class="ep" style="margin-bottom:0"><span class="mono">${esc(a.start_command||"")}</span></div></div>
+        </div>
+        <div class="card" style="margin-top:var(--s5)"><div class="row between"><h3 style="font-size:var(--fs-h2);margin:0">genesis-overrides.json</h3>
+          <button class="btn btn-ghost btn-sm" data-copy='${esc(a.genesis_overrides_json||"")}'>copy</button></div>
+          <pre style="margin-top:var(--s3)"><code>${esc((a.genesis_overrides_json||"").slice(0,1400))}</code></pre></div>`;
+      document.querySelectorAll("[data-copy]").forEach((b)=>b.addEventListener("click",()=>{navigator.clipboard?.writeText(b.dataset.copy);b.textContent="copied";setTimeout(()=>b.textContent="copy",1200);}));
+    }
+
+    async function load() {
+      try {
+        let dep;
+        if (id) { dep = await api.get("/api/deployments/" + encodeURIComponent(id)); }
+        else {
+          const { deployments } = await api.get("/api/deployments");
+          dep = (deployments || [])[0];
+        }
+        if (!dep) {
+          document.getElementById("root").innerHTML = `<div class="card" style="text-align:center;padding:var(--s10)">
+            <div style="font-size:40px">📊</div><p class="dim" style="margin:12px 0 4px;font-weight:600">No deployment to show</p>
+            <span class="hint">Deploy a chain first, then its live dashboard appears here.</span>
+            <div style="margin-top:16px"><a class="btn btn-primary btn-sm" href="/deploy">🚀 Deploy a chain</a></div></div>`;
+          return;
+        }
+        render(dep);
+      } catch (e) {
+        document.getElementById("root").innerHTML = `<div class="card">Couldn't load: ${esc(e.message)}</div>`;
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

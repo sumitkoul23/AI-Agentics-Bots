@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin · SKYMETRIC Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/design/design-system.css" />
+<style>
+  .wrap{max-width:var(--container);margin:0 auto;padding:var(--s6)}
+  .logo{display:flex;align-items:center;gap:10px}.logo b{font-size:15px}.logo span{font-size:11px;color:var(--muted);display:block}
+  .brandmark{font-size:22px;filter:drop-shadow(0 0 8px rgba(124,92,255,.6))}
+  #appnav{display:flex;gap:6px}@media(max-width:1024px){#appnav{display:none}}
+  .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s4)}
+  @media(max-width:640px){.metric-grid{grid-template-columns:repeat(2,1fr)}}
+  .avatar{width:30px;height:30px;border-radius:50%;background:var(--accent-grad);display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff}
+  h3.sub{font-size:var(--fs-h2);margin:var(--s6) 0 var(--s4)}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><span class="brandmark">🌌</span><div><b>Admin</b><span>SKYMETRIC Labs</span></div></div>
+    <nav id="appnav"></nav>
+    <button class="btn btn-primary btn-sm" onclick="alert('Invite flow — wire to your auth provider.')">+ Invite</button>
+  </div>
+
+  <div class="wrap">
+    <h2 style="font-size:var(--fs-h1);margin:0 0 var(--s5)">Members &amp; roles</h2>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="table">
+        <thead><tr><th>Member</th><th>Role</th><th>Chains</th><th>Last active</th></tr></thead>
+        <tbody>
+          <tr><td><div class="row"><div class="avatar">SK</div><div><b style="color:var(--text)">Sumit Koul</b><div class="hint">sumit@skymetric.dev</div></div></div></td><td><span class="chip rec">Owner</span></td><td id="m-chains">—</td><td>now</td></tr>
+          <tr><td><div class="row"><div class="avatar" style="background:linear-gradient(135deg,#3ddc97,#18d3ff)">AK</div><div><b style="color:var(--text)">Aria Kade</b><div class="hint">aria@skymetric.dev</div></div></div></td><td><span class="chip">Maintainer</span></td><td>2</td><td>3h ago</td></tr>
+          <tr><td><div class="row"><div class="avatar" style="background:linear-gradient(135deg,#ffb454,#ff7eb6)">JD</div><div><b style="color:var(--text)">Jules Devereux</b><div class="hint">jules@skymetric.dev</div></div></div></td><td><span class="chip">Viewer</span></td><td>1</td><td>2d ago</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">Deployment audit log <span class="hint">(live)</span></h3>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="table">
+        <thead><tr><th>Chain</th><th>Target</th><th>Validators</th><th>When</th><th>Status</th></tr></thead>
+        <tbody id="log"><tr><td colspan="5" class="muted" style="padding:var(--s5)">Loading…</td></tr></tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">Connected targets</h3>
+    <div class="metric-grid" id="targets"></div>
+
+    <div class="card" style="margin-top:var(--s6);border-color:rgba(255,107,129,.3)">
+      <h3 style="color:var(--red);margin:0 0 var(--s3);font-size:var(--fs-h2)">Danger zone</h3>
+      <div class="row between"><p class="dim" style="margin:0">Tear down a chain and delete all generated artifacts. This cannot be undone.</p>
+      <button class="btn btn-danger btn-sm" onclick="alert('Teardown is gated behind owner confirmation.')">Teardown…</button></div>
+    </div>
+  </div>
+
+  <nav class="tabbar" id="apptabs"></nav>
+
+  <script src="/assets/js/shell.js"></script>
+  <script>
+    mountShell("/admin");
+    const ICON={local:"💻",docker:"🐳",fly:"🪰",oracle:"☁️",codespaces:"🧑‍💻"};
+    async function load(){
+      try{
+        const [{deployments},{targets}] = await Promise.all([api.get("/api/deployments"),api.get("/api/targets")]);
+        document.getElementById("m-chains").textContent = (deployments||[]).length;
+        const log = document.getElementById("log");
+        log.innerHTML = (deployments&&deployments.length)
+          ? deployments.map(d=>{const c=d.config||{};const st=d.status==="ready"?"live":d.status;const cls=st==="live"?"live":st==="deploying"?"deploying":"error";
+              return `<tr><td class="mono">${esc(c.chain_id||d.id)}</td><td>${esc(d.target_label||"—")}</td><td>${c.validators??"—"}</td><td>${esc((d.created_at||"").slice(0,16).replace("T"," "))}</td><td><span class="chip ${cls}"><span class="dot"></span>${esc(st)}</span></td></tr>`;}).join("")
+          : `<tr><td colspan="5" class="muted" style="padding:var(--s5)">No deployments yet.</td></tr>`;
+        document.getElementById("targets").innerHTML = (targets||[]).map(t=>
+          `<div class="card row between"><span>${ICON[t.id]||"📦"} ${esc(t.label)}</span><span class="chip ${t.recommended?"live":""}"><span class="dot"></span>${t.recommended?"ready":"link"}</span></div>`).join("");
+      }catch(e){
+        document.getElementById("log").innerHTML = `<tr><td colspan="5">Couldn't load: ${esc(e.message)}</td></tr>`;
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

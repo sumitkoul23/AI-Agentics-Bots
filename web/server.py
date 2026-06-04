@@ -48,6 +48,15 @@ STATIC_TYPES = {
 
 MAX_BODY_BYTES = 256 * 1024
 
+# Clean-URL → file map for the multi-page app.
+APP_ROUTES = {
+    "/": "index.html",
+    "/deploy": "index.html",
+    "/chains": "app/chains.html",
+    "/dashboard": "app/dashboard.html",
+    "/admin": "app/admin.html",
+}
+
 
 class StudioHandler(BaseHTTPRequestHandler):
     server_version = "ChainDeploymentStudio/1.0"
@@ -105,6 +114,11 @@ class StudioHandler(BaseHTTPRequestHandler):
             return self._send_json(200, record)
         if route.startswith("/api/"):
             return self._send_json(404, {"error": "Unknown endpoint"})
+
+        # Clean-URL routes for the app pages (served as static HTML).
+        page = APP_ROUTES.get(route.rstrip("/") or "/")
+        if page is not None:
+            return self._send_static(WEB_ROOT / page)
 
         return self._send_static(self._resolve_static(route))
 
