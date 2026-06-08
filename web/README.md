@@ -116,7 +116,67 @@ web/
 | `/` or `/deploy` | Deployment wizard (`index.html`) |
 | `/chains` | Ecosystem home — live grid of deployments |
 | `/dashboard` (`?id=…`) | Per-chain console — metrics, endpoints, artifacts |
+| `/wallet` | **SKYMETRIC Wallet** — send/receive SKY, manage agents |
 | `/admin` | Admin panel — members, audit log, targets |
+
+## 👛 SKYMETRIC Wallet
+
+A browser-native Cosmos wallet, embedded in the Studio at `/wallet`. Real
+cryptography (no shortcuts):
+
+| Layer | Implementation |
+|-------|----------------|
+| Mnemonic | 24-word BIP39 (192-bit entropy) |
+| Seed | PBKDF2-HMAC-SHA512, 2048 rounds |
+| HD path | BIP32, Cosmos default `m/44'/118'/0'/0/0` |
+| Signing | secp256k1 ECDSA (low-s) via `@noble/secp256k1@2.1.0` |
+| Address | `bech32("agentic", RIPEMD-160(SHA-256(pubkey)))` |
+| TX encoding | Hand-rolled protobuf (byte-exact match with CosmJS) |
+| Storage | `localStorage`, AES-GCM (PBKDF2 100k rounds for key) |
+
+**Verified interoperable** — bit-perfect match against CosmJS's
+`DirectSecp256k1HdWallet` for address derivation and `MsgSend` / `TxBody`
+encoding.
+
+The wallet's crypto stack lives in three modules:
+`assets/js/wallet-crypto.js` (keygen + signing), `assets/js/wallet-proto.js`
+(protobuf encoder), and `assets/js/wallet-rpc.js` (REST client + sign
+pipeline). The Send tab attempts a real broadcast against the selected
+network's REST endpoint and falls back to "signed locally, RPC unreachable"
+when offline.
+
+### dApp integration — `window.skymetric`
+
+Any web page can talk to the wallet by loading the provider script:
+
+```html
+<script src="https://your-studio-host/assets/js/skymetric-provider.js"></script>
+<script>
+  // Request connection (opens the wallet popup on first call)
+  const { address, chainId } = await window.skymetric.connect();
+
+  // Send tokens
+  const result = await window.skymetric.signAndBroadcast({
+    chainId: "skymetric-1",
+    toAddress: "agentic1…",
+    amount: [{ denom: "usky", amount: "1000000" }],
+    memo: "hello from my dApp",
+  });
+
+  window.skymetric.on("disconnect", () => console.log("user locked wallet"));
+</script>
+```
+
+The API is a small subset of Keplr's protocol so existing Cosmos dApps can
+adapt with minimal changes.
+
+### Browser extension
+
+A Chrome MV3 extension version lives at
+[`genesis/wallet/extension/`](../genesis/wallet/extension/) with the same
+keygen + storage stack (using `chrome.storage.local` instead of
+`localStorage`). Load it unpacked: chrome://extensions → Developer mode →
+Load unpacked → select `genesis/wallet/extension/`.
 
 ### API
 
@@ -146,14 +206,24 @@ web/
   "goal_bonded": 0.67,
   "task_burn_fraction": 0.2,
   "slash_fraction_fraud": 0.5,
-  "unbonding_days": 21
+  "unbonding_days": 21,
+  "authority_address": "agentic1…"
 }
 ```
 
+`authority_address` is optional — when present it's validated as an
+`agentic1…` bech32 address and recorded as the chain's owner (the Studio's
+`/chains` view can then filter "Only mine" by the connected wallet address).
+
 ## 🔐 Note on on-chain deployment
 
-Actual submission to Solana requires funded keypairs and live RPC access. The
-final broadcast step is simulated deterministically, while validation, agent
-birth, DNA generation, and treasury bootstrap use the genuine protocol classes —
-so the artifacts you get back are real, reproducible, and ready to wire up to a
-live `SolanaClient`.
+Booting an actual validator requires the compiled `skymetricd` binary
+(`cd genesis/chain && make install`) plus funded keys and live RPC. The
+Studio generates a validated genesis (`genesis-overrides.json`), a
+single-node bootstrap script (`init-chain.sh`), and the `.env` — everything
+up to the point where you run the node yourself. The final "start node" step
+is surfaced as a follow-up command rather than executed in-browser.
+
+The **wallet**, by contrast, performs real cryptography end-to-end: it signs
+genuine secp256k1 transactions and will broadcast them to a live REST
+endpoint when one is reachable (falling back to local-sign-only when not).

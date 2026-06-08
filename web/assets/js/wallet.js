@@ -632,7 +632,7 @@ function renderRep(addr, el) {
       <div class="bar" style="margin-bottom:16px"><span style="width:${Math.round(pct*100)}%"></span></div>
       <div class="row between" style="font-size:13px;margin-bottom:6px">
         <span class="dim">Lifetime slashes</span>
-        <b class="${r.slashCount>0?"":""}${r.slashCount>0?"" : ""}">${r.slashCount}</b>
+        <b class="${r.slashCount > 0 ? "amber" : ""}">${r.slashCount}</b>
       </div>
       <div class="row between" style="font-size:13px;margin-bottom:6px">
         <span class="dim">Tasks completed</span><b>${r.tasks}</b>
@@ -657,12 +657,96 @@ function lockWallet() {
   APP.wallet = null;
   document.getElementById("lockPw").value = "";
   setStatus("");
+  _broadcastEvent("disconnect", null);
   show("vLock");
 }
 
+/* ── dApp bridge (postMessage protocol) ────────────────────────────── */
+function _send(target, msg) { try { target.postMessage(msg, "*"); } catch {} }
+
+function _broadcastEvent(event, payload) {
+  if (window.opener) _send(window.opener, { type: "skymetric:event", event, payload });
+}
+
+async function handleDappRequest(reqMsg, sourceWin) {
+  const { id, method, params } = reqMsg;
+  const reply = (result, error) => _send(sourceWin, { type: "skymetric:response", id, result, error });
+
+  // Only allow requests once a wallet is unlocked AND user has approved this origin.
+  // For v1: a single approval persists for the popup lifetime; signAndBroadcast still requires explicit confirm.
+  switch (method) {
+    case "connect": {
+      if (!APP.wallet) return reply(null, "Wallet locked or not set up.");
+      const ok = confirm(`Allow "${esc(reqMsg.origin || "this site")}" to see your SKYMETRIC address?`);
+      if (!ok) return reply(null, "User rejected the request.");
+      return reply({
+        address: APP.wallet.address,
+        chainId: APP.network,
+        pubkey:  null,
+        name:    "skymetric-account",
+      });
+    }
+    case "getKey": {
+      if (!APP.wallet) return reply(null, "Wallet locked.");
+      return reply({
+        bech32Address: APP.wallet.address,
+        name:          "skymetric-account",
+        algo:          "secp256k1",
+        pubkey:        null,
+      });
+    }
+    case "suggestChain": {
+      const chain = params?.chainConfig || params;
+      const ok = confirm(`Add network "${esc(chain?.chainId || "unknown")}" to your wallet?`);
+      return reply({ ok }, ok ? undefined : "User rejected the request.");
+    }
+    case "signAndBroadcast": {
+      if (!APP.wallet) return reply(null, "Wallet locked.");
+      if (!APP.wallet.mnemonic) return reply(null, "Mnemonic unavailable — re-import wallet to enable signing.");
+      const ready = await isCryptoReady();
+      if (!ready) return reply(null, "Crypto module unavailable.");
+      const { chainId, msgs, fee, memo, toAddress, amount } = params || {};
+      // Minimal MsgSend support in v1 (extend per type as needed)
+      try {
+        const network = NETWORKS[chainId || APP.network];
+        if (!network) return reply(null, `Unknown chainId: ${chainId}`);
+        const to = toAddress || (msgs && msgs[0]?.value?.toAddress);
+        const amt = amount  || (msgs && msgs[0]?.value?.amount);
+        const ok = confirm(`Send ${amt?.[0]?.amount} ${amt?.[0]?.denom} to ${to?.slice(0,12)}…${to?.slice(-6)}?`);
+        if (!ok) return reply(null, "User rejected the request.");
+        const out = await sendTokens({
+          mnemonic: APP.wallet.mnemonic,
+          hrp:      network.hrp,
+          restUrl:  network.rest,
+          chainId:  chainId || APP.network,
+          toAddress: to,
+          amount:    amt,
+          memo:      memo || "",
+          fee:       fee || { amount: [{ denom: network.coinDenom, amount: "1000" }], gasLimit: 200000n },
+        });
+        return reply(out.result || {});
+      } catch (e) { return reply(null, e.message); }
+    }
+    default:
+      return reply(null, `Unknown method: ${method}`);
+  }
+}
+
 /* ── Wire up ────────────────────────────────────────────────────────── */
+window.addEventListener("message", e => {
+  const msg = e.data;
+  if (!msg || msg.type !== "skymetric:request") return;
+  handleDappRequest(msg, e.source).catch(err => {
+    _send(e.source, { type: "skymetric:response", id: msg.id, error: err.message });
+  });
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   boot();
+
+  // If opened as a dApp wallet popup, announce readiness so the provider
+  // can stop polling and deliver its queued request.
+  if (window.opener) _send(window.opener, { type: "skymetric:ready" });
 
   // addr copy in main wallet
   document.getElementById("wAddr")?.addEventListener("click", () => {

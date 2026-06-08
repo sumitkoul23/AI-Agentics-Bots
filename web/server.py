@@ -56,6 +56,7 @@ APP_ROUTES = {
     "/dashboard": "app/dashboard.html",
     "/admin": "app/admin.html",
     "/wallet": "app/wallet.html",
+    "/dapp-demo": "app/dapp-demo.html",
 }
 
 
