@@ -92,9 +92,16 @@
   }
 
   // ---------- Deployer port (mirrors deployer.py) ----------
+  // Persisted to localStorage so the multi-page app (chains/dashboard/admin)
+  // can read the same deployments on a static (backend-less) host.
+  const STORE_KEY = "skymetric_deployments_v1";
   const STORE = {
-    _items: [],
-    add(r) { this._items.unshift(r); },
+    _items: (() => {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY) || "[]"); }
+      catch { return []; }
+    })(),
+    _save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(this._items)); } catch {} },
+    add(r) { this._items.unshift(r); this._save(); },
     stats() {
       return {
         deployments: this._items.length,
@@ -155,6 +162,10 @@
     if (validators * validator_stake > total_supply)
       throw new DeploymentError("Validators × stake exceeds total supply. Lower the stake or validator count.");
 
+    const authority_address = String(p.authority_address || "").trim();
+    if (authority_address && !(authority_address.startsWith("agentic1") && authority_address.length >= 39 && authority_address.length <= 90))
+      throw new DeploymentError("Authority address must be a bech32 'agentic1…' address.");
+
     return {
       chain_id, moniker, target,
       total_supply_sky: total_supply, validators, max_validators,
@@ -162,6 +173,8 @@
       inflation_min, inflation_max, goal_bonded,
       task_burn_fraction, slash_fraction_fraud, unbonding_days,
       description: String(p.description || "").trim().slice(0, 280),
+      denom_display: DISPLAY_DENOM,
+      authority_address: authority_address || null,
     };
   }
 
@@ -387,6 +400,7 @@ echo "==> Done. Start with ./scripts/start-node.sh"
       task_burn_fraction: parseFloat($("#task_burn_fraction").value) || 0,
       slash_fraction_fraud: parseFloat($("#slash_fraction_fraud").value) || 0,
       unbonding_days: parseInt($("#unbonding_days").value, 10) || 0,
+      authority_address: ($("#authority_address") && $("#authority_address").value.trim()) || "",
     };
   }
 
@@ -613,8 +627,33 @@ echo "==> Done. Start with ./scripts/start-node.sh"
     $("#chain_id").addEventListener("input", (e) => {
       e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
     });
+    wireConnectWallet();
     syncOutputs();
     showStep(1);
+  }
+
+  // Connect Wallet — reads the address the wallet persisted to localStorage.
+  function connectedWalletAddress() {
+    try { return JSON.parse(localStorage.getItem("skymetric_wallet_v1") || "null")?.address || null; }
+    catch { return null; }
+  }
+  function wireConnectWallet() {
+    const btn = $("#connectWalletBtn");
+    const input = $("#authority_address");
+    if (!btn || !input) return;
+    const refresh = () => {
+      const addr = connectedWalletAddress();
+      if (addr && !input.value) input.value = addr;
+      btn.textContent = addr ? "✓ " + addr.slice(0, 10) + "…" + addr.slice(-6) : "👛 Connect";
+      if (addr) btn.title = addr;
+    };
+    btn.addEventListener("click", () => {
+      const addr = connectedWalletAddress();
+      if (addr) { input.value = addr; refresh(); toast("Authority address filled from connected wallet."); }
+      else window.open("/wallet", "skymetric-wallet", "width=480,height=720");
+    });
+    window.addEventListener("storage", (e) => { if (e.key === "skymetric_wallet_v1") refresh(); });
+    refresh();
   }
 
   document.addEventListener("DOMContentLoaded", init);

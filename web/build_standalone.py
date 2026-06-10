@@ -50,16 +50,60 @@ def build() -> str:
     return html
 
 
+# App pages that ship as clean-URL routes on a static host.
+# Each app/<name>.html is served at "/<name>" by Cloudflare Pages.
+APP_PAGES = ("wallet", "chains", "dashboard", "admin", "dapp-demo")
+
+
 def build_site(dist: Path) -> None:
-    """Produce a publishable static-site directory for Cloudflare Pages."""
+    """Produce a complete, publishable static-site directory.
+
+    Layout (Cloudflare Pages serves <name>.html at /<name>):
+
+        dist/
+          index.html          wizard (offline build, localStorage-backed)
+          wallet.html         /wallet   — fully client-side wallet
+          chains.html         /chains   — reads localStorage deployment store
+          dashboard.html      /dashboard
+          admin.html          /admin
+          dapp-demo.html      /dapp-demo
+          assets/  design/    copied verbatim (absolute /assets, /design refs)
+          _headers _redirects robots.txt
+    """
+    if dist.exists():
+        shutil.rmtree(dist)
     dist.mkdir(parents=True, exist_ok=True)
+
+    # 1. Wizard (inlined CSS + offline JS port).
     index = dist / "index.html"
     index.write_text(build())
+
+    # 2. App pages — copied to the dist root so /<name> resolves on Pages.
+    for name in APP_PAGES:
+        src = WEB / "app" / f"{name}.html"
+        if src.exists():
+            shutil.copyfile(src, dist / f"{name}.html")
+
+    # 3. Static asset + design trees (absolute /assets, /design references).
+    for tree in ("assets", "design"):
+        src = WEB / tree
+        if src.exists():
+            shutil.copytree(src, dist / tree)
+
+    # 4. Hosting metadata.
     for extra in ("_headers", "robots.txt"):
         src = WEB / extra
         if src.exists():
             shutil.copyfile(src, dist / extra)
-    print(f"wrote {index} ({index.stat().st_size:,} bytes)")
+
+    # 5. Clean-URL redirects (Cloudflare Pages _redirects format).
+    (dist / "_redirects").write_text(
+        "# Clean-URL routing for the deploy alias\n"
+        "/deploy   /index.html   200\n"
+    )
+
+    pages = ", ".join(f"/{p}" for p in APP_PAGES)
+    print(f"wrote {index} ({index.stat().st_size:,} bytes) + pages: /, /deploy, {pages}")
     print(f"site ready in {dist}/ — set Cloudflare Pages output dir to web/dist")
 
 

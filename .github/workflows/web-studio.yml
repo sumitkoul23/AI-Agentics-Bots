@@ -1,0 +1,71 @@
+# Build + validate the Chain Deployment Studio static site. No deploy step
+# here — the deploy is wired by connecting `web/` to Cloudflare Pages directly
+# (free tier; build command `python web/build_standalone.py --site`, output
+# `web/dist`, auto-deploys on every push). This job de-risks that build by
+# running the exact same command in a clean environment.
+name: web-studio
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "web/**"
+      - ".github/workflows/web-studio.yml"
+  pull_request:
+    paths:
+      - "web/**"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build static site (same command as Cloudflare Pages)
+        run: python web/build_standalone.py --site
+
+      - name: Verify all pages + assets are present
+        run: |
+          set -e
+          for f in index.html wallet.html chains.html dashboard.html admin.html dapp-demo.html; do
+            test -f "web/dist/$f" || { echo "missing web/dist/$f"; exit 1; }
+          done
+          for a in assets/js/shell.js assets/js/wallet.js assets/js/wallet-crypto.js \
+                   assets/js/wallet-proto.js assets/js/wallet-rpc.js \
+                   assets/js/skymetric-provider.js assets/js/standalone.js \
+                   design/design-system.css _headers _redirects robots.txt; do
+            test -f "web/dist/$a" || { echo "missing web/dist/$a"; exit 1; }
+          done
+          # The wizard must be fully self-contained (no unresolved /assets refs).
+          ! grep -q "/assets/" web/dist/index.html || { echo "index.html has unresolved /assets refs"; exit 1; }
+          echo "static site OK"
+
+      - name: Backend import + validation smoke test
+        run: |
+          python - <<'PY'
+          import sys; sys.path.insert(0, ".")
+          from web.backend import deployer
+          # A valid request round-trips; a bad authority address is rejected.
+          cfg = deployer.validate_request({
+              "chain_id": "ci-1", "moniker": "ci", "target": "local",
+              "authority_address": "agentic1mnsja06yh3hetn8nyetep4ek4w5jp83v6drs0t",
+          })
+          assert cfg["authority_address"].startswith("agentic1"), cfg
+          try:
+              deployer.validate_request({"chain_id": "ci-1", "authority_address": "nope"})
+              raise SystemExit("expected bad-authority rejection")
+          except deployer.DeploymentError:
+              pass
+          print("backend OK")
+          PY
+
+      - name: HTML validation (htmlhint via npx)
+        run: npx --yes htmlhint "web/dist/*.html"
