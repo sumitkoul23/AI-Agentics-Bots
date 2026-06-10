@@ -1,0 +1,72 @@
+# Deploy the Chain Deployment Studio to GitHub Pages.
+#
+# Fully automated: `actions/configure-pages` with `enablement: true` creates
+# the Pages site on first run, so no manual repo-settings step is needed.
+# The site is built with the repo subpath as base (GitHub Pages project sites
+# serve at /<repo>/), then published via the Pages artifact flow.
+#
+# Live URL after the first successful run:
+#   https://sumitkoul23.github.io/AI-Agentics-Bots/
+name: deploy-pages
+
+on:
+  push:
+    branches: [main, "claude/chain-deployment-webapp-r5zEM"]
+    paths:
+      - "web/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Configure GitHub Pages (auto-enables on first run)
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Build static site with Pages base path
+        run: python web/build_standalone.py --site --base "${{ steps.pages.outputs.base_path }}"
+
+      - name: Verify no unrewritten root-absolute references remain
+        run: |
+          set -e
+          base="${{ steps.pages.outputs.base_path }}"
+          if [ -n "$base" ] && [ "$base" != "/" ]; then
+            if grep -rnoE '["'"'"']/assets/' web/dist --include="*.html" --include="*.js" | grep -v "$base"; then
+              echo "found unrewritten /assets/ references"; exit 1
+            fi
+          fi
+          test -f web/dist/index.html
+          test -f web/dist/wallet.html
+          test -f web/dist/.nojekyll
+          echo "dist OK (base=$base)"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
