@@ -25,7 +25,7 @@
     <div class="logo"><span class="brandmark">🌌</span><div><b>SKYMETRIC Studio</b><span>Cosmos SDK · CometBFT</span></div></div>
     <nav id="appnav"></nav>
     <div class="row">
-      <button class="btn btn-ghost btn-sm">⬡ Connect Keplr</button>
+      <button class="btn btn-ghost btn-sm" id="connectWalletBtn">👛 Connect Wallet</button>
       <a class="btn btn-primary btn-sm" href="/deploy">+ New chain</a>
       <div class="avatar">SK</div>
     </div>
@@ -50,6 +50,7 @@
   <script src="/assets/js/shell.js"></script>
   <script>
     mountShell("/chains");
+    wireWalletButton(document.getElementById("connectWalletBtn"), () => { if (typeof applyFilters === "function") applyFilters(); });
     const ICON = { live: "🌌", deploying: "🛰️", ready: "🌌", draft: "⚡" };
     function card(d) {
       const c = d.config || {};
