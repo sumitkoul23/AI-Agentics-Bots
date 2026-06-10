@@ -676,7 +676,12 @@ async function handleDappRequest(reqMsg, sourceWin) {
   // For v1: a single approval persists for the popup lifetime; signAndBroadcast still requires explicit confirm.
   switch (method) {
     case "connect": {
-      if (!APP.wallet) return reply(null, "Wallet locked or not set up.");
+      if (!APP.wallet) {
+        // Surface the setup/unlock screen in this popup so the user can act,
+        // then tell the dApp to retry once a wallet exists.
+        try { boot(); window.focus(); } catch {}
+        return reply(null, "No wallet yet — create or unlock your SKYMETRIC wallet in the popup, then click Connect again.");
+      }
       const ok = confirm(`Allow "${esc(reqMsg.origin || "this site")}" to see your SKYMETRIC address?`);
       if (!ok) return reply(null, "User rejected the request.");
       return reply({
