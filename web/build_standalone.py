@@ -93,9 +93,11 @@ def build_site(dist: Path, base: str = "") -> None:
         shutil.rmtree(dist)
     dist.mkdir(parents=True, exist_ok=True)
 
-    # 1. Wizard (inlined CSS + offline JS port).
+    # 1. Wizard (inlined CSS + offline JS port). deploy.html is a copy so
+    #    the /deploy alias works on hosts without _redirects (GitHub Pages).
     index = dist / "index.html"
     index.write_text(rewrite_base(build(), base))
+    shutil.copyfile(index, dist / "deploy.html")
 
     # 2. App pages — copied to the dist root so /<name> resolves on Pages.
     for name in APP_PAGES:
