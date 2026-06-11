@@ -384,9 +384,15 @@ function switchTab(tab) {
   }
 }
 
-/* ── Live backend node detection ────────────────────────────────────── */
-// When served by the Node backend, /api/chain/* proxies a real chain node.
-// On a static host these 404 and the wallet falls back to deterministic mock.
+/* ── Live node connection ───────────────────────────────────────────────
+ * Two ways to reach a REAL chain node:
+ *  1. Node backend (/api/chain/*) — proxied, no CORS concerns.
+ *  2. Direct from the browser to a CORS-enabled public REST node — works on
+ *     a $0 static host (GitHub Pages) with no backend at all.
+ * We try the backend first, then fall back to the direct node.
+ */
+const DIRECT_REST = "https://rest.cosmos.directory/cosmoshub"; // CORS: access-control-allow-origin *
+
 let _backend = undefined; // undefined=unknown, null=absent, object=config
 async function backendChain() {
   if (_backend !== undefined) return _backend;
@@ -396,13 +402,34 @@ async function backendChain() {
   } catch { _backend = null; }
   return _backend;
 }
+
 async function liveStatus() {
-  try { const r = await fetch("/api/chain/status"); return r.ok ? await r.json() : null; }
-  catch { return null; }
+  // Backend proxy first.
+  try {
+    const r = await fetch("/api/chain/status");
+    if (r.ok) return await r.json();
+  } catch {}
+  // Direct to a CORS-enabled public node (static host).
+  try {
+    const r = await fetch(`${DIRECT_REST}/cosmos/base/tendermint/v1beta1/blocks/latest`);
+    if (!r.ok) return null;
+    const h = (await r.json())?.block?.header || {};
+    return { ok: true, direct: true, rest: DIRECT_REST, rpc: DIRECT_REST,
+             network: h.chain_id || null, latest_block_height: h.height || null,
+             latest_block_time: h.time || null };
+  } catch { return null; }
 }
+
 async function liveBalances(addr) {
-  try { const r = await fetch("/api/chain/balances/" + encodeURIComponent(addr)); return r.ok ? (await r.json()).balances : null; }
-  catch { return null; }
+  try {
+    const r = await fetch("/api/chain/balances/" + encodeURIComponent(addr));
+    if (r.ok) return (await r.json()).balances;
+  } catch {}
+  try {
+    const r = await fetch(`${DIRECT_REST}/cosmos/bank/v1beta1/balances/${encodeURIComponent(addr)}`);
+    if (!r.ok) return null;
+    return (await r.json()).balances || [];
+  } catch { return null; }
 }
 
 /* ── Overview tab ───────────────────────────────────────────────────── */
