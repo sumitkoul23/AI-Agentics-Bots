@@ -384,6 +384,27 @@ function switchTab(tab) {
   }
 }
 
+/* ── Live backend node detection ────────────────────────────────────── */
+// When served by the Node backend, /api/chain/* proxies a real chain node.
+// On a static host these 404 and the wallet falls back to deterministic mock.
+let _backend = undefined; // undefined=unknown, null=absent, object=config
+async function backendChain() {
+  if (_backend !== undefined) return _backend;
+  try {
+    const r = await fetch("/api/chain/config");
+    _backend = r.ok ? await r.json() : null;
+  } catch { _backend = null; }
+  return _backend;
+}
+async function liveStatus() {
+  try { const r = await fetch("/api/chain/status"); return r.ok ? await r.json() : null; }
+  catch { return null; }
+}
+async function liveBalances(addr) {
+  try { const r = await fetch("/api/chain/balances/" + encodeURIComponent(addr)); return r.ok ? (await r.json()).balances : null; }
+  catch { return null; }
+}
+
 /* ── Overview tab ───────────────────────────────────────────────────── */
 function renderOverview(addr, el) {
   const tokens = mockTokens(addr);
@@ -400,18 +421,46 @@ function renderOverview(addr, el) {
           <div class="w-asset-amount mono">${esc(t.amount)}</div>
         </div>`).join("")}
     </div>
-    <div class="w-section-title" style="margin-top:20px">Network</div>
+    <div class="w-section-title" style="margin-top:20px">Network <span id="nodeBadge" class="chip" style="font-size:10px">checking node…</span></div>
     <div class="card" style="padding:12px 14px">
       <div class="row between" style="margin-bottom:8px">
-        <span class="dim">Chain ID</span><b class="mono">${esc(APP.network)}</b>
+        <span class="dim">Chain ID</span><b class="mono" id="ov-chainid">${esc(APP.network)}</b>
       </div>
       <div class="row between" style="margin-bottom:8px">
-        <span class="dim">RPC</span><span class="mono hint">${esc(NETWORKS[APP.network]?.rpc || "—")}</span>
+        <span class="dim">RPC</span><span class="mono hint" id="ov-rpc">${esc(NETWORKS[APP.network]?.rpc || "—")}</span>
       </div>
-      <div class="row between">
-        <span class="dim">REST</span><span class="mono hint">${esc(NETWORKS[APP.network]?.rest || "—")}</span>
+      <div class="row between" style="margin-bottom:8px">
+        <span class="dim">REST</span><span class="mono hint" id="ov-rest">${esc(NETWORKS[APP.network]?.rest || "—")}</span>
+      </div>
+      <div class="row between" id="ov-height-row" hidden>
+        <span class="dim">Block height</span><b class="mono green" id="ov-height">—</b>
       </div>
     </div>`;
+
+  // Upgrade to real, live node data when the backend is present.
+  liveStatus().then(async (s) => {
+    const badge = document.getElementById("nodeBadge");
+    if (!badge) return;
+    if (s && s.ok) {
+      badge.className = "chip live"; badge.innerHTML = `<span class="dot"></span>live node`;
+      const cid = document.getElementById("ov-chainid"); if (cid && s.network) cid.textContent = s.network;
+      const rpc = document.getElementById("ov-rpc");  if (rpc && s.rpc)  rpc.textContent  = s.rpc;
+      const rest= document.getElementById("ov-rest"); if (rest && s.rest) rest.textContent = s.rest;
+      const hr = document.getElementById("ov-height-row"), h = document.getElementById("ov-height");
+      if (hr && h && s.latest_block_height) { hr.hidden = false; h.textContent = "#" + Number(s.latest_block_height).toLocaleString(); }
+      // Real balances for this address from the live node.
+      const bals = await liveBalances(addr);
+      if (Array.isArray(bals)) {
+        const rows = bals.length
+          ? bals.map(b => `<div class="w-asset-row"><div class="w-asset-icon">🪙</div><div class="w-asset-info"><b>${esc(b.denom)}</b><span>on-chain</span></div><div class="w-asset-amount mono">${esc(b.amount)}</div></div>`).join("")
+          : `<div class="w-asset-row"><div class="w-asset-info"><b>No on-chain balance</b><span>this address holds nothing on ${esc(s.network||"the node")} yet</span></div></div>`;
+        el.querySelector(".w-asset-list").innerHTML = rows;
+      }
+    } else {
+      badge.className = "chip"; badge.style.background = "rgba(255,180,84,.15)"; badge.style.color = "var(--amber)";
+      badge.textContent = "demo data (no backend node)";
+    }
+  });
 }
 
 /* ── Send tab ───────────────────────────────────────────────────────── */

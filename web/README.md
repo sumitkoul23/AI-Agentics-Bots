@@ -21,6 +21,20 @@ signature, and the genesis generation of agents).
 - **Zero dependencies** — pure Python standard library backend + vanilla
   HTML/CSS/JS front-end (no build step)
 
+## 🟢 Two backends
+
+This `web/` front-end runs against either backend:
+
+- **Python stdlib** (`web/server.py`) — zero-dependency, great for local use.
+- **Node.js** (`../server/`) — a real Express server that also **connects to a
+  live blockchain node** (`/api/chain/*` proxies a real CometBFT RPC + Cosmos
+  REST node). The wallet's Overview then shows the live block height and real
+  on-chain balances. Deploy it free on Render/Fly — see
+  [`../server/README.md`](../server/README.md).
+
+On a static host (GitHub Pages) there's no backend, so the app falls back to
+the localStorage store and the wallet labels its figures "demo data".
+
 ## 🚀 Run it
 
 From the repository root:

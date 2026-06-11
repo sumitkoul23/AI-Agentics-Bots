@@ -1,0 +1,31 @@
+# Render.com blueprint — free Node web service for the Chain Deployment Studio.
+# Deploy: push this repo, then on render.com → New → Blueprint → pick the repo.
+# Render auto-detects this file and provisions the service (free plan).
+services:
+  - type: web
+    name: skymetric-studio
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Live chain node — defaults to a public Cosmos Hub node so the site
+      # connects to a real chain immediately. Override to point at your own
+      # skymetricd node.
+      - key: CHAIN_RPC
+        value: https://cosmos-rpc.publicnode.com
+      - key: CHAIN_REST
+        value: https://cosmos-rest.publicnode.com
+      - key: CHAIN_BECH32
+        value: agentic
+      - key: CHAIN_DENOM
+        value: usky
+      - key: CHAIN_SYMBOL
+        value: SKY
+    # Free plan has an ephemeral disk; deployments reset on redeploy. Upgrade
+    # to attach a persistent disk at /data and set DATA_FILE=/data/deployments.json.

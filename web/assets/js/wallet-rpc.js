@@ -12,40 +12,66 @@
 import { signBytes, accountFromMnemonic, pubkeyFromPriv } from "/assets/js/wallet-crypto.js";
 import { Proto, buildMsgSendAny, toBase64 } from "/assets/js/wallet-proto.js";
 
+/* ── Backend-proxy detection ───────────────────────────────────────────
+ * When the Node backend is serving this page, /api/chain/* proxies a real
+ * node (and dodges browser CORS). We prefer it; otherwise we hit the REST
+ * endpoint directly from the browser.
+ */
+async function hasBackend() {
+  try { const r = await fetch("/api/chain/config"); return r.ok; }
+  catch { return false; }
+}
+
 /* ── REST client ───────────────────────────────────────────────────── */
 export class CosmosRest {
   constructor(restUrl) {
     this.url = restUrl.replace(/\/+$/, "");
+    this._backend = undefined;
+  }
+
+  async _useBackend() {
+    if (this._backend === undefined) this._backend = await hasBackend();
+    return this._backend;
   }
 
   async getAccount(address) {
-    const r = await fetch(`${this.url}/cosmos/auth/v1beta1/accounts/${address}`);
-    if (r.status === 404) return { accountNumber: 0, sequence: 0, exists: false };
+    const viaBackend = await this._useBackend();
+    const url = viaBackend
+      ? `/api/chain/account/${encodeURIComponent(address)}`
+      : `${this.url}/cosmos/auth/v1beta1/accounts/${address}`;
+    const r = await fetch(url);
+    if (r.status === 404) return { accountNumber: 0n, sequence: 0n, exists: false };
     if (!r.ok) throw new Error(`account fetch failed (${r.status})`);
     const j = await r.json();
-    const acc = j.account;
+    const acc = viaBackend ? j : j.account;
     return {
       accountNumber: BigInt(acc.account_number || 0),
       sequence:      BigInt(acc.sequence || 0),
-      exists:        true,
+      exists:        acc.exists ?? true,
     };
   }
 
   async getBalances(address) {
-    const r = await fetch(`${this.url}/cosmos/bank/v1beta1/balances/${address}`);
+    const viaBackend = await this._useBackend();
+    const url = viaBackend
+      ? `/api/chain/balances/${encodeURIComponent(address)}`
+      : `${this.url}/cosmos/bank/v1beta1/balances/${address}`;
+    const r = await fetch(url);
     if (!r.ok) throw new Error(`balance fetch failed (${r.status})`);
     const j = await r.json();
     return j.balances || [];
   }
 
   async broadcast(txRawBytes, mode = "BROADCAST_MODE_SYNC") {
-    const r = await fetch(`${this.url}/cosmos/tx/v1beta1/txs`, {
+    const viaBackend = await this._useBackend();
+    const url  = viaBackend ? `/api/chain/broadcast` : `${this.url}/cosmos/tx/v1beta1/txs`;
+    const r = await fetch(url, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ tx_bytes: toBase64(txRawBytes), mode }),
     });
     const j = await r.json();
-    if (!r.ok) throw new Error(j.message || `broadcast failed (${r.status})`);
+    if (!r.ok) throw new Error(j.error || j.message || `broadcast failed (${r.status})`);
     return j.tx_response || j;
   }
 }
