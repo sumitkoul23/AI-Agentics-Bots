@@ -359,6 +359,23 @@ git tag v1.0.0 && git push origin v1.0.0
 
 ---
 
+## Chain Deployment Studio
+
+A professional, guided web app for spinning up a new **SKYMETRIC** chain
+(Cosmos SDK + CometBFT) lives in [`web/`](web/README.md). It walks you through
+chain identity, tokenomics, validators and a deploy target, then generates
+ready-to-run artifacts (`genesis-overrides.json`, `init-chain.sh`, `.env`) for
+the real [`genesis/chain`](genesis/chain) toolchain — with zero external
+dependencies.
+
+```bash
+python web/server.py        # then open http://localhost:8000
+```
+
+See [`web/README.md`](web/README.md) for full details.
+
+---
+
 ## Safety
 
 - No API keys required — Ollama is fully local

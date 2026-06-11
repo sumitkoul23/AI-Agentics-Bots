@@ -12,6 +12,13 @@
 **/.gocache/
 **/.gopath/
 
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Generated build artifacts
+web/dist/
+
 # Compiled agent binaries
 agents/priya-hub/priya-hub
 agents/priya-hub/priya-hub-*
@@ -33,3 +40,8 @@ agents/**/.priya-hub-memory.json
 # OS / editor noise
 Thumbs.db
 .DS_Store
+
+# Node backend
+server/node_modules/
+server/data/
+.env

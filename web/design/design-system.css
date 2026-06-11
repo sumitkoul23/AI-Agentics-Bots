@@ -1,0 +1,210 @@
+/* ============================================================
+   SKYMETRIC Studio — Design System (v1)
+   Single source of truth for tokens + primitives, shared by the
+   coded mockups and mirrored into Figma variables/styles.
+   Built on the existing cosmic theme, extended for dashboard + admin.
+   ============================================================ */
+
+:root {
+  /* ---- Color: surfaces ---- */
+  --bg: #06070f;
+  --bg-2: #0b0e1c;
+  --surface: #0e1124;
+  --surface-2: #141733;
+  --surface-3: #1b1f3d;
+  --panel: rgba(20, 23, 43, 0.72);
+  --overlay: rgba(4, 5, 12, 0.72);
+
+  /* ---- Color: lines ---- */
+  --border: rgba(130, 140, 200, 0.16);
+  --border-strong: rgba(140, 150, 220, 0.34);
+
+  /* ---- Color: text ---- */
+  --text: #e8eafc;
+  --text-dim: #a3a8c8;
+  --muted: #767ba0;
+
+  /* ---- Color: brand + accents ---- */
+  --accent: #7c5cff;       /* primary violet */
+  --accent-2: #18d3ff;     /* cyan */
+  --accent-grad: linear-gradient(135deg, #7c5cff 0%, #18d3ff 100%);
+  --green: #3ddc97;        /* live / success */
+  --amber: #ffb454;        /* deploying / warning */
+  --red: #ff6b81;          /* error / danger */
+  --pink: #ff7eb6;
+
+  /* ---- Status semantic ---- */
+  --status-live: var(--green);
+  --status-deploying: var(--amber);
+  --status-error: var(--red);
+  --status-idle: var(--muted);
+
+  /* ---- Typography ---- */
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fs-display: clamp(28px, 4vw, 40px);
+  --fs-h1: clamp(22px, 3vw, 28px);
+  --fs-h2: 18px;
+  --fs-h3: 15px;
+  --fs-body: 14px;
+  --fs-sm: 13px;
+  --fs-xs: 12px;
+  --fw-reg: 400;
+  --fw-med: 500;
+  --fw-semi: 600;
+  --fw-bold: 700;
+  --fw-x: 800;
+
+  /* ---- Space scale (4px base) ---- */
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 20px; --s6: 24px; --s8: 32px; --s10: 40px; --s12: 48px;
+
+  /* ---- Radius ---- */
+  --r-sm: 8px;  --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-pill: 999px;
+
+  /* ---- Elevation ---- */
+  --shadow-1: 0 4px 14px rgba(0,0,0,.28);
+  --shadow-2: 0 12px 36px rgba(0,0,0,.40);
+  --shadow-3: 0 20px 60px rgba(0,0,0,.45);
+  --glow-accent: 0 8px 24px rgba(124,92,255,.32);
+
+  /* ---- Layout ---- */
+  --nav-w: 240px;
+  --header-h: 64px;
+  --container: 1280px;
+}
+
+/* ---------- Reset-ish ---------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: var(--font);
+  background:
+    radial-gradient(1200px 700px at 80% -10%, #1a1740 0%, transparent 55%),
+    radial-gradient(900px 600px at -10% 10%, #0b2740 0%, transparent 50%),
+    var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   Primitives (the component kit — Figma component parity)
+   ============================================================ */
+
+/* ---- Buttons ---- */
+.btn {
+  font: inherit; font-weight: var(--fw-semi); font-size: var(--fs-body);
+  padding: 10px 18px; border-radius: var(--r-sm);
+  border: 1px solid transparent; cursor: pointer; transition: .16s;
+  display: inline-flex; align-items: center; gap: var(--s2);
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary { background: var(--accent-grad); color: #fff; box-shadow: var(--glow-accent); }
+.btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.btn-success { background: linear-gradient(135deg, #3ddc97, #18d3ff); color: #04241a; }
+.btn-ghost { background: transparent; border-color: var(--border); color: var(--text-dim); }
+.btn-ghost:hover { color: var(--text); border-color: var(--border-strong); }
+.btn-danger { background: transparent; border-color: rgba(255,107,129,.4); color: var(--red); }
+.btn-danger:hover { background: rgba(255,107,129,.1); }
+.btn-sm { padding: 6px 12px; font-size: var(--fs-sm); }
+.btn-icon { padding: 8px; border-radius: var(--r-sm); }
+
+/* ---- Status chips ---- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--fs-xs); font-weight: var(--fw-semi);
+  padding: 4px 10px; border-radius: var(--r-pill);
+  background: rgba(255,255,255,.06); color: var(--text-dim); text-transform: capitalize;
+}
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.chip.live { background: rgba(61,220,151,.16); color: var(--green); }
+.chip.deploying { background: rgba(255,180,84,.16); color: var(--amber); }
+.chip.error { background: rgba(255,107,129,.16); color: var(--red); }
+.chip.rec { background: rgba(124,92,255,.16); color: #b9a8ff; }
+
+/* ---- Cards ---- */
+.card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--r-lg); box-shadow: var(--shadow-2);
+  backdrop-filter: blur(14px); padding: var(--s6);
+}
+.card-tight { padding: var(--s4); }
+.card-hover { transition: .18s; }
+.card-hover:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+
+/* ---- Metric stat ---- */
+.stat { display: flex; flex-direction: column; gap: 2px; }
+.stat .label { font-size: var(--fs-xs); color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+.stat .value { font-size: 26px; font-weight: var(--fw-x); }
+.stat .delta { font-size: var(--fs-xs); }
+.stat .delta.up { color: var(--green); }
+.stat .delta.down { color: var(--red); }
+
+/* ---- Form fields ---- */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label { font-size: var(--fs-sm); font-weight: var(--fw-semi); color: var(--text-dim); }
+.input {
+  font: inherit; color: var(--text); background: rgba(8,10,22,.7);
+  border: 1px solid var(--border); border-radius: var(--r-sm); padding: 11px 13px; transition: .16s;
+}
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,92,255,.18); }
+.hint { font-size: var(--fs-xs); color: var(--muted); }
+
+/* ---- Tables ---- */
+.table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.table th { text-align: left; color: var(--muted); font-weight: var(--fw-semi); font-size: var(--fs-xs);
+  text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text-dim); }
+.table tr:hover td { background: rgba(255,255,255,.02); color: var(--text); }
+.mono { font-family: var(--mono); font-size: var(--fs-xs); }
+
+/* ---- Progress / sparkline rail ---- */
+.bar { height: 8px; border-radius: var(--r-pill); background: rgba(255,255,255,.07); overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--accent-grad); border-radius: inherit; }
+
+/* ---- App shell ---- */
+.shell { display: grid; grid-template-columns: var(--nav-w) 1fr; min-height: 100vh; }
+.sidenav {
+  border-right: 1px solid var(--border); padding: var(--s5) var(--s4);
+  display: flex; flex-direction: column; gap: var(--s2); background: rgba(8,10,22,.4); backdrop-filter: blur(10px);
+}
+.navlink {
+  display: flex; align-items: center; gap: var(--s3); padding: 10px 12px;
+  border-radius: var(--r-sm); color: var(--text-dim); font-size: var(--fs-body); font-weight: var(--fw-med);
+  text-decoration: none; transition: .15s;
+}
+.navlink:hover { background: rgba(255,255,255,.04); color: var(--text); }
+.navlink.active { background: rgba(124,92,255,.14); color: var(--text); border: 1px solid var(--border-strong); }
+.topbar {
+  height: var(--header-h); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--s6); border-bottom: 1px solid var(--border); position: sticky; top: 0;
+  background: var(--overlay); backdrop-filter: blur(10px); z-index: 5;
+}
+
+/* ---- Mobile bottom tab bar ---- */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; display: none;
+  grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--border);
+  background: var(--overlay); backdrop-filter: blur(14px); z-index: 20;
+}
+.tabbar a { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 0;
+  font-size: 10px; color: var(--muted); text-decoration: none; }
+.tabbar a.active { color: var(--accent-2); }
+
+/* ---- Utilities ---- */
+.grid { display: grid; gap: var(--s4); }
+.row { display: flex; align-items: center; gap: var(--s3); }
+.between { justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.muted { color: var(--muted); }
+.dim { color: var(--text-dim); }
+
+/* ============================================================
+   Responsive — mobile-first reflow (per device matrix)
+   ============================================================ */
+@media (max-width: 1024px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidenav { display: none; }
+  .tabbar { display: grid; }
+  body { padding-bottom: 64px; }
+}

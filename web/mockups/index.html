@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SKYMETRIC Studio — Design Mockups</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../design/design-system.css" />
+<style>
+  .gallery { max-width: var(--container); margin: 0 auto; padding: var(--s6); }
+  .gallery > h1 { font-size: var(--fs-display); font-weight: 800; margin: 0 0 4px; }
+  .gallery > p.sub { color: var(--text-dim); margin: 0 0 var(--s6); }
+  .screen-tabs { display: flex; gap: var(--s2); flex-wrap: wrap; margin-bottom: var(--s6); }
+  .screen-tabs button { font: inherit; font-size: var(--fs-sm); font-weight: 600; cursor: pointer;
+    padding: 8px 16px; border-radius: var(--r-pill); border: 1px solid var(--border);
+    background: transparent; color: var(--text-dim); transition: .15s; }
+  .screen-tabs button.active { background: var(--accent-grad); color: #fff; border-color: transparent; }
+  .screen { display: none; } .screen.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px);} to { opacity:1; transform:none; } }
+  .device-note { font-size: var(--fs-xs); color: var(--muted); margin-bottom: var(--s4); }
+  /* device frame for mobile previews */
+  .devices { display: grid; grid-template-columns: 1fr 320px; gap: var(--s6); align-items: start; }
+  @media (max-width: 900px){ .devices { grid-template-columns: 1fr; } }
+  .phone { width: 320px; border: 8px solid #1b1f3d; border-radius: 34px; overflow: hidden;
+    box-shadow: var(--shadow-3); background: var(--bg); }
+  .phone .notch { height: 22px; background: #1b1f3d; }
+  .phone-body { height: 620px; overflow-y: auto; }
+  .brandmark { font-size: 22px; filter: drop-shadow(0 0 8px rgba(124,92,255,.6)); }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo b { font-size: 15px; } .logo span { font-size: 11px; color: var(--muted); display:block; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--s4); }
+  @media (max-width: 1024px){ .metric-grid { grid-template-columns: repeat(2,1fr);} }
+  .spark { height: 44px; display: flex; align-items: flex-end; gap: 3px; margin-top: var(--s3); }
+  .spark i { flex: 1; background: var(--accent-grad); border-radius: 2px; opacity: .8; }
+  .chain-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--s4); }
+  @media (max-width: 1024px){ .chain-grid { grid-template-columns: repeat(2,1fr);} }
+  @media (max-width: 640px){ .chain-grid { grid-template-columns: 1fr;} }
+  .ep { display:flex; justify-content:space-between; align-items:center; padding:10px 12px;
+    background: rgba(8,10,22,.5); border:1px solid var(--border); border-radius: var(--r-sm); margin-bottom:8px; }
+  .seg { display:flex; gap:4px; background: rgba(8,10,22,.5); padding:4px; border-radius:var(--r-pill); border:1px solid var(--border); }
+  .seg button { font:inherit; font-size:var(--fs-xs); font-weight:600; border:0; background:transparent;
+    color:var(--muted); padding:6px 14px; border-radius:var(--r-pill); cursor:pointer; }
+  .seg button.on { background: var(--accent-grad); color:#fff; }
+  .avatar { width:30px;height:30px;border-radius:50%;background:var(--accent-grad);display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff; }
+  h2.sec { font-size: var(--fs-h1); margin: 0 0 var(--s5); }
+  h3.sub { font-size: var(--fs-h2); margin: 0 0 var(--s4); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <h1>🌌 SKYMETRIC Studio — Design Mockups</h1>
+  <p class="sub">High-fidelity, responsive screens for the redesign · web + mobile + admin · built on the shared design system.</p>
+
+  <div class="screen-tabs" id="tabs">
+    <button class="active" data-s="chains">Chains (home)</button>
+    <button data-s="dashboard">Chain dashboard</button>
+    <button data-s="admin">Admin panel</button>
+    <button data-s="mobile">Mobile (web+admin)</button>
+  </div>
+
+  <!-- ============ CHAINS HOME ============ -->
+  <section class="screen active" data-screen="chains">
+    <div class="device-note">Desktop · ecosystem home — grid of deployed chains with status, search, and "New chain" CTA (Dymension/Caldera pattern).</div>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="topbar">
+        <div class="logo"><span class="brandmark">🌌</span><div><b>SKYMETRIC Studio</b><span>Cosmos SDK · CometBFT</span></div></div>
+        <div class="row">
+          <input class="input" placeholder="Search chains…" style="width:200px;" />
+          <button class="btn btn-ghost btn-sm">⬡ Connect Keplr</button>
+          <button class="btn btn-primary btn-sm">+ New chain</button>
+          <div class="avatar">SK</div>
+        </div>
+      </div>
+      <div style="padding: var(--s6);">
+        <div class="row between" style="margin-bottom: var(--s5);">
+          <h2 class="sec" style="margin:0;">Your chains</h2>
+          <div class="seg"><button class="on">All</button><button>Live</button><button>Devnet</button><button>Draft</button></div>
+        </div>
+        <div class="chain-grid">
+          <!-- chain card -->
+          <div class="card card-hover" style="padding:var(--s5);">
+            <div class="row between"><div class="logo"><span class="brandmark" style="font-size:18px;">🌌</span><b>skymetric-1</b></div><span class="chip live"><span class="dot"></span>live</span></div>
+            <p class="dim" style="font-size:var(--fs-sm); margin:10px 0 14px;">Mainnet · SKY · 4 validators</p>
+            <div class="row between" style="font-size:var(--fs-xs);"><span class="muted">Block time</span><b>3.1s</b></div>
+            <div class="row between" style="font-size:var(--fs-xs); margin-top:6px;"><span class="muted">Bonded</span><b>67%</b></div>
+            <div class="bar" style="margin-top:8px;"><span style="width:67%"></span></div>
+          </div>
+          <div class="card card-hover" style="padding:var(--s5);">
+            <div class="row between"><div class="logo"><span class="brandmark" style="font-size:18px;">🛰️</span><b>nebula-test-2</b></div><span class="chip deploying"><span class="dot"></span>deploying</span></div>
+            <p class="dim" style="font-size:var(--fs-sm); margin:10px 0 14px;">Testnet · NEB · 2 validators</p>
+            <div class="row between" style="font-size:var(--fs-xs);"><span class="muted">Step</span><b>6 / 8</b></div>
+            <div class="bar" style="margin-top:8px;"><span style="width:75%; background:linear-gradient(135deg,#ffb454,#ff7eb6)"></span></div>
+          </div>
+          <div class="card card-hover" style="padding:var(--s5);">
+            <div class="row between"><div class="logo"><span class="brandmark" style="font-size:18px;">⚡</span><b>aurora-devnet-1</b></div><span class="chip"><span class="dot"></span>draft</span></div>
+            <p class="dim" style="font-size:var(--fs-sm); margin:10px 0 14px;">Devnet · AUR · 1 validator</p>
+            <div class="row between" style="font-size:var(--fs-xs);"><span class="muted">Saved</span><b>2h ago</b></div>
+            <div style="margin-top:12px;"><button class="btn btn-ghost btn-sm">Resume setup →</button></div>
+          </div>
+        </div>
+        <div class="metric-grid" style="margin-top: var(--s6);">
+          <div class="card stat"><span class="label">Chains</span><span class="value">3</span><span class="delta up">+1 this week</span></div>
+          <div class="card stat"><span class="label">Validators</span><span class="value">7</span></div>
+          <div class="card stat"><span class="label">SKY planned</span><span class="value">1.5B</span></div>
+          <div class="card stat"><span class="label">Uptime</span><span class="value">99.9%</span><span class="delta up">healthy</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHAIN DASHBOARD ============ -->
+  <section class="screen" data-screen="dashboard">
+    <div class="device-note">Desktop · post-launch console — overview metrics, validators, endpoints, economy (Caldera/Conduit telemetry pattern).</div>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="shell" style="min-height:auto;">
+        <nav class="sidenav" style="display:flex;">
+          <div class="logo" style="margin-bottom:var(--s5);"><span class="brandmark">🌌</span><div><b>skymetric-1</b><span>mainnet</span></div></div>
+          <a class="navlink active">▦ Overview</a>
+          <a class="navlink">🗳️ Validators</a>
+          <a class="navlink">🔌 Endpoints</a>
+          <a class="navlink">💰 Economy</a>
+          <a class="navlink">⚖️ Governance</a>
+          <a class="navlink" style="margin-top:auto;">← All chains</a>
+        </nav>
+        <div style="padding: var(--s6);">
+          <div class="row between" style="margin-bottom: var(--s5);">
+            <div><h2 class="sec" style="margin:0;">skymetric-1 <span class="chip live"><span class="dot"></span>live</span></h2>
+              <p class="dim mono" style="font-size:var(--fs-xs); margin:6px 0 0;">gen_024481f7a0ee7cc3004660df</p></div>
+            <div class="row"><button class="btn btn-ghost btn-sm">⎘ Explorer</button><button class="btn btn-ghost btn-sm">🚰 Faucet</button></div>
+          </div>
+          <div class="metric-grid">
+            <div class="card stat"><span class="label">Block height</span><span class="value">1,284,902</span><span class="delta up">+3.1s/blk</span></div>
+            <div class="card stat"><span class="label">TPS</span><span class="value">42</span><span class="delta up">▲ 8%</span></div>
+            <div class="card stat"><span class="label">Bonded</span><span class="value">67%</span><span class="delta">goal 67%</span></div>
+            <div class="card stat"><span class="label">Inflation</span><span class="value">6.2%</span><span class="delta down">▼ tapering</span></div>
+          </div>
+          <div class="grid" style="grid-template-columns: 2fr 1fr; margin-top: var(--s5);">
+            <div class="card">
+              <div class="row between"><h3 class="sub" style="margin:0;">Block production</h3><div class="seg"><button>1H</button><button class="on">24H</button><button>7D</button></div></div>
+              <div class="spark">
+                <i style="height:40%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:80%"></i><i style="height:60%"></i>
+                <i style="height:90%"></i><i style="height:70%"></i><i style="height:85%"></i><i style="height:55%"></i><i style="height:75%"></i>
+                <i style="height:95%"></i><i style="height:68%"></i><i style="height:78%"></i><i style="height:88%"></i><i style="height:62%"></i>
+              </div>
+            </div>
+            <div class="card">
+              <h3 class="sub">Treasury</h3>
+              <div class="stat"><span class="value" style="font-size:30px;">10 SKY</span><span class="delta up">+0.4 / day burn offset</span></div>
+              <div class="bar" style="margin-top:var(--s4);"><span style="width:42%"></span></div>
+              <p class="hint" style="margin-top:8px;">20% task burn · 50/30 agent/validator split</p>
+            </div>
+          </div>
+          <div class="card" style="margin-top:var(--s5);">
+            <h3 class="sub">Endpoints</h3>
+            <div class="ep"><span class="mono">RPC&nbsp;&nbsp;http://localhost:26657</span><button class="btn btn-ghost btn-sm">copy</button></div>
+            <div class="ep"><span class="mono">REST&nbsp;http://localhost:1317</span><button class="btn btn-ghost btn-sm">copy</button></div>
+            <div class="ep"><span class="mono">gRPC&nbsp;localhost:9090</span><button class="btn btn-ghost btn-sm">copy</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ADMIN PANEL ============ -->
+  <section class="screen" data-screen="admin">
+    <div class="device-note">Desktop · admin — org members, roles, API keys, deployment audit log, connected targets, danger zone.</div>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="shell" style="min-height:auto;">
+        <nav class="sidenav" style="display:flex;">
+          <div class="logo" style="margin-bottom:var(--s5);"><span class="brandmark">🌌</span><div><b>Admin</b><span>SKYMETRIC Labs</span></div></div>
+          <a class="navlink active">👥 Members</a>
+          <a class="navlink">🗂️ Deployments</a>
+          <a class="navlink">🎯 Targets</a>
+          <a class="navlink">🔑 API keys</a>
+          <a class="navlink">⚙️ Settings</a>
+        </nav>
+        <div style="padding: var(--s6);">
+          <div class="row between" style="margin-bottom:var(--s5);"><h2 class="sec" style="margin:0;">Members & roles</h2><button class="btn btn-primary btn-sm">+ Invite</button></div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="table">
+              <thead><tr><th>Member</th><th>Role</th><th>Chains</th><th>Last active</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><div class="row"><div class="avatar">SK</div><div><b style="color:var(--text)">Sumit Koul</b><div class="hint">sumit@skymetric.dev</div></div></div></td><td><span class="chip rec">Owner</span></td><td>3</td><td>now</td><td>⋯</td></tr>
+                <tr><td><div class="row"><div class="avatar" style="background:linear-gradient(135deg,#3ddc97,#18d3ff)">AK</div><div><b style="color:var(--text)">Aria Kade</b><div class="hint">aria@skymetric.dev</div></div></div></td><td><span class="chip">Maintainer</span></td><td>2</td><td>3h ago</td><td>⋯</td></tr>
+                <tr><td><div class="row"><div class="avatar" style="background:linear-gradient(135deg,#ffb454,#ff7eb6)">JD</div><div><b style="color:var(--text)">Jules Devereux</b><div class="hint">jules@skymetric.dev</div></div></div></td><td><span class="chip">Viewer</span></td><td>1</td><td>2d ago</td><td>⋯</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="sub" style="margin:var(--s6) 0 var(--s4);">Deployment audit log</h3>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="table">
+              <thead><tr><th>Chain</th><th>Action</th><th>By</th><th>Target</th><th>When</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">skymetric-1</td><td>deploy</td><td>Sumit</td><td>Local devnet</td><td>2h ago</td><td><span class="chip live"><span class="dot"></span>ready</span></td></tr>
+                <tr><td class="mono">nebula-test-2</td><td>deploy</td><td>Aria</td><td>Docker</td><td>6h ago</td><td><span class="chip deploying"><span class="dot"></span>running</span></td></tr>
+                <tr><td class="mono">aurora-devnet-1</td><td>validate</td><td>Aria</td><td>—</td><td>1d ago</td><td><span class="chip error"><span class="dot"></span>failed</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="sub" style="margin:var(--s6) 0 var(--s4);">Connected targets</h3>
+          <div class="metric-grid">
+            <div class="card row between"><span>💻 Local</span><span class="chip live"><span class="dot"></span>ok</span></div>
+            <div class="card row between"><span>🐳 Docker</span><span class="chip live"><span class="dot"></span>ok</span></div>
+            <div class="card row between"><span>🪰 Fly.io</span><span class="chip"><span class="dot"></span>link</span></div>
+            <div class="card row between"><span>☁️ Oracle</span><span class="chip"><span class="dot"></span>link</span></div>
+          </div>
+
+          <div class="card" style="margin-top:var(--s6); border-color: rgba(255,107,129,.3);">
+            <h3 class="sub" style="color:var(--red); margin-top:0;">Danger zone</h3>
+            <div class="row between"><p class="dim" style="margin:0;">Tear down a chain and delete all generated artifacts. This cannot be undone.</p><button class="btn btn-danger btn-sm">Teardown…</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MOBILE ============ -->
+  <section class="screen" data-screen="mobile">
+    <div class="device-note">Mobile · the same surfaces reflowed — full-screen wizard step with sticky CTA, and a card-ified admin with bottom tab bar.</div>
+    <div class="devices">
+      <!-- phone 1: wizard step -->
+      <div class="phone" style="margin:0 auto;">
+        <div class="notch"></div>
+        <div class="phone-body">
+          <div style="padding:16px;">
+            <div class="logo" style="margin-bottom:14px;"><span class="brandmark">🌌</span><div><b>Deploy chain</b><span>Step 3 of 5 · Validators</span></div></div>
+            <div class="bar" style="margin-bottom:18px;"><span style="width:60%"></span></div>
+            <div class="field" style="margin-bottom:14px;"><label>Genesis validators</label>
+              <div class="row"><button class="btn btn-ghost btn-icon">−</button><input class="input" value="4" style="text-align:center;flex:1;" /><button class="btn btn-ghost btn-icon">+</button></div>
+            </div>
+            <div class="field" style="margin-bottom:14px;"><label>Validator stake (SKY)</label><input class="input" value="100000" /></div>
+            <div class="field" style="margin-bottom:14px;"><label>Fraud slash · 50%</label><input type="range" value="50" /></div>
+            <div class="card card-tight" style="background:rgba(124,92,255,.08);">
+              <span class="hint">Bonded at genesis: <b style="color:var(--text)">400,000 SKY</b></span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:12px 16px; border-top:1px solid var(--border); display:flex; gap:8px;">
+          <button class="btn btn-ghost" style="flex:1;">Back</button>
+          <button class="btn btn-primary" style="flex:2;">Next →</button>
+        </div>
+      </div>
+      <!-- phone 2: dashboard + tabbar -->
+      <div class="phone" style="margin:0 auto;">
+        <div class="notch"></div>
+        <div class="phone-body" style="position:relative;">
+          <div style="padding:16px 16px 70px;">
+            <div class="row between" style="margin-bottom:14px;"><b>skymetric-1</b><span class="chip live"><span class="dot"></span>live</span></div>
+            <div class="grid" style="grid-template-columns:1fr 1fr;">
+              <div class="card stat card-tight"><span class="label">Height</span><span class="value" style="font-size:20px;">1.28M</span></div>
+              <div class="card stat card-tight"><span class="label">TPS</span><span class="value" style="font-size:20px;">42</span></div>
+              <div class="card stat card-tight"><span class="label">Bonded</span><span class="value" style="font-size:20px;">67%</span></div>
+              <div class="card stat card-tight"><span class="label">Inflation</span><span class="value" style="font-size:20px;">6.2%</span></div>
+            </div>
+            <div class="card card-tight" style="margin-top:12px;">
+              <span class="hint">Block production · 24H</span>
+              <div class="spark"><i style="height:50%"></i><i style="height:80%"></i><i style="height:60%"></i><i style="height:90%"></i><i style="height:70%"></i><i style="height:95%"></i><i style="height:65%"></i><i style="height:85%"></i></div>
+            </div>
+            <div class="ep" style="margin-top:12px;"><span class="mono" style="font-size:11px;">RPC :26657</span><button class="btn btn-ghost btn-sm">copy</button></div>
+          </div>
+          <div class="tabbar" style="display:grid; position:absolute;">
+            <a class="active">▦<span>Home</span></a><a>🗳️<span>Vals</span></a><a>🔌<span>RPC</span></a><a>💰<span>Econ</span></a><a>⚙️<span>More</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  const tabs = document.getElementById('tabs');
+  tabs.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('active', x === b));
+    const s = b.dataset.s;
+    document.querySelectorAll('.screen').forEach(sc => sc.classList.toggle('active', sc.dataset.screen === s));
+  });
+</script>
+</body>
+</html>

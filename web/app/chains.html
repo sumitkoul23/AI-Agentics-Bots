@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chains · SKYMETRIC Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/design/design-system.css" />
+<style>
+  .wrap { max-width: var(--container); margin: 0 auto; padding: var(--s6); }
+  .logo { display:flex; align-items:center; gap:10px; } .logo b{font-size:15px} .logo span{font-size:11px;color:var(--muted);display:block}
+  .brandmark{font-size:22px;filter:drop-shadow(0 0 8px rgba(124,92,255,.6))}
+  #appnav{display:flex;gap:6px}
+  .chain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+  @media(max-width:1024px){.chain-grid{grid-template-columns:repeat(2,1fr)}#appnav{display:none}}
+  @media(max-width:640px){.chain-grid{grid-template-columns:1fr}}
+  .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s4);margin-top:var(--s6)}
+  @media(max-width:1024px){.metric-grid{grid-template-columns:repeat(2,1fr)}}
+  .avatar{width:30px;height:30px;border-radius:50%;background:var(--accent-grad);display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><span class="brandmark">🌌</span><div><b>SKYMETRIC Studio</b><span>Cosmos SDK · CometBFT</span></div></div>
+    <nav id="appnav"></nav>
+    <div class="row">
+      <button class="btn btn-ghost btn-sm" id="connectWalletBtn">👛 Connect Wallet</button>
+      <a class="btn btn-primary btn-sm" href="/deploy">+ New chain</a>
+      <div class="avatar">SK</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="row between" style="margin-bottom:var(--s5)">
+      <h2 style="font-size:var(--fs-h1);margin:0">Your chains</h2>
+      <div class="row" style="gap:8px">
+        <label class="chip" id="ownedToggle" style="cursor:pointer;display:none;align-items:center;gap:6px">
+          <input type="checkbox" id="onlyOwned" style="margin:0" /> <span>Only mine</span>
+        </label>
+        <input class="input" id="search" placeholder="Search chains…" style="width:220px" />
+      </div>
+    </div>
+    <div class="chain-grid" id="grid"><p class="muted">Loading…</p></div>
+    <div class="metric-grid" id="stats"></div>
+  </div>
+
+  <nav class="tabbar" id="apptabs"></nav>
+
+  <script src="/assets/js/shell.js"></script>
+  <script>
+    mountShell("/chains");
+    wireWalletButton(document.getElementById("connectWalletBtn"), () => { if (typeof applyFilters === "function") applyFilters(); });
+    const ICON = { live: "🌌", deploying: "🛰️", ready: "🌌", draft: "⚡" };
+    function card(d) {
+      const c = d.config || {};
+      const status = d.status === "ready" ? "live" : d.status;
+      const cls = status === "live" ? "live" : status === "deploying" ? "deploying" : "";
+      const vals = c.validators ?? "—";
+      const tgt = d.target_label || "—";
+      const me = myAddress();
+      const isMine = me && c.authority_address === me;
+      const mineBadge = isMine ? `<span class="chip" style="background:rgba(124,92,255,.15);color:var(--accent);font-size:10px">mine</span>` : "";
+      const authority = c.authority_address ? `<div class="row between" style="font-size:var(--fs-xs);margin-top:6px"><span class="muted">Authority</span><span class="mono" style="font-size:10px">${esc(c.authority_address.slice(0,10))}…${esc(c.authority_address.slice(-6))}</span></div>` : "";
+      return `<a class="card card-hover" href="/dashboard?id=${esc(d.id)}" style="text-decoration:none;color:inherit">
+        <div class="row between"><div class="logo"><span class="brandmark" style="font-size:18px">${ICON[status]||"🌌"}</span><b>${esc(c.chain_id||d.id)}</b>${mineBadge}</div>
+        <span class="chip ${cls}"><span class="dot"></span>${esc(status)}</span></div>
+        <p class="dim" style="font-size:var(--fs-sm);margin:10px 0 14px">${esc(tgt)} · ${esc(c.denom_display||"SKY")} · ${vals} validators</p>
+        <div class="row between" style="font-size:var(--fs-xs)"><span class="muted">Total supply</span><b>${(c.total_supply_sky||0).toLocaleString()} SKY</b></div>
+        <div class="row between" style="font-size:var(--fs-xs);margin-top:6px"><span class="muted">Goal bonded</span><b>${Math.round((c.goal_bonded||0)*100)}%</b></div>
+        ${authority}
+        <div class="bar" style="margin-top:8px"><span style="width:${Math.round((c.goal_bonded||0)*100)}%"></span></div>
+      </a>`;
+    }
+    function empty() {
+      return `<div class="card" style="grid-column:1/-1;text-align:center;padding:var(--s10)">
+        <div style="font-size:40px">🛰️</div>
+        <p class="dim" style="margin:12px 0 4px;font-weight:600">No chains yet</p>
+        <span class="hint">Deploy your first SKYMETRIC chain to see it here.</span>
+        <div style="margin-top:16px"><a class="btn btn-primary btn-sm" href="/deploy">+ New chain</a></div>
+      </div>`;
+    }
+    let all = [];
+    function myAddress() {
+      try { return JSON.parse(localStorage.getItem("skymetric_wallet_v1") || "null")?.address || null; }
+      catch { return null; }
+    }
+    function applyFilters() {
+      const q = (document.getElementById("search").value || "").toLowerCase();
+      const onlyMine = document.getElementById("onlyOwned")?.checked;
+      const me = myAddress();
+      let items = all.filter(d => (d.config?.chain_id || d.id).toLowerCase().includes(q));
+      if (onlyMine && me) items = items.filter(d => d.config?.authority_address === me);
+      render(items);
+    }
+    function render(items) {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = items.length ? items.map(card).join("") : empty();
+    }
+    async function load() {
+      try {
+        const [{ deployments }, s] = await Promise.all([api.get("/api/deployments"), api.get("/api/stats")]);
+        all = deployments || [];
+        render(all);
+        if (myAddress()) document.getElementById("ownedToggle").style.display = "inline-flex";
+        document.getElementById("stats").innerHTML = `
+          <div class="card stat"><span class="label">Chains</span><span class="value">${s.deployments}</span></div>
+          <div class="card stat"><span class="label">Validators</span><span class="value">${s.validators}</span></div>
+          <div class="card stat"><span class="label">SKY planned</span><span class="value">${(s.supply_sky||0).toLocaleString()}</span></div>
+          <div class="card stat"><span class="label">Framework</span><span class="value" style="font-size:13px">${esc(s.framework)}</span></div>`;
+      } catch (e) {
+        document.getElementById("grid").innerHTML = `<div class="card" style="grid-column:1/-1">Couldn't load: ${esc(e.message)}</div>`;
+      }
+    }
+    document.getElementById("search").addEventListener("input", applyFilters);
+    document.getElementById("onlyOwned").addEventListener("change", applyFilters);
+    load();
+  </script>
+</body>
+</html>

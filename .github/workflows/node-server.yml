@@ -1,0 +1,61 @@
+# Build + smoke-test the Node.js backend, including its LIVE chain connection.
+name: node-server
+
+on:
+  push:
+    branches: [main, "claude/chain-deployment-webapp-r5zEM"]
+    paths:
+      - "server/**"
+      - "web/**"
+      - ".github/workflows/node-server.yml"
+  pull_request:
+    paths:
+      - "server/**"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: cd server && npm install
+
+      - name: Syntax check
+        run: |
+          cd server
+          for f in index.js lib/deployer.js lib/store.js lib/chain.js; do node --check "$f"; done
+
+      - name: Boot server + assert API and LIVE node
+        run: |
+          cd server
+          PORT=8099 node index.js & SRV=$!
+          sleep 3
+          set -e
+
+          echo "== health =="
+          curl -fsS localhost:8099/api/health | tee /tmp/h.json
+          node -e "const d=require('/tmp/h.json');if(d.backend!=='node')process.exit(1)"
+
+          echo "== deploy persists =="
+          curl -fsS -X POST localhost:8099/api/deploy -H 'Content-Type: application/json' \
+            -d '{"chain_id":"ci-1","moniker":"ci","target":"local","validators":2,"validator_stake_sky":1000,"total_supply_sky":1000000}' \
+            | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const r=JSON.parse(s);if(r.status!=='ready')process.exit(1);console.log('deploy id',r.id)})"
+
+          echo "== bad authority rejected =="
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8099/api/deploy -H 'Content-Type: application/json' -d '{"chain_id":"ci-1","authority_address":"nope"}')
+          test "$code" = "400"
+
+          echo "== LIVE chain status (real node) =="
+          curl -fsS localhost:8099/api/chain/status | tee /tmp/s.json
+          node -e "const d=require('/tmp/s.json');if(!d.ok||!d.latest_block_height)process.exit(1);console.log('live height',d.latest_block_height,'network',d.network)"
+
+          kill $SRV
+          echo "node backend OK"

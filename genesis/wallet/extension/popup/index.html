@@ -3,53 +3,109 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=360, initial-scale=1">
-  <title>Skymetric Wallet</title>
+  <title>SKYMETRIC Wallet</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
+
+<!-- ── Setup screen ─────────────────────────────────────────────────── -->
+<div id="vSetup" class="screen">
+  <header class="topbar"><div class="brand"><svg viewBox="0 0 256 256" class="mark" aria-hidden="true"><g stroke="#7DF9FF" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.85"><line x1="128" y1="128" x2="56" y2="56"/><line x1="128" y1="128" x2="200" y2="56"/><line x1="128" y1="128" x2="56" y2="200"/><line x1="128" y1="128" x2="200" y2="200"/></g><g fill="#A78BFA"><circle cx="56" cy="56" r="18"/><circle cx="200" cy="56" r="18"/><circle cx="56" cy="200" r="18"/><circle cx="200" cy="200" r="18"/></g><circle cx="128" cy="128" r="36" fill="#7DF9FF"/><circle cx="128" cy="128" r="22" fill="#0A0E1A"/><circle cx="128" cy="128" r="10" fill="#7DF9FF"/></svg><span class="wordmark">SKYMETRIC</span></div></header>
+  <div class="setup-hero">
+    <div class="hero-glyph">🌌</div>
+    <h2>Your agent-economy wallet</h2>
+    <p>Hold SKY, register AI agents, track tasks and reputation — all in one place.</p>
+  </div>
+  <div class="setup-btns">
+    <button class="btn primary" id="btnCreate">Create new wallet</button>
+    <button class="btn ghost"   id="btnImport">Import recovery phrase</button>
+  </div>
+</div>
+
+<!-- ── Backup screen ────────────────────────────────────────────────── -->
+<div id="vBackup" class="screen" hidden>
+  <header class="topbar compact"><span class="back" id="backFromBackup">← Back</span><span>Recovery phrase</span><span></span></header>
+  <div class="scroll-area">
+    <p class="sub">Write these 24 words down in order. This is the only way to recover your wallet.</p>
+    <div class="mnemonic-grid" id="mnemonicGrid"></div>
+    <div class="warn-box">Never share your phrase with anyone. SKYMETRIC will never ask for it.</div>
+    <button class="btn primary" id="btnConfirmBackup" style="width:100%;margin-top:10px">I've saved it — continue</button>
+  </div>
+</div>
+
+<!-- ── Confirm screen ───────────────────────────────────────────────── -->
+<div id="vConfirm" class="screen" hidden>
+  <header class="topbar compact"><span class="back" id="backFromConfirm">← Back</span><span>Verify backup</span><span></span></header>
+  <div class="scroll-area">
+    <p class="sub" id="confirmHint"></p>
+    <div id="confirmInputs"></div>
+    <div id="confirmErr" class="err-msg" hidden></div>
+    <button class="btn primary" id="btnVerify" style="width:100%;margin-top:10px">Verify</button>
+  </div>
+</div>
+
+<!-- ── Import screen ────────────────────────────────────────────────── -->
+<div id="vImport" class="screen" hidden>
+  <header class="topbar compact"><span class="back" id="backFromImport">← Back</span><span>Import wallet</span><span></span></header>
+  <div class="scroll-area">
+    <p class="sub">Enter your 24-word recovery phrase, separated by spaces.</p>
+    <textarea id="importPhrase" class="phrase-input" rows="5" placeholder="word1 word2 … word24" autocomplete="off" spellcheck="false"></textarea>
+    <div id="importErr" class="err-msg" hidden></div>
+    <button class="btn primary" id="btnImportConfirm" style="width:100%;margin-top:10px">Continue</button>
+  </div>
+</div>
+
+<!-- ── Password screen ──────────────────────────────────────────────── -->
+<div id="vPassword" class="screen" hidden>
+  <header class="topbar compact"><span></span><span>Set password</span><span></span></header>
+  <div class="scroll-area">
+    <p class="sub">Protect this wallet with a password. You'll need it each time you open the extension.</p>
+    <label class="field">Password<input type="password" id="pw1" placeholder="Min 8 characters" /></label>
+    <label class="field" style="margin-top:8px">Confirm<input type="password" id="pw2" placeholder="Repeat password" /></label>
+    <div id="pwErr" class="err-msg" hidden></div>
+    <button class="btn primary" id="btnSavePw" style="width:100%;margin-top:10px">Create wallet</button>
+  </div>
+</div>
+
+<!-- ── Lock screen ──────────────────────────────────────────────────── -->
+<div id="vLock" class="screen" hidden>
+  <header class="topbar"><div class="brand"><svg viewBox="0 0 256 256" class="mark" aria-hidden="true"><g stroke="#7DF9FF" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.85"><line x1="128" y1="128" x2="56" y2="56"/><line x1="128" y1="128" x2="200" y2="56"/><line x1="128" y1="128" x2="56" y2="200"/><line x1="128" y1="128" x2="200" y2="200"/></g><g fill="#A78BFA"><circle cx="56" cy="56" r="18"/><circle cx="200" cy="56" r="18"/><circle cx="56" cy="200" r="18"/><circle cx="200" cy="200" r="18"/></g><circle cx="128" cy="128" r="36" fill="#7DF9FF"/><circle cx="128" cy="128" r="22" fill="#0A0E1A"/><circle cx="128" cy="128" r="10" fill="#7DF9FF"/></svg><span class="wordmark">SKYMETRIC</span></div></header>
+  <div class="lock-body">
+    <div class="lock-icon">🔒</div>
+    <p class="sub">Enter your password</p>
+    <input type="password" id="lockPw" class="lock-input" placeholder="Password" />
+    <div id="lockErr" class="err-msg" hidden></div>
+    <button class="btn primary" id="btnUnlock" style="width:100%;margin-top:10px">Unlock</button>
+    <button class="btn ghost"   id="btnReset"  style="width:100%;margin-top:6px;font-size:11px">Reset wallet</button>
+  </div>
+</div>
+
+<!-- ── Main wallet screen ────────────────────────────────────────────── -->
+<div id="vMain" class="screen" hidden>
   <header class="topbar">
-    <div class="brand">
-      <!-- Inline brand mark — keeps the popup self-contained -->
-      <svg viewBox="0 0 256 256" class="mark" aria-hidden="true">
-        <g stroke="#7DF9FF" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.85">
-          <line x1="128" y1="128" x2="56" y2="56"/><line x1="128" y1="128" x2="200" y2="56"/>
-          <line x1="128" y1="128" x2="56" y2="200"/><line x1="128" y1="128" x2="200" y2="200"/>
-        </g>
-        <g fill="#A78BFA"><circle cx="56" cy="56" r="18"/><circle cx="200" cy="56" r="18"/><circle cx="56" cy="200" r="18"/><circle cx="200" cy="200" r="18"/></g>
-        <circle cx="128" cy="128" r="36" fill="#7DF9FF"/><circle cx="128" cy="128" r="22" fill="#0A0E1A"/><circle cx="128" cy="128" r="10" fill="#7DF9FF"/>
-      </svg>
-      <span class="wordmark">SKYMETRIC</span>
-    </div>
+    <div class="brand"><svg viewBox="0 0 256 256" class="mark" aria-hidden="true"><g stroke="#7DF9FF" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.85"><line x1="128" y1="128" x2="56" y2="56"/><line x1="128" y1="128" x2="200" y2="56"/><line x1="128" y1="128" x2="56" y2="200"/><line x1="128" y1="128" x2="200" y2="200"/></g><g fill="#A78BFA"><circle cx="56" cy="56" r="18"/><circle cx="200" cy="56" r="18"/><circle cx="56" cy="200" r="18"/><circle cx="200" cy="200" r="18"/></g><circle cx="128" cy="128" r="36" fill="#7DF9FF"/><circle cx="128" cy="128" r="22" fill="#0A0E1A"/><circle cx="128" cy="128" r="10" fill="#7DF9FF"/></svg><span class="wordmark">SKYMETRIC</span></div>
     <button class="chain-switch" id="chainSwitch">skymetric-1 ▾</button>
   </header>
-
   <section class="balance">
-    <div class="addr" id="addr">agentic1scaffold0000000000000000000000000000000</div>
+    <div class="addr" id="addr" title="Click to copy"></div>
     <div class="amount"><span id="balance">—</span><span class="denom">SKY</span></div>
     <div class="actions">
       <button data-action="send">Send</button>
       <button data-action="receive">Receive</button>
       <button data-action="stake">Stake</button>
-      <button data-action="swap">Swap</button>
+      <button data-action="lock">Lock</button>
     </div>
   </section>
-
-  <!-- The agent-economy tab strip. This is the differentiation: a wallet
-       that shows AI-agent state as a first-class surface. -->
-  <nav class="tabs" id="tabs">
+  <nav class="tabs">
     <button class="tab active" data-tab="assets">Assets</button>
     <button class="tab" data-tab="registry">Agents</button>
     <button class="tab" data-tab="tasks">Tasks</button>
     <button class="tab" data-tab="reputation">Reputation</button>
     <button class="tab" data-tab="streams">Streams</button>
   </nav>
-
   <main id="panel" class="panel"></main>
+</div>
 
-  <footer class="warn">
-    v0 SCAFFOLD — does not hold real keys. Use Keplr or Leap to sign.
-  </footer>
-
-  <script src="popup.js" type="module"></script>
+<script src="popup.js" type="module"></script>
 </body>
 </html>

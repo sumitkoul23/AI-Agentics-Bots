@@ -1,0 +1,60 @@
+# Deploy the Chain Deployment Studio to GitHub Pages via the gh-pages branch.
+#
+# Note: the Pages-API flow (actions/configure-pages with enablement:true)
+# fails here — the default GITHUB_TOKEN can't create the Pages site
+# ("Resource not accessible by integration"). Pushing a gh-pages branch
+# avoids the API entirely: GitHub auto-enables Pages from that branch.
+#
+# Live URL: https://sumitkoul23.github.io/AI-Agentics-Bots/
+name: deploy-pages
+
+on:
+  push:
+    branches: [main, "claude/chain-deployment-webapp-r5zEM"]
+    paths:
+      - "web/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build static site with Pages base path
+        run: python web/build_standalone.py --site --base "/${{ github.event.repository.name }}"
+
+      - name: Verify no unrewritten root-absolute references remain
+        run: |
+          set -e
+          base="/${{ github.event.repository.name }}"
+          if grep -rnoE '["'"'"']/assets/' web/dist --include="*.html" --include="*.js" | grep -v "$base"; then
+            echo "found unrewritten /assets/ references"; exit 1
+          fi
+          test -f web/dist/index.html
+          test -f web/dist/wallet.html
+          test -f web/dist/.nojekyll
+          echo "dist OK (base=$base)"
+
+      - name: Push to gh-pages branch
+        run: |
+          cd web/dist
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_SHA::8}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages:gh-pages
