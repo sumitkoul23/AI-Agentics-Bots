@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Chain Deployment Studio — spin up a new SKYMETRIC chain (Cosmos SDK + CometBFT) with a guided, professional workflow." />
+  <title>Chain Deployment Studio · SKYMETRIC</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8C%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+/* ============================================================
+   Chain Deployment Studio — Genesis Protocol
+   Professional dark "cosmic" theme. No external CSS deps.
+   ============================================================ */
+
+:root {
+  --bg: #06070f;
+  --bg-2: #0b0e1c;
+  --panel: rgba(20, 23, 43, 0.72);
+  --panel-solid: #141733;
+  --border: rgba(130, 140, 200, 0.16);
+  --border-strong: rgba(140, 150, 220, 0.34);
+  --text: #e8eafc;
+  --text-dim: #a3a8c8;
+  --muted: #767ba0;
+  --accent: #7c5cff;
+  --accent-2: #18d3ff;
+  --accent-grad: linear-gradient(135deg, #7c5cff 0%, #18d3ff 100%);
+  --green: #3ddc97;
+  --amber: #ffb454;
+  --red: #ff6b81;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: radial-gradient(1200px 700px at 80% -10%, #1a1740 0%, transparent 55%),
+              radial-gradient(900px 600px at -10% 10%, #0b2740 0%, transparent 50%),
+              var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(600px 300px at 50% 0%, rgba(124, 92, 255, 0.18), transparent 70%),
+    radial-gradient(500px 260px at 90% 80%, rgba(24, 211, 255, 0.12), transparent 70%);
+  animation: drift 18s ease-in-out infinite alternate;
+  z-index: 0;
+}
+@keyframes drift {
+  from { transform: translateY(-10px); opacity: 0.85; }
+  to   { transform: translateY(10px);  opacity: 1; }
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { font-size: 28px; filter: drop-shadow(0 0 10px rgba(124,92,255,.6)); }
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-text strong { font-size: 16px; letter-spacing: .2px; }
+.brand-text span { font-size: 12px; color: var(--muted); }
+.topnav { display: flex; align-items: center; gap: 14px; }
+
+.engine-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--text-dim);
+  padding: 6px 12px; border: 1px solid var(--border);
+  border-radius: 999px; background: rgba(255,255,255,.02);
+}
+.engine-pill .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--muted); box-shadow: 0 0 8px currentColor;
+}
+.engine-pill.ok .dot { background: var(--green); }
+.engine-pill.warn .dot { background: var(--amber); }
+
+.ghost-btn {
+  font-size: 13px; color: var(--text-dim); text-decoration: none;
+  padding: 7px 14px; border: 1px solid var(--border);
+  border-radius: 999px; transition: .2s;
+}
+.ghost-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+/* ---------- Layout ---------- */
+.layout {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 22px;
+  padding: 26px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+@media (max-width: 940px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+}
+.panel-head h1 { margin: 0 0 6px; font-size: 24px; font-weight: 800; letter-spacing: -.4px; }
+.panel-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.panel-head p { margin: 0; color: var(--text-dim); font-size: 14px; }
+.panel-head.row { display: flex; align-items: center; justify-content: space-between; }
+
+/* ---------- Stepper ---------- */
+.stepper {
+  list-style: none;
+  display: flex;
+  gap: 6px;
+  padding: 0;
+  margin: 22px 0 24px;
+  flex-wrap: wrap;
+}
+.stepper li {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: var(--muted);
+  padding: 7px 12px; border-radius: 999px;
+  border: 1px solid transparent;
+  transition: .25s;
+}
+.stepper li span {
+  display: grid; place-items: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(255,255,255,.06); font-size: 11px; font-weight: 700;
+}
+.stepper li.active {
+  color: var(--text); border-color: var(--border-strong);
+  background: rgba(124,92,255,.12);
+}
+.stepper li.active span { background: var(--accent-grad); color: #fff; }
+.stepper li.done span { background: var(--green); color: #04241a; }
+.stepper li.done { color: var(--text-dim); }
+
+/* ---------- Form / steps ---------- */
+#wizardForm { display: flex; flex-direction: column; flex: 1; }
+.step { display: none; border: 0; padding: 0; margin: 0; min-height: 280px; }
+.step.active { display: block; animation: fade .3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+.step legend { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-2); margin-bottom: 16px; font-weight: 600; }
+.muted { color: var(--text-dim); font-size: 14px; margin: 0 0 16px; }
+
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+.field > span { font-size: 13px; font-weight: 600; color: var(--text-dim); }
+.field > span em { color: var(--muted); font-style: normal; font-weight: 400; }
+.field input, .field textarea, .field select {
+  font: inherit; color: var(--text);
+  background: rgba(8, 10, 22, 0.7);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  transition: .18s;
+}
+.field textarea { resize: vertical; }
+.field input:focus, .field textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124,92,255,.18);
+}
+.field input[type="range"] { padding: 0; accent-color: var(--accent); }
+.hint { color: var(--muted); font-size: 12px; }
+
+/* ---------- Network grid ---------- */
+.network-grid { display: grid; gap: 12px; }
+.net-card {
+  position: relative;
+  text-align: left;
+  background: rgba(8,10,22,.55);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: .18s;
+}
+.net-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.net-card.selected {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(124,92,255,.14), rgba(24,211,255,.06));
+  box-shadow: 0 0 0 3px rgba(124,92,255,.14);
+}
+.net-card h3 { margin: 0 0 4px; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.net-card p { margin: 0; font-size: 13px; color: var(--text-dim); }
+.net-card .net-meta { margin-top: 10px; font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.tag {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .5px;
+  padding: 2px 8px; border-radius: 999px; text-transform: uppercase;
+}
+.tag.rec { background: rgba(61,220,151,.16); color: var(--green); }
+.tag.cost { background: rgba(255,180,84,.16); color: var(--amber); }
+
+/* ---------- Agent grid ---------- */
+.agent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 600px) { .agent-grid { grid-template-columns: 1fr; } }
+.agent-card {
+  background: rgba(8,10,22,.55);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px; text-align: center;
+}
+.agent-icon { font-size: 26px; }
+.agent-card h3 { margin: 8px 0 4px; font-size: 15px; }
+.agent-card p { margin: 0 0 14px; font-size: 12px; color: var(--muted); min-height: 32px; }
+.counter { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.counter input {
+  width: 56px; text-align: center; font: inherit; color: var(--text);
+  background: rgba(0,0,0,.3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 0;
+}
+.step-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--border); background: rgba(255,255,255,.04);
+  color: var(--text); font-size: 18px; cursor: pointer; transition: .15s;
+}
+.step-btn:hover { border-color: var(--accent); color: var(--accent-2); }
+.agent-total { margin-top: 18px; text-align: center; font-size: 14px; color: var(--text-dim); }
+.agent-total strong { color: var(--text); font-size: 16px; }
+
+/* ---------- Callout & two-col ---------- */
+.callout {
+  margin-top: 6px; padding: 12px 14px; font-size: 13px; color: var(--text-dim);
+  background: rgba(124,92,255,.08); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.callout code, .field code, .endpoints code, .deploy-cmd code { font-family: var(--mono); color: var(--accent-2); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+output { font-family: var(--mono); color: var(--accent-2); font-weight: 600; }
+
+/* ---------- Artifacts ---------- */
+.artifacts-title { margin: 6px 0 10px; font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px; }
+.artifact { margin-bottom: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: rgba(8,10,22,.55); }
+.artifact-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px; font-size: 12.5px; font-weight: 600; color: var(--text-dim);
+  background: rgba(255,255,255,.03); border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+}
+.artifact-btns { display: flex; gap: 6px; }
+.artifact pre, .deploy-cmd pre {
+  margin: 0; padding: 12px 14px; overflow-x: auto;
+  font-family: var(--mono); font-size: 12px; line-height: 1.55; color: var(--text);
+  max-height: 220px;
+}
+.deploy-cmd { margin-top: 6px; }
+.deploy-cmd label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .6px; }
+.deploy-cmd pre { background: rgba(8,10,22,.6); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.deploy-cmd small { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+.endpoints { margin-top: 8px; font-size: 12px; color: var(--text-dim); }
+
+/* ---------- Review ---------- */
+.review { display: grid; gap: 10px; }
+.review-row {
+  display: flex; justify-content: space-between; gap: 14px;
+  padding: 11px 14px; background: rgba(8,10,22,.5);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 14px;
+}
+.review-row label { color: var(--muted); }
+.review-row span { color: var(--text); font-weight: 600; text-align: right; word-break: break-word; }
+.confirm {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 18px; font-size: 13.5px; color: var(--text-dim);
+}
+.confirm input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+/* ---------- Wizard actions ---------- */
+.wizard-actions {
+  display: flex; gap: 10px; margin-top: auto; padding-top: 24px;
+}
+.btn {
+  font: inherit; font-weight: 600; font-size: 14px;
+  padding: 12px 22px; border-radius: var(--radius-sm);
+  border: 1px solid transparent; cursor: pointer; transition: .18s;
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.secondary { background: transparent; border-color: var(--border); color: var(--text-dim); }
+.btn.secondary:not(:disabled):hover { border-color: var(--border-strong); color: var(--text); }
+.btn.primary { background: var(--accent-grad); color: #fff; margin-left: auto; box-shadow: 0 8px 24px rgba(124,92,255,.32); }
+.btn.primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.btn.deploy { background: linear-gradient(135deg, #3ddc97, #18d3ff); color: #04241a; margin-left: auto; box-shadow: 0 8px 24px rgba(61,220,151,.3); }
+.btn.deploy:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+/* ---------- Console ---------- */
+.console { min-height: 480px; }
+.status-chip {
+  font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 999px;
+  background: rgba(255,255,255,.06); color: var(--text-dim); text-transform: capitalize;
+}
+.status-chip.deploying { background: rgba(255,180,84,.16); color: var(--amber); }
+.status-chip.live { background: rgba(61,220,151,.16); color: var(--green); }
+.status-chip.error { background: rgba(255,107,129,.16); color: var(--red); }
+
+.console-body { flex: 1; margin-top: 18px; overflow-y: auto; max-height: 60vh; }
+.empty-state { text-align: center; color: var(--muted); padding: 48px 12px; }
+.empty-glyph { font-size: 40px; opacity: .85; }
+.empty-state p { margin: 14px 0 4px; color: var(--text-dim); font-weight: 600; }
+.empty-state span { font-size: 13px; }
+
+.log { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: 13px; }
+.log li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; margin-bottom: 6px;
+  background: rgba(8,10,22,.5); border: 1px solid var(--border);
+  opacity: 0; transform: translateX(8px);
+  animation: slideIn .35s forwards;
+}
+@keyframes slideIn { to { opacity: 1; transform: none; } }
+.log .log-ico { width: 18px; text-align: center; flex-shrink: 0; }
+.log .log-text strong { display: block; color: var(--text); font-weight: 600; margin-bottom: 2px; }
+.log .log-text small { color: var(--muted); }
+.log li.pending .log-ico { color: var(--amber); }
+.log li.done .log-ico { color: var(--green); }
+.spinner {
+  display: inline-block; width: 12px; height: 12px;
+  border: 2px solid rgba(255,180,84,.3); border-top-color: var(--amber);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Result ---------- */
+.result { animation: fade .4s ease; }
+.result-banner {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px; border-radius: var(--radius-sm); margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(61,220,151,.16), rgba(24,211,255,.08));
+  border: 1px solid rgba(61,220,151,.3);
+}
+.result-banner .big { font-size: 26px; }
+.result-banner strong { display: block; font-size: 15px; }
+.result-banner span { font-size: 13px; color: var(--text-dim); }
+
+.kv { display: grid; gap: 8px; margin-bottom: 16px; }
+.kv-row {
+  display: flex; justify-content: space-between; gap: 12px; align-items: center;
+  padding: 10px 12px; background: rgba(8,10,22,.5);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.kv-row label { font-size: 12px; color: var(--muted); }
+.kv-row .val { font-family: var(--mono); font-size: 12.5px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.copy-btn {
+  border: 1px solid var(--border); background: rgba(255,255,255,.04);
+  color: var(--text-dim); border-radius: 6px; padding: 2px 7px;
+  font-size: 11px; cursor: pointer; transition: .15s;
+}
+.copy-btn:hover { color: var(--accent-2); border-color: var(--accent); }
+
+.agents-preview h4 { margin: 4px 0 10px; font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px; }
+.agent-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-family: var(--mono);
+  padding: 5px 10px; border-radius: 999px; margin: 0 6px 6px 0;
+  background: rgba(124,92,255,.1); border: 1px solid var(--border);
+}
+.result-actions { display: flex; gap: 10px; margin-top: 18px; }
+.result-actions a, .result-actions button {
+  flex: 1; text-align: center; text-decoration: none;
+  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  padding: 11px; border-radius: var(--radius-sm);
+}
+.result-actions .link-btn { background: var(--accent-grad); color: #fff; border: 0; }
+.result-actions .again-btn { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+.result-actions .again-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+/* ---------- Stat strip ---------- */
+.stat-strip {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-top: 18px; padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.stat-strip > div { text-align: center; }
+.stat-strip span { display: block; font-size: 20px; font-weight: 800; }
+.stat-strip label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+
+/* ---------- Footer ---------- */
+.footer {
+  position: relative; z-index: 1;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  padding: 18px 28px; border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--muted);
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--panel-solid); border: 1px solid var(--border-strong);
+  color: var(--text); padding: 12px 20px; border-radius: 999px;
+  font-size: 13px; box-shadow: var(--shadow); z-index: 50;
+  animation: pop .25s ease;
+}
+.toast.error { border-color: var(--red); color: #ffd7dd; }
+@keyframes pop { from { opacity: 0; transform: translate(-50%, 10px);} to {opacity:1; transform: translate(-50%,0);} }
+
+</style>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <!-- ============ Header ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">🌌</span>
+      <div class="brand-text">
+        <strong>Chain Deployment Studio</strong>
+        <span>SKYMETRIC · Cosmos SDK + CometBFT · offline build</span>
+      </div>
+    </div>
+    <nav class="topnav">
+      <a class="ghost-btn" href="/AI-Agentics-Bots/chains">Chains</a>
+      <a class="ghost-btn" href="/AI-Agentics-Bots/dashboard">Dashboard</a>
+      <a class="ghost-btn" href="/AI-Agentics-Bots/wallet">Wallet</a>
+      <a class="ghost-btn" href="/AI-Agentics-Bots/admin">Admin</a>
+      <span class="engine-pill" id="enginePill" title="Chain framework">
+        <span class="dot"></span> connecting…
+      </span>
+      <a class="ghost-btn" href="https://github.com/sumitkoul23/ai-agentics-bots/tree/main/genesis" target="_blank" rel="noreferrer">Docs</a>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <!-- ============ Left: Wizard ============ -->
+    <section class="panel wizard" aria-label="Deployment wizard">
+      <div class="panel-head">
+        <h1>Deploy a new chain</h1>
+        <p>Spin up a sovereign SKYMETRIC chain in five guided steps — and walk away with ready-to-run config.</p>
+      </div>
+
+      <ol class="stepper" id="stepper">
+        <li data-step="1" class="active"><span>1</span> Identity</li>
+        <li data-step="2"><span>2</span> Tokenomics</li>
+        <li data-step="3"><span>3</span> Validators</li>
+        <li data-step="4"><span>4</span> Target</li>
+        <li data-step="5"><span>5</span> Review</li>
+      </ol>
+
+      <form id="wizardForm" autocomplete="off">
+        <!-- Step 1: Identity -->
+        <fieldset class="step active" data-step="1">
+          <legend>Chain identity</legend>
+          <label class="field">
+            <span>Chain ID</span>
+            <input type="text" id="chain_id" name="chain_id" value="skymetric-1" placeholder="e.g. skymetric-1" maxlength="48" required />
+            <small class="hint">Lowercase name ending in a revision number, e.g. <code>mychain-1</code>.</small>
+          </label>
+          <label class="field">
+            <span>Validator moniker</span>
+            <input type="text" id="moniker" name="moniker" value="genesis-node" placeholder="e.g. genesis-node" maxlength="70" required />
+            <small class="hint">The public name of your genesis node.</small>
+          </label>
+          <label class="field">
+            <span>Description <em>(optional)</em></span>
+            <textarea id="description" name="description" rows="3" maxlength="280" placeholder="What is this chain for?"></textarea>
+          </label>
+          <label class="field">
+            <span>Chain authority <em>(optional)</em></span>
+            <div style="display:flex;gap:8px;align-items:stretch">
+              <input type="text" id="authority_address" name="authority_address" placeholder="agentic1… (or connect wallet)" style="flex:1;font-family:monospace;font-size:12px" />
+              <button type="button" id="connectWalletBtn" class="ghost-btn" style="white-space:nowrap">👛 Connect</button>
+            </div>
+            <small class="hint">Address that will own the chain — auto-filled when you connect your SKYMETRIC wallet.</small>
+          </label>
+          <div class="callout">Native coin: <strong>SKY</strong> · base denom <code>usky</code> · 1 SKY = 1,000,000 usky</div>
+        </fieldset>
+
+        <!-- Step 2: Tokenomics -->
+        <fieldset class="step" data-step="2">
+          <legend>Tokenomics</legend>
+          <label class="field">
+            <span>Total supply (SKY)</span>
+            <input type="number" id="total_supply_sky" name="total_supply_sky" min="1" step="1" value="1000000000" />
+            <small class="hint">Total SKY minted at genesis.</small>
+          </label>
+          <div class="two-col">
+            <label class="field">
+              <span>Min inflation · <output id="infMinOut">1%</output></span>
+              <input type="range" id="inflation_min" name="inflation_min" min="0" max="0.5" step="0.01" value="0.01" />
+            </label>
+            <label class="field">
+              <span>Max inflation · <output id="infMaxOut">7%</output></span>
+              <input type="range" id="inflation_max" name="inflation_max" min="0" max="0.5" step="0.01" value="0.07" />
+            </label>
+          </div>
+          <label class="field">
+            <span>Goal bonded · <output id="goalOut">67%</output></span>
+            <input type="range" id="goal_bonded" name="goal_bonded" min="0.1" max="1" step="0.01" value="0.67" />
+            <small class="hint">Target share of supply staked by validators.</small>
+          </label>
+          <label class="field">
+            <span>Task burn fraction · <output id="burnOut">20%</output></span>
+            <input type="range" id="task_burn_fraction" name="task_burn_fraction" min="0" max="1" step="0.01" value="0.20" />
+            <small class="hint">SKY burned on every settled agent task (deflationary pressure).</small>
+          </label>
+        </fieldset>
+
+        <!-- Step 3: Validators -->
+        <fieldset class="step" data-step="3">
+          <legend>Validators & staking</legend>
+          <div class="two-col">
+            <label class="field">
+              <span>Genesis validators</span>
+              <input type="number" id="validators" name="validators" min="1" max="100" value="4" />
+              <small class="hint">Validators present at launch.</small>
+            </label>
+            <label class="field">
+              <span>Max validators</span>
+              <input type="number" id="max_validators" name="max_validators" min="1" max="1000" value="100" />
+              <small class="hint">Active set cap.</small>
+            </label>
+          </div>
+          <div class="two-col">
+            <label class="field">
+              <span>Validator stake (SKY)</span>
+              <input type="number" id="validator_stake_sky" name="validator_stake_sky" min="0" step="1000" value="100000" />
+            </label>
+            <label class="field">
+              <span>Faucet balance (SKY)</span>
+              <input type="number" id="faucet_balance_sky" name="faucet_balance_sky" min="0" step="1000" value="500000" />
+            </label>
+          </div>
+          <div class="two-col">
+            <label class="field">
+              <span>Unbonding period (days)</span>
+              <input type="number" id="unbonding_days" name="unbonding_days" min="1" max="90" value="21" />
+            </label>
+            <label class="field">
+              <span>Fraud slash · <output id="slashOut">50%</output></span>
+              <input type="range" id="slash_fraction_fraud" name="slash_fraction_fraud" min="0" max="1" step="0.01" value="0.50" />
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Step 4: Target -->
+        <fieldset class="step" data-step="4">
+          <legend>Deploy target</legend>
+          <div class="network-grid" id="targetGrid" role="radiogroup" aria-label="Deploy target">
+            <!-- populated by JS -->
+          </div>
+        </fieldset>
+
+        <!-- Step 5: Review -->
+        <fieldset class="step" data-step="5">
+          <legend>Review & deploy</legend>
+          <div class="review" id="reviewBox"><!-- populated by JS --></div>
+          <label class="confirm">
+            <input type="checkbox" id="confirm" />
+            <span>I've reviewed the configuration and want to generate this chain.</span>
+          </label>
+        </fieldset>
+
+        <div class="wizard-actions">
+          <button type="button" class="btn secondary" id="backBtn" disabled>Back</button>
+          <button type="button" class="btn primary" id="nextBtn">Next</button>
+          <button type="submit" class="btn deploy" id="deployBtn" hidden>🚀 Deploy chain</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ Right: Console / Result ============ -->
+    <aside class="panel console" aria-label="Deployment console">
+      <div class="panel-head row">
+        <h2>Deployment console</h2>
+        <span class="status-chip" id="statusChip">idle</span>
+      </div>
+
+      <div class="console-body" id="consoleBody">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-glyph">🛰️</div>
+          <p>Your deployment log will appear here.</p>
+          <span>Configure your chain and hit <strong>Deploy</strong>.</span>
+        </div>
+
+        <ul class="log" id="deployLog" hidden></ul>
+
+        <div class="result" id="resultBox" hidden></div>
+      </div>
+
+      <div class="stat-strip" id="statStrip">
+        <div><span id="statDeploys">0</span><label>chains</label></div>
+        <div><span id="statValidators">0</span><label>validators</label></div>
+        <div><span id="statSupply">0</span><label>SKY planned</label></div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <span>SKYMETRIC · Chain Deployment Studio</span>
+    <span>Spin up a sovereign agent-economy chain on Cosmos SDK</span>
+  </footer>
+
+  <div class="toast" id="toast" role="alert" hidden></div>
+
+  <script>
+/* ============================================================
+   Chain Deployment Studio — STANDALONE build (SKYMETRIC)
+   A faithful client-side port of web/backend/deployer.py so the
+   wizard works fully offline from a single file:// HTML page,
+   with no server and no API calls.
+   ============================================================ */
+(() => {
+  "use strict";
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  // ---------- Constants (mirror deployer.py) ----------
+  const USKY_PER_SKY = 1_000_000;
+  const BASE_DENOM = "usky";
+  const DISPLAY_DENOM = "SKY";
+
+  const TARGETS = [
+    { id: "local", label: "Local devnet", icon: "💻", recommended: true,
+      description: "Single-node chain on your machine. Best for first runs.",
+      command: "./scripts/init-chain.sh && ./scripts/start-node.sh",
+      needs: "Go 1.21+ and the skymetricd binary (make install)." },
+    { id: "docker", label: "Docker", icon: "🐳", recommended: false,
+      description: "Reproducible containerised node via docker-compose.",
+      command: "docker compose -f deploy/docker/docker-compose.yml up -d",
+      needs: "Docker + docker compose." },
+    { id: "fly", label: "Fly.io", icon: "🪰", recommended: false,
+      description: "Deploy a public node to Fly.io's free tier.",
+      command: "fly deploy -c deploy/fly/fly.toml",
+      needs: "A Fly.io account and flyctl." },
+    { id: "oracle", label: "Oracle Cloud", icon: "☁️", recommended: false,
+      description: "Always-free ARM VM — see deploy/oracle-cloud.",
+      command: "see deploy/oracle-cloud/README.md",
+      needs: "An Oracle Cloud always-free tenancy." },
+    { id: "codespaces", label: "GitHub Codespaces", icon: "🧑‍💻", recommended: false,
+      description: "Zero-install devnet in the browser.",
+      command: "see deploy/codespaces/README.md",
+      needs: "A GitHub account." },
+  ];
+
+  const state = { step: 1, maxStep: 5, targets: TARGETS, selectedTarget: "local", lastRecord: null };
+
+  // ---------- Toast ----------
+  let toastTimer;
+  function toast(msg, isError = false) {
+    const el = $("#toast");
+    el.textContent = msg;
+    el.classList.toggle("error", isError);
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => (el.hidden = true), 3400);
+  }
+
+  // ---------- Engine / stats (local) ----------
+  function loadEngine() {
+    const pill = $("#enginePill");
+    pill.classList.add("ok");
+    pill.innerHTML = `<span class="dot"></span> Cosmos SDK v0.50 + CometBFT`;
+    paintStats(STORE.stats());
+  }
+  function paintStats(s) {
+    $("#statDeploys").textContent = s.deployments;
+    $("#statValidators").textContent = s.validators;
+    $("#statSupply").textContent = compact(s.supply_sky);
+  }
+  function compact(n) {
+    if (n >= 1e9) return (n / 1e9).toFixed(1) + "B";
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+    return String(n);
+  }
+
+  // ---------- Targets ----------
+  function loadTargets() {
+    const grid = $("#targetGrid");
+    grid.innerHTML = "";
+    state.targets.forEach((t) => {
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "net-card" + (t.id === state.selectedTarget ? " selected" : "");
+      const badge = t.recommended ? '<span class="tag rec">recommended</span>' : "";
+      card.innerHTML = `
+        <h3>${t.icon} ${t.label} ${badge}</h3>
+        <p>${t.description}</p>
+        <div class="net-meta">needs: ${t.needs}</div>`;
+      card.addEventListener("click", () => {
+        state.selectedTarget = t.id;
+        $$(".net-card", grid).forEach((c) => c.classList.toggle("selected", c === card));
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  // ---------- Deployer port (mirrors deployer.py) ----------
+  // Persisted to localStorage so the multi-page app (chains/dashboard/admin)
+  // can read the same deployments on a static (backend-less) host.
+  const STORE_KEY = "skymetric_deployments_v1";
+  const STORE = {
+    _items: (() => {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY) || "[]"); }
+      catch { return []; }
+    })(),
+    _save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(this._items)); } catch {} },
+    add(r) { this._items.unshift(r); this._save(); },
+    stats() {
+      return {
+        deployments: this._items.length,
+        validators: this._items.reduce((s, d) => s + d.config.validators, 0),
+        supply_sky: this._items.reduce((s, d) => s + d.config.total_supply_sky, 0),
+      };
+    },
+  };
+
+  class DeploymentError extends Error {}
+
+  const toUsky = (sky) => Math.round(sky * USKY_PER_SKY);
+  const sdkDec = (v) => v.toFixed(18);
+
+  function validChainId(v) {
+    return /^[a-z0-9]+(-[a-z0-9]+)*-\d+$/.test(v);
+  }
+
+  function validateRequest(p) {
+    const chain_id = String(p.chain_id || "").trim();
+    if (!chain_id) throw new DeploymentError("Chain ID is required.");
+    if (!validChainId(chain_id))
+      throw new DeploymentError("Chain ID must look like 'name-1' (lowercase, ends in a revision number).");
+
+    let moniker = String(p.moniker || "").trim() || "genesis-node";
+    if (moniker.length > 70 || !/^[A-Za-z0-9._-]+$/.test(moniker))
+      throw new DeploymentError("Moniker must be <=70 chars (letters, digits, - _ .).");
+
+    const target = String(p.target || "local").trim().toLowerCase();
+    if (!TARGETS.some((t) => t.id === target))
+      throw new DeploymentError(`Unsupported deploy target: '${target}'.`);
+
+    const total_supply = num(p.total_supply_sky, 1_000_000_000, "Total supply");
+    if (total_supply < 1) throw new DeploymentError("Total supply must be at least 1 SKY.");
+
+    const validators = int(p.validators, 4, "Validator count");
+    if (validators < 1 || validators > 100)
+      throw new DeploymentError("Validator count must be between 1 and 100.");
+
+    const max_validators = int(p.max_validators, 100, "Max validators");
+    if (max_validators < validators || max_validators > 1000)
+      throw new DeploymentError("Max validators must be >= genesis validators and <= 1000.");
+
+    const validator_stake = num(p.validator_stake_sky, 100_000, "Validator stake");
+    const faucet_balance = num(p.faucet_balance_sky, 500_000, "Faucet balance");
+    const inflation_min = frac(p.inflation_min, 0.01, "Min inflation");
+    const inflation_max = frac(p.inflation_max, 0.07, "Max inflation");
+    if (inflation_min > inflation_max)
+      throw new DeploymentError("Min inflation cannot exceed max inflation.");
+    const goal_bonded = frac(p.goal_bonded, 0.67, "Goal bonded");
+    if (goal_bonded <= 0) throw new DeploymentError("Goal bonded must be greater than 0.");
+    const task_burn_fraction = frac(p.task_burn_fraction, 0.2, "Task burn");
+    const slash_fraction_fraud = frac(p.slash_fraction_fraud, 0.5, "Fraud slash");
+    const unbonding_days = int(p.unbonding_days, 21, "Unbonding period");
+    if (unbonding_days < 1 || unbonding_days > 90)
+      throw new DeploymentError("Unbonding period must be between 1 and 90 days.");
+
+    if (validators * validator_stake > total_supply)
+      throw new DeploymentError("Validators × stake exceeds total supply. Lower the stake or validator count.");
+
+    const authority_address = String(p.authority_address || "").trim();
+    if (authority_address && !(authority_address.startsWith("agentic1") && authority_address.length >= 39 && authority_address.length <= 90))
+      throw new DeploymentError("Authority address must be a bech32 'agentic1…' address.");
+
+    return {
+      chain_id, moniker, target,
+      total_supply_sky: total_supply, validators, max_validators,
+      validator_stake_sky: validator_stake, faucet_balance_sky: faucet_balance,
+      inflation_min, inflation_max, goal_bonded,
+      task_burn_fraction, slash_fraction_fraud, unbonding_days,
+      description: String(p.description || "").trim().slice(0, 280),
+      denom_display: DISPLAY_DENOM,
+      authority_address: authority_address || null,
+    };
+  }
+
+  function num(v, d, label) {
+    const n = v === undefined || v === null || v === "" ? d : Number(v);
+    if (Number.isNaN(n)) throw new DeploymentError(`${label} must be a number.`);
+    if (n < 0) throw new DeploymentError(`${label} cannot be negative.`);
+    return n;
+  }
+  function int(v, d, label) {
+    const n = v === undefined || v === null || v === "" ? d : parseInt(v, 10);
+    if (Number.isNaN(n)) throw new DeploymentError(`${label} must be a whole number.`);
+    if (n < 0) throw new DeploymentError(`${label} cannot be negative.`);
+    return n;
+  }
+  function frac(v, d, label) {
+    const n = v === undefined || v === null || v === "" ? d : Number(v);
+    if (Number.isNaN(n)) throw new DeploymentError(`${label} must be a number.`);
+    if (n < 0 || n > 1) throw new DeploymentError(`${label} must be between 0 and 1.`);
+    return n;
+  }
+
+  function genesisOverrides(c) {
+    const burn = c.task_burn_fraction;
+    const remainder = 1.0 - burn;
+    const split_agent = (remainder * 5.0) / 8.0;
+    const split_validators = remainder - split_agent;
+    const minAgentStake = toUsky(Math.max(c.validator_stake_sky / 1000.0, 1));
+    return {
+      _comment: `Generated by Chain Deployment Studio for ${c.chain_id}. Applied via jq onto the genesis.json that \`skymetricd init\` produces.`,
+      app_state: {
+        staking: { params: {
+          unbonding_time: `${c.unbonding_days * 86400}s`,
+          max_validators: c.max_validators,
+          bond_denom: BASE_DENOM,
+          min_commission_rate: sdkDec(0.05),
+        }},
+        mint: { params: {
+          mint_denom: BASE_DENOM,
+          inflation_rate_change: sdkDec(0.01),
+          inflation_max: sdkDec(c.inflation_max),
+          inflation_min: sdkDec(c.inflation_min),
+          goal_bonded: sdkDec(c.goal_bonded),
+          blocks_per_year: "10512000",
+        }},
+        gov: { params: {
+          min_deposit: [{ denom: BASE_DENOM, amount: "10000000" }],
+          max_deposit_period: "172800s",
+          voting_period: "172800s",
+        }},
+        slashing: { params: {
+          signed_blocks_window: "10000",
+          min_signed_per_window: sdkDec(0.05),
+          downtime_jail_duration: "600s",
+          slash_fraction_double_sign: sdkDec(c.slash_fraction_fraud),
+          slash_fraction_downtime: sdkDec(0.0001),
+        }},
+        agentic: {
+          params: {
+            min_agent_stake: String(minAgentStake),
+            min_agent_stake_floor: String(Math.max(Math.floor(minAgentStake / 10), 1)),
+            split_agent: sdkDec(split_agent),
+            split_validators: sdkDec(split_validators),
+            split_burn: sdkDec(burn),
+            fraud_proof_quorum: 3,
+            reputation_gain_per_task: 1,
+          },
+          agent_records: [], tasks: [], task_counter: 0, burned_total: "0",
+        },
+      },
+    };
+  }
+
+  function initScript(c) {
+    const stake = `${toUsky(c.validator_stake_sky)}${BASE_DENOM}`;
+    const faucet = `${toUsky(c.faucet_balance_sky)}${BASE_DENOM}`;
+    return `#!/usr/bin/env bash
+# Generated by Chain Deployment Studio for ${c.chain_id}
+# Initialise a single-node ${c.chain_id} devnet.
+set -euo pipefail
+
+CHAIN_ID="\${CHAIN_ID:-${c.chain_id}}"
+MONIKER="\${MONIKER:-${c.moniker}}"
+DENOM="${BASE_DENOM}"
+HOME_DIR="\${HOME_DIR:-$HOME/.skymetric}"
+BIN="\${BIN:-skymetricd}"
+
+VALIDATOR_STAKE="\${VALIDATOR_STAKE:-${stake}}"
+FAUCET_BALANCE="\${FAUCET_BALANCE:-${faucet}}"
+
+echo "==> Initialising $CHAIN_ID (moniker=$MONIKER, home=$HOME_DIR)"
+rm -rf "$HOME_DIR"
+"$BIN" init "$MONIKER" --chain-id "$CHAIN_ID" --home "$HOME_DIR"
+
+cp ./genesis-overrides.json "$HOME_DIR/config/genesis-overrides.json"
+
+echo "==> Creating genesis accounts"
+for KEY in validator faucet; do
+  "$BIN" keys add "$KEY" --keyring-backend test --home "$HOME_DIR" 2>/dev/null || true
+done
+
+VAL_ADDR=$("$BIN" keys show validator -a --keyring-backend test --home "$HOME_DIR")
+FAUCET_ADDR=$("$BIN" keys show faucet -a --keyring-backend test --home "$HOME_DIR")
+
+"$BIN" genesis add-genesis-account "$VAL_ADDR" "$VALIDATOR_STAKE" --home "$HOME_DIR"
+"$BIN" genesis add-genesis-account "$FAUCET_ADDR" "$FAUCET_BALANCE" --home "$HOME_DIR"
+
+echo "==> Creating genesis validator (gentx)"
+"$BIN" genesis gentx validator "$VALIDATOR_STAKE" \\
+  --chain-id "$CHAIN_ID" --keyring-backend test --home "$HOME_DIR"
+
+echo "==> Collecting gentxs"
+"$BIN" genesis collect-gentxs --home "$HOME_DIR"
+"$BIN" genesis validate-genesis --home "$HOME_DIR"
+echo "==> Done. Start with ./scripts/start-node.sh"
+`;
+  }
+
+  function envFile(c) {
+    return (
+      `CHAIN_ID=${c.chain_id}\n` +
+      `MONIKER=${c.moniker}\n` +
+      `DENOM=${BASE_DENOM}\n` +
+      `VALIDATOR_STAKE=${toUsky(c.validator_stake_sky)}${BASE_DENOM}\n` +
+      `FAUCET_BALANCE=${toUsky(c.faucet_balance_sky)}${BASE_DENOM}\n` +
+      `MAX_VALIDATORS=${c.max_validators}\n`
+    );
+  }
+
+  function deploy(payload) {
+    const c = validateRequest(payload);
+    const target = TARGETS.find((t) => t.id === c.target);
+    const id = Math.random().toString(16).slice(2, 14);
+    const now = () => new Date().toISOString();
+    const bonded = c.validators * c.validator_stake_sky;
+    const fmt = (n) => n.toLocaleString("en-US");
+
+    const record = {
+      id,
+      created_at: now(),
+      status: "ready",
+      config: c,
+      target_label: target.label,
+      artifacts: {
+        genesis_overrides_json: JSON.stringify(genesisOverrides(c), null, 2),
+        init_chain_sh: initScript(c),
+        env_file: envFile(c),
+        deploy_command: target.command,
+        target_needs: target.needs,
+        rpc: "http://localhost:26657",
+        rest: "http://localhost:1317",
+        start_command: "./scripts/start-node.sh",
+      },
+      summary: {
+        chain_id: c.chain_id,
+        denom: `${DISPLAY_DENOM} (${BASE_DENOM})`,
+        total_supply: `${fmt(c.total_supply_sky)} ${DISPLAY_DENOM}`,
+        validators: c.validators,
+        bonded_at_genesis: `${fmt(bonded)} ${DISPLAY_DENOM}`,
+        inflation: `${Math.round(c.inflation_min * 100)}–${Math.round(c.inflation_max * 100)}%`,
+        task_burn: `${Math.round(c.task_burn_fraction * 100)}%`,
+        target: target.label,
+      },
+    };
+    STORE.add(record);
+    return record;
+  }
+
+  // ---------- Stepper navigation ----------
+  function showStep(n) {
+    state.step = n;
+    $$(".step").forEach((s) => s.classList.toggle("active", +s.dataset.step === n));
+    $$("#stepper li").forEach((li) => {
+      const s = +li.dataset.step;
+      li.classList.toggle("active", s === n);
+      li.classList.toggle("done", s < n);
+    });
+    $("#backBtn").disabled = n === 1;
+    const last = n === state.maxStep;
+    $("#nextBtn").hidden = last;
+    $("#deployBtn").hidden = !last;
+    if (last) buildReview();
+  }
+
+  function validateStep(n) {
+    if (n === 1) {
+      const id = $("#chain_id").value.trim();
+      if (!validChainId(id))
+        return "Chain ID must be lowercase and end in a revision number, e.g. mychain-1.";
+      if (!$("#moniker").value.trim()) return "Please enter a validator moniker.";
+    }
+    if (n === 2) {
+      if ((parseFloat($("#total_supply_sky").value) || 0) < 1) return "Total supply must be at least 1 SKY.";
+      if (parseFloat($("#inflation_min").value) > parseFloat($("#inflation_max").value))
+        return "Min inflation cannot exceed max inflation.";
+    }
+    if (n === 3) {
+      const v = parseInt($("#validators").value, 10) || 0;
+      const max = parseInt($("#max_validators").value, 10) || 0;
+      if (v < 1) return "You need at least one genesis validator.";
+      if (max < v) return "Max validators must be >= genesis validators.";
+      const bonded = v * (parseFloat($("#validator_stake_sky").value) || 0);
+      if (bonded > (parseFloat($("#total_supply_sky").value) || 0))
+        return "Validators × stake exceeds total supply.";
+    }
+    return null;
+  }
+
+  function gather() {
+    return {
+      chain_id: $("#chain_id").value.trim(),
+      moniker: $("#moniker").value.trim(),
+      description: $("#description").value.trim(),
+      target: state.selectedTarget,
+      total_supply_sky: parseFloat($("#total_supply_sky").value) || 0,
+      validators: parseInt($("#validators").value, 10) || 0,
+      max_validators: parseInt($("#max_validators").value, 10) || 0,
+      validator_stake_sky: parseFloat($("#validator_stake_sky").value) || 0,
+      faucet_balance_sky: parseFloat($("#faucet_balance_sky").value) || 0,
+      inflation_min: parseFloat($("#inflation_min").value) || 0,
+      inflation_max: parseFloat($("#inflation_max").value) || 0,
+      goal_bonded: parseFloat($("#goal_bonded").value) || 0,
+      task_burn_fraction: parseFloat($("#task_burn_fraction").value) || 0,
+      slash_fraction_fraud: parseFloat($("#slash_fraction_fraud").value) || 0,
+      unbonding_days: parseInt($("#unbonding_days").value, 10) || 0,
+      authority_address: ($("#authority_address") && $("#authority_address").value.trim()) || "",
+    };
+  }
+
+  function buildReview() {
+    const c = gather();
+    const target = state.targets.find((t) => t.id === c.target);
+    const pct = (x) => `${Math.round(x * 100)}%`;
+    const rows = [
+      ["Chain ID", c.chain_id || "—"],
+      ["Moniker", c.moniker || "—"],
+      ["Native coin", "SKY (usky)"],
+      ["Total supply", `${c.total_supply_sky.toLocaleString()} SKY`],
+      ["Inflation", `${pct(c.inflation_min)} – ${pct(c.inflation_max)}`],
+      ["Goal bonded", pct(c.goal_bonded)],
+      ["Task burn", pct(c.task_burn_fraction)],
+      ["Genesis validators", `${c.validators} (max ${c.max_validators})`],
+      ["Validator stake", `${c.validator_stake_sky.toLocaleString()} SKY`],
+      ["Unbonding", `${c.unbonding_days} days`],
+      ["Deploy target", target ? target.label : c.target],
+    ];
+    $("#reviewBox").innerHTML = rows
+      .map(([k, v]) => `<div class="review-row"><label>${k}</label><span>${v}</span></div>`)
+      .join("");
+  }
+
+  // ---------- Deploy flow ----------
+  async function runDeploy(e) {
+    e.preventDefault();
+    if (!$("#confirm").checked) return toast("Please confirm before deploying.", true);
+
+    const config = gather();
+    const deployBtn = $("#deployBtn");
+    deployBtn.disabled = true;
+
+    $("#emptyState").hidden = true;
+    $("#resultBox").hidden = true;
+    const log = $("#deployLog");
+    log.hidden = false;
+    log.innerHTML = "";
+    setStatus("deploying");
+
+    let record, err;
+    try { record = deploy(config); }
+    catch (e2) { err = e2; }
+
+    const steps = planSteps(config);
+    for (const step of steps) {
+      const li = appendLog(step, "pending");
+      await sleep(360 + Math.random() * 240);
+      markDone(li);
+    }
+
+    if (err) { failDeploy(err.message); deployBtn.disabled = false; return; }
+
+    state.lastRecord = record;
+    await sleep(280);
+    renderResult(record);
+    setStatus("ready");
+    toast("🎉 Chain bundle generated!");
+    paintStats(STORE.stats());
+    deployBtn.disabled = false;
+  }
+
+  function failDeploy(msg) {
+    setStatus("error");
+    appendLog({ title: "Deployment failed", detail: msg }, "error");
+    toast(msg || "Deployment failed", true);
+  }
+
+  function planSteps(c) {
+    const target = state.targets.find((t) => t.id === c.target) || { label: c.target };
+    return [
+      { title: "Validate configuration", detail: "Checking chain ID, tokenomics and validators." },
+      { title: "Generate genesis overrides", detail: "Building genesis-overrides.json." },
+      { title: "Create genesis accounts", detail: `Adding ${c.validators} validator(s) + faucet.` },
+      { title: "Collect gentxs", detail: "Genesis validator transactions." },
+      { title: "Render init-chain.sh", detail: "Parametrizing the bootstrap script." },
+      { title: "Validate genesis", detail: "skymetricd genesis validate-genesis." },
+      { title: `Prepare ${target.label} target`, detail: "Assembling deploy recipe." },
+      { title: "Finalize bundle", detail: "Packaging artifacts." },
+    ];
+  }
+
+  function appendLog(step, kind) {
+    const li = document.createElement("li");
+    li.className = kind;
+    const ico = kind === "pending" ? '<span class="spinner"></span>' : kind === "error" ? "✕" : "✓";
+    li.innerHTML = `<span class="log-ico">${ico}</span>
+      <span class="log-text"><strong>${step.title}</strong><small>${step.detail || ""}</small></span>`;
+    $("#deployLog").appendChild(li);
+    li.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    return li;
+  }
+  function markDone(li) {
+    li.className = "done";
+    li.querySelector(".log-ico").innerHTML = "✓";
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  }
+
+  function renderResult(r) {
+    const s = r.summary, a = r.artifacts;
+    const kv = (label, value) => `<div class="kv-row"><label>${label}</label><span class="val">${value}</span></div>`;
+    const file = (id, name, body) => `
+      <div class="artifact">
+        <div class="artifact-head">
+          <span>${name}</span>
+          <span class="artifact-btns">
+            <button class="copy-btn" data-copy-id="${id}">copy</button>
+            <button class="copy-btn" data-dl-id="${id}" data-dl-name="${name}">download</button>
+          </span>
+        </div>
+        <pre id="${id}"><code>${esc(body)}</code></pre>
+      </div>`;
+
+    $("#resultBox").innerHTML = `
+      <div class="result-banner">
+        <span class="big">🌌</span>
+        <div>
+          <strong>${r.config.chain_id} is ready to launch</strong>
+          <span>${s.total_supply} · ${s.validators} validators · ${s.target}</span>
+        </div>
+      </div>
+      <div class="kv">
+        ${kv("Chain ID", s.chain_id)}
+        ${kv("Native coin", s.denom)}
+        ${kv("Total supply", s.total_supply)}
+        ${kv("Bonded at genesis", s.bonded_at_genesis)}
+        ${kv("Inflation", s.inflation)}
+        ${kv("Task burn", s.task_burn)}
+      </div>
+      <h4 class="artifacts-title">Generated artifacts</h4>
+      ${file("art-genesis", "genesis-overrides.json", a.genesis_overrides_json)}
+      ${file("art-init", "init-chain.sh", a.init_chain_sh)}
+      ${file("art-env", ".env", a.env_file)}
+      <div class="deploy-cmd">
+        <label>Deploy command (${esc(r.target_label)})</label>
+        <pre><code>${esc(a.deploy_command)}</code></pre>
+        <small>${esc(a.target_needs)}</small>
+        <div class="endpoints">RPC <code>${a.rpc}</code> · REST <code>${a.rest}</code></div>
+      </div>
+      <div class="result-actions">
+        <button class="link-btn" id="dlAll">⬇ Download all artifacts</button>
+        <button class="again-btn" id="againBtn">Deploy another</button>
+      </div>`;
+    $("#resultBox").hidden = false;
+
+    $$("[data-copy-id]", $("#resultBox")).forEach((b) =>
+      b.addEventListener("click", () => {
+        navigator.clipboard?.writeText($("#" + b.dataset.copyId).innerText);
+        toast("Copied to clipboard");
+      })
+    );
+    $$("[data-dl-id]", $("#resultBox")).forEach((b) =>
+      b.addEventListener("click", () => download(b.dataset.dlName, $("#" + b.dataset.dlId).innerText))
+    );
+    $("#dlAll").addEventListener("click", downloadAll);
+    $("#againBtn").addEventListener("click", resetWizard);
+  }
+
+  function download(name, content) {
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url; link.download = name; link.click();
+    URL.revokeObjectURL(url);
+  }
+  function downloadAll() {
+    const r = state.lastRecord;
+    if (!r) return;
+    download("genesis-overrides.json", r.artifacts.genesis_overrides_json);
+    download("init-chain.sh", r.artifacts.init_chain_sh);
+    download(".env", r.artifacts.env_file);
+    toast("Downloading 3 files…");
+  }
+
+  function resetWizard() {
+    $("#wizardForm").reset();
+    $("#confirm").checked = false;
+    state.selectedTarget = "local";
+    state.lastRecord = null;
+    loadTargets();
+    syncOutputs();
+    showStep(1);
+    $("#deployLog").hidden = true;
+    $("#deployLog").innerHTML = "";
+    $("#resultBox").hidden = true;
+    $("#emptyState").hidden = false;
+    setStatus("idle");
+  }
+
+  function setStatus(s) {
+    const chip = $("#statusChip");
+    chip.className = "status-chip " + (s === "idle" ? "" : s);
+    chip.textContent = s;
+  }
+
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  function syncOutputs() {
+    const pct = (id) => Math.round((parseFloat($("#" + id).value) || 0) * 100) + "%";
+    $("#infMinOut").textContent = pct("inflation_min");
+    $("#infMaxOut").textContent = pct("inflation_max");
+    $("#goalOut").textContent = pct("goal_bonded");
+    $("#burnOut").textContent = pct("task_burn_fraction");
+    $("#slashOut").textContent = pct("slash_fraction_fraud");
+  }
+
+  function init() {
+    loadEngine();
+    loadTargets();
+    $("#nextBtn").addEventListener("click", () => {
+      const err = validateStep(state.step);
+      if (err) return toast(err, true);
+      if (state.step < state.maxStep) showStep(state.step + 1);
+    });
+    $("#backBtn").addEventListener("click", () => { if (state.step > 1) showStep(state.step - 1); });
+    $("#wizardForm").addEventListener("submit", runDeploy);
+    ["inflation_min", "inflation_max", "goal_bonded", "task_burn_fraction", "slash_fraction_fraud"].forEach(
+      (id) => $("#" + id).addEventListener("input", syncOutputs)
+    );
+    $("#chain_id").addEventListener("input", (e) => {
+      e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+    });
+    wireConnectWallet();
+    syncOutputs();
+    showStep(1);
+  }
+
+  // Connect Wallet — reads the address the wallet persisted to localStorage.
+  function connectedWalletAddress() {
+    try { return JSON.parse(localStorage.getItem("skymetric_wallet_v1") || "null")?.address || null; }
+    catch { return null; }
+  }
+  function wireConnectWallet() {
+    const btn = $("#connectWalletBtn");
+    const input = $("#authority_address");
+    if (!btn || !input) return;
+    const refresh = () => {
+      const addr = connectedWalletAddress();
+      if (addr && !input.value) input.value = addr;
+      btn.textContent = addr ? "✓ " + addr.slice(0, 10) + "…" + addr.slice(-6) : "👛 Connect";
+      if (addr) btn.title = addr;
+    };
+    btn.addEventListener("click", () => {
+      const addr = connectedWalletAddress();
+      if (addr) { input.value = addr; refresh(); toast("Authority address filled from connected wallet."); }
+      else window.open("/AI-Agentics-Bots/wallet", "skymetric-wallet", "width=480,height=720");
+    });
+    window.addEventListener("storage", (e) => { if (e.key === "skymetric_wallet_v1") refresh(); });
+    refresh();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+
+</script>
+</body>
+</html>

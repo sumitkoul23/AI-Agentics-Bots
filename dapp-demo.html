@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>dApp Demo · window.skymetric</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%8C%3C/text%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/AI-Agentics-Bots/design/design-system.css" />
+<style>
+  .wrap{max-width:640px;margin:0 auto;padding:var(--s6)}
+  .logo{display:flex;align-items:center;gap:10px}.logo b{font-size:15px}.logo span{font-size:11px;color:var(--muted);display:block}
+  .brandmark{font-size:22px}
+  pre{margin:0;padding:14px 16px;background:rgba(8,10,22,.6);border:1px solid var(--border);border-radius:var(--r-sm);overflow-x:auto;font-family:var(--mono);font-size:12px;white-space:pre-wrap;word-break:break-all;max-height:280px}
+  .field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+  .field span{font-size:12px;color:var(--muted)}
+  .field input{background:rgba(8,10,22,.6);border:1px solid var(--border);color:var(--text);border-radius:var(--r-sm);padding:9px 12px;font:13px var(--sans);outline:none}
+  .row{display:flex;align-items:center;gap:8px}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><span class="brandmark">🔌</span><div><b>dApp Demo</b><span>window.skymetric provider</span></div></div>
+    <a class="btn btn-ghost btn-sm" href="/AI-Agentics-Bots/wallet">Open wallet ↗</a>
+  </div>
+
+  <div class="wrap">
+    <h2 style="font-size:var(--fs-h1);margin:0 0 6px">Connect to SKYMETRIC Wallet</h2>
+    <p class="dim" style="margin:0 0 20px">This page is a third-party dApp. It loads <code>skymetric-provider.js</code> and talks to your wallet over <code>postMessage</code> — the same way a real dApp would.</p>
+
+    <div class="card" style="padding:20px;margin-bottom:16px">
+      <div class="row between" style="margin-bottom:14px">
+        <h3 style="margin:0;font-size:var(--fs-h2)">1 · Connect</h3>
+        <span class="chip" id="status"><span class="dot"></span>not connected</span>
+      </div>
+      <button class="btn btn-primary" id="btnConnect">👛 Connect wallet</button>
+      <pre id="connOut" style="margin-top:12px" hidden></pre>
+    </div>
+
+    <div class="card" style="padding:20px;margin-bottom:16px">
+      <h3 style="margin:0 0 14px;font-size:var(--fs-h2)">2 · Send a transaction</h3>
+      <label class="field"><span>Recipient</span><input id="to" placeholder="agentic1…" /></label>
+      <label class="field"><span>Amount (SKY)</span><input id="amt" type="number" min="0.000001" step="0.000001" placeholder="1.000000" /></label>
+      <button class="btn btn-primary" id="btnSend">Sign &amp; broadcast</button>
+      <pre id="sendOut" style="margin-top:12px" hidden></pre>
+    </div>
+
+    <div class="card" style="padding:20px">
+      <h3 style="margin:0 0 10px;font-size:var(--fs-h2)">Event log</h3>
+      <pre id="log">// events appear here…</pre>
+    </div>
+  </div>
+
+  <script src="/AI-Agentics-Bots/assets/js/skymetric-provider.js"></script>
+  <script>
+    const $ = id => document.getElementById(id);
+    const log = (m) => { $("log").textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + $("log").textContent; };
+    let account = null;
+
+    window.skymetric.on("disconnect", () => {
+      account = null;
+      $("status").innerHTML = '<span class="dot"></span>disconnected';
+      log("wallet locked / disconnected");
+    });
+    window.skymetric.on("accountsChanged", (a) => { account = a; log("accountsChanged: " + (a?.address || a)); });
+
+    $("btnConnect").addEventListener("click", async () => {
+      try {
+        const res = await window.skymetric.connect();
+        account = res;
+        $("status").innerHTML = '<span class="dot"></span>connected';
+        $("status").className = "chip live";
+        $("connOut").hidden = false;
+        $("connOut").textContent = JSON.stringify(res, null, 2);
+        log("connected: " + res.address);
+      } catch (e) { log("connect failed: " + e.message); }
+    });
+
+    $("btnSend").addEventListener("click", async () => {
+      if (!account) { log("connect first"); return; }
+      const to = $("to").value.trim();
+      const sky = parseFloat($("amt").value || "0");
+      if (!to || !(sky > 0)) { log("enter recipient + amount"); return; }
+      const usky = String(BigInt(Math.round(sky * 1e6)));
+      try {
+        $("sendOut").hidden = false;
+        $("sendOut").textContent = "signing…";
+        const res = await window.skymetric.signAndBroadcast({
+          chainId: account.chainId || "skymetric-1",
+          toAddress: to,
+          amount: [{ denom: "usky", amount: usky }],
+          memo: "from dApp demo",
+        });
+        $("sendOut").textContent = JSON.stringify(res, null, 2);
+        log("tx result: " + (res.txhash || JSON.stringify(res)));
+      } catch (e) { $("sendOut").textContent = "error: " + e.message; log("send failed: " + e.message); }
+    });
+
+    log("provider loaded: " + (window.skymetric ? "window.skymetric v" + window.skymetric.version : "MISSING"));
+  </script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+# Clean-URL routing for the deploy alias
+/deploy   /index.html   200
