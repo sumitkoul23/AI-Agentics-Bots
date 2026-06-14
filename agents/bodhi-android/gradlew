@@ -1,0 +1,5 @@
+#!/bin/sh
+# Minimal Gradle wrapper — delegates to system Gradle installation.
+# In CI, gradle/actions/setup-gradle installs the correct version.
+# Locally, install Gradle 8.x: https://gradle.org/install/
+exec gradle "$@"

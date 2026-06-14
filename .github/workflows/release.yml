@@ -127,6 +127,11 @@ jobs:
       - name: Install build tools
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.4'
+
       - name: Set version name from tag, input, or VERSION file
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
