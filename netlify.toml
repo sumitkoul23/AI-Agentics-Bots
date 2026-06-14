@@ -1,0 +1,55 @@
+[build]
+  publish = "agents/priya-app/static"
+  functions = "netlify/functions"
+
+[dev]
+  command = "echo 'No build step needed — static files served directly'"
+  port = 9090
+  targetPort = 9090
+
+# Rewrite /api/* to Netlify Functions so the app HTML needs zero changes
+[[redirects]]
+  from = "/api/chat"
+  to = "/.netlify/functions/chat"
+  status = 200
+
+[[redirects]]
+  from = "/api/status"
+  to = "/.netlify/functions/status"
+  status = 200
+
+[[redirects]]
+  from = "/api/agents"
+  to = "/.netlify/functions/agents"
+  status = 200
+
+[[redirects]]
+  from = "/api/memory"
+  to = "/.netlify/functions/memory"
+  status = 200
+
+[[redirects]]
+  from = "/api/events"
+  to = "/.netlify/functions/events"
+  status = 200
+
+# SPA fallback — all other paths serve index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
