@@ -15,6 +15,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script type="module">
+  import { startRegistration, startAuthentication } from 'https://esm.sh/@simplewebauthn/browser@13'
+  window._swReg = startRegistration
+  window._swAuth = startAuthentication
+</script>
 <style>
 /* ── Reset & base ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -339,6 +344,34 @@ body{
 .plan-email-wrap{padding:0 14px 12px;display:flex;flex-direction:column;gap:5px}
 .plan-email-label{font-size:.73rem;color:var(--text3);font-weight:500}
 .plan-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(236,72,153,.15));border:1px solid rgba(139,92,246,.3);border-radius:99px;padding:3px 10px;font-size:.7rem;font-weight:700;color:var(--accent)}
+
+/* ── Auth screen ── */
+.auth-wrap{max-width:360px;margin:0 auto;padding:32px 20px 24px}
+.auth-logo{font-size:52px;text-align:center;margin-bottom:12px}
+.auth-title{font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:4px}
+.auth-sub{font-size:.82rem;color:var(--text2);text-align:center;margin-bottom:26px;line-height:1.5}
+.auth-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--surface2);border-radius:var(--r-sm);padding:3px}
+.auth-tab{flex:1;padding:8px;font-size:.8rem;font-weight:600;border:none;border-radius:calc(var(--r-sm) - 2px);background:none;color:var(--text3);cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
+.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.btn-passkey{width:100%;border:none;border-radius:var(--r);padding:15px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;transition:transform .12s,box-shadow .12s;box-shadow:0 4px 20px rgba(139,92,246,.3)}
+.btn-passkey:hover,.btn-passkey:active{transform:translateY(-1px);box-shadow:0 6px 28px rgba(139,92,246,.4)}
+.btn-passkey:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--text3);font-size:.75rem}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-form{display:flex;flex-direction:column;gap:10px}
+.pw-wrap{position:relative}
+.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px;line-height:1}
+.auth-action-btn{width:100%;border:none;border-radius:var(--r);padding:13px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;background:var(--surface3);color:var(--text);transition:all .12s;margin-top:2px}
+.auth-action-btn:hover,.auth-action-btn:active{background:var(--accent);color:#fff}
+.auth-action-btn:disabled{opacity:.4;cursor:not-allowed}
+.auth-skip{display:block;text-align:center;margin-top:20px;font-size:.78rem;color:var(--text3);cursor:pointer;padding:8px}
+.auth-skip:hover{color:var(--text2)}
+.auth-err{color:var(--red);font-size:.78rem;text-align:center;min-height:18px;margin-top:4px}
+.auth-user-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:16px}
+.auth-user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.auth-user-info{flex:1;min-width:0}
+.auth-user-email{font-size:.82rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-user-plan{font-size:.7rem;color:var(--text3)}
 </style>
 </head>
 <body>
@@ -454,6 +487,15 @@ body{
         </div>
         <div class="s-arrow">›</div>
       </div>
+      <div class="s-section">Account</div>
+      <div class="s-row" id="settings-account-row" onclick="setScreen('auth')">
+        <div class="s-icon">👤</div>
+        <div class="s-info">
+          <div class="s-name" id="settings-account-name">Sign In / Create Account</div>
+          <div class="s-sub" id="settings-account-sub">Sync plan, manage passkeys</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
       <div class="s-section">Plans &amp; Billing</div>
       <div class="s-row" id="plan-status-row" style="cursor:default">
         <div class="s-icon">✨</div>
@@ -490,6 +532,63 @@ body{
     </div>
   </div>
 
+
+  <!-- Auth -->
+  <div class="screen" id="screen-auth">
+    <div class="screen-body">
+      <div class="auth-wrap">
+        <div class="auth-logo">🌸</div>
+        <div class="auth-title">Welcome to Bodhi</div>
+        <div class="auth-sub">Create an account to sync your plan across devices, or continue as a guest.</div>
+
+        <!-- Signed-in state (hidden by default) -->
+        <div id="auth-signed-in" style="display:none">
+          <div class="auth-user-row">
+            <div class="auth-user-avatar" id="auth-avatar">?</div>
+            <div class="auth-user-info">
+              <div class="auth-user-email" id="auth-email-display">—</div>
+              <div class="auth-user-plan" id="auth-plan-display">Free Plan</div>
+            </div>
+          </div>
+          <button class="btn-ghost" style="width:100%;margin-bottom:10px" onclick="setScreen('chat')">Continue to Chat →</button>
+          <button class="btn-ghost" style="width:100%" onclick="signOut()">Sign Out</button>
+        </div>
+
+        <!-- Sign-in/Register form -->
+        <div id="auth-form-wrap">
+          <!-- Passkey button -->
+          <button class="btn-passkey" id="passkey-btn" onclick="handlePasskey()">
+            <span>🔑</span> Continue with Passkey
+          </button>
+          <div style="font-size:.7rem;color:var(--text3);text-align:center;margin:-8px 0 10px">
+            Uses Face ID, Touch ID, or your device PIN
+          </div>
+
+          <div class="auth-divider">or use email</div>
+
+          <!-- Email + password tabs -->
+          <div class="auth-tabs">
+            <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
+            <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Create Account</button>
+          </div>
+
+          <form class="auth-form" onsubmit="handlePasswordAuth(event)" autocomplete="on">
+            <input class="fi" id="auth-email" type="email" placeholder="Email address"
+              name="email" autocomplete="email" required/>
+            <div class="pw-wrap">
+              <input class="fi" id="auth-password" type="password" placeholder="Password (min 8 chars)"
+                name="password" autocomplete="current-password" required style="padding-right:40px"/>
+              <button type="button" class="pw-eye" onclick="togglePwEye()" id="pw-eye-btn">👁️</button>
+            </div>
+            <div class="auth-err" id="auth-err"></div>
+            <button type="submit" class="auth-action-btn" id="auth-submit-btn">Sign In</button>
+          </form>
+
+          <span class="auth-skip" onclick="skipAuth()">Skip — continue as free guest</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Landing -->
   <div class="screen" id="screen-landing">
@@ -887,10 +986,12 @@ function init() {
   // Handle Stripe/Razorpay/Coinbase return URLs
   handlePaymentReturn()
 
-  // Show landing on first ever visit
+  updateAuthScreen()
+
+  // Show auth screen on first ever visit
   const firstVisit = !localStorage.getItem('bodhi-visited')
   if (firstVisit && !window.location.search) {
-    setScreen('landing')
+    setScreen('auth')
     return
   }
 
@@ -1354,6 +1455,168 @@ function installPWA() {
 }
 function dismissBanner() {
   document.getElementById('install-banner').classList.remove('show')
+}
+
+// ── Auth ────────────────────────────────────────────────────────────────────
+let _authTab = 'signin'
+
+function switchAuthTab(tab) {
+  _authTab = tab
+  document.getElementById('tab-signin').classList.toggle('active', tab === 'signin')
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register')
+  const submitBtn = document.getElementById('auth-submit-btn')
+  if (submitBtn) submitBtn.textContent = tab === 'signin' ? 'Sign In' : 'Create Account'
+  const pw = document.getElementById('auth-password')
+  if (pw) pw.autocomplete = tab === 'signin' ? 'current-password' : 'new-password'
+  document.getElementById('auth-err').textContent = ''
+}
+
+function togglePwEye() {
+  const pw = document.getElementById('auth-password')
+  const btn = document.getElementById('pw-eye-btn')
+  if (pw.type === 'password') { pw.type = 'text'; btn.textContent = '🙈' }
+  else { pw.type = 'password'; btn.textContent = '👁️' }
+}
+
+function authError(msg) {
+  const el = document.getElementById('auth-err')
+  if (el) el.textContent = msg
+}
+
+function updateAuthScreen() {
+  const { plan, email } = getPlan()
+  const isSignedIn = !!email
+  document.getElementById('auth-signed-in').style.display = isSignedIn ? 'block' : 'none'
+  document.getElementById('auth-form-wrap').style.display = isSignedIn ? 'none' : 'block'
+  if (isSignedIn) {
+    const avatarEl = document.getElementById('auth-avatar')
+    if (avatarEl) avatarEl.textContent = email[0].toUpperCase()
+    const emailEl = document.getElementById('auth-email-display')
+    if (emailEl) emailEl.textContent = email
+    const planEl = document.getElementById('auth-plan-display')
+    if (planEl) planEl.textContent = plan === 'pro' ? 'Pro Plan' : plan === 'team' ? 'Team Plan' : 'Free Plan'
+  }
+  // Also update settings row
+  const settingsName = document.getElementById('settings-account-name')
+  const settingsSub = document.getElementById('settings-account-sub')
+  if (settingsName) {
+    if (isSignedIn) {
+      settingsName.textContent = email
+      if (settingsSub) settingsSub.textContent = plan === 'free' ? 'Free Plan · Click to upgrade' : plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan active'
+    } else {
+      settingsName.textContent = 'Sign In / Create Account'
+      if (settingsSub) settingsSub.textContent = 'Sync plan, manage passkeys'
+    }
+  }
+}
+
+async function handlePasskey() {
+  const email = (document.getElementById('auth-email')?.value || '').trim()
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    authError('Enter your email first, then tap Continue with Passkey')
+    document.getElementById('auth-email')?.focus()
+    return
+  }
+  const btn = document.getElementById('passkey-btn')
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span> Preparing passkey…' }
+  authError('')
+  try {
+    // Wait for SimpleWebAuthn module to load
+    let attempts = 0
+    while (!window._swReg && attempts++ < 30) await new Promise(r => setTimeout(r, 100))
+    if (!window._swReg) throw new Error('Passkey library not loaded — try refreshing')
+
+    if (_authTab === 'register') {
+      // Registration flow
+      const optRes = await fetch('/api/auth/passkey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'register-start', email })
+      })
+      if (!optRes.ok) throw new Error(await optRes.text())
+      const optionsJSON = await optRes.json()
+
+      const credential = await window._swReg({ optionsJSON })
+
+      const verRes = await fetch('/api/auth/passkey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'register-finish', email, credential })
+      })
+      if (!verRes.ok) throw new Error(await verRes.text())
+      const d = await verRes.json()
+      setPlanToken(d.token, d.plan, d.email)
+      toast('🎉 Passkey created & signed in!')
+      updateAuthScreen()
+      setTimeout(() => setScreen('chat'), 900)
+    } else {
+      // Authentication flow
+      const optRes = await fetch('/api/auth/passkey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'login-start', email })
+      })
+      if (!optRes.ok) throw new Error(await optRes.text())
+      const optionsJSON = await optRes.json()
+
+      const credential = await window._swAuth({ optionsJSON })
+
+      const verRes = await fetch('/api/auth/passkey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'login-finish', email, credential })
+      })
+      if (!verRes.ok) throw new Error(await verRes.text())
+      const d = await verRes.json()
+      setPlanToken(d.token, d.plan, d.email)
+      toast('🔑 Signed in with passkey!')
+      updateAuthScreen()
+      setTimeout(() => setScreen('chat'), 900)
+    }
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
+      authError('Passkey prompt dismissed. Try again or use password.')
+    } else {
+      authError(err.message || 'Passkey error')
+    }
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span>🔑</span> Continue with Passkey' }
+  }
+}
+
+async function handlePasswordAuth(e) {
+  e.preventDefault()
+  const email = document.getElementById('auth-email').value.trim()
+  const password = document.getElementById('auth-password').value
+  const btn = document.getElementById('auth-submit-btn')
+  authError('')
+  if (btn) { btn.disabled = true; btn.textContent = 'Please wait…' }
+  try {
+    const res = await fetch('/api/auth/password', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: _authTab === 'signin' ? 'login' : 'register', email, password })
+    })
+    const text = await res.text()
+    if (!res.ok) throw new Error(text)
+    const d = JSON.parse(text)
+    setPlanToken(d.token, d.plan, d.email)
+    toast(_authTab === 'signin' ? '✓ Signed in!' : '🎉 Account created!')
+    updateAuthScreen()
+    setTimeout(() => setScreen('chat'), 800)
+  } catch (err) {
+    authError(err.message || 'Auth error')
+    if (btn) { btn.disabled = false; btn.textContent = _authTab === 'signin' ? 'Sign In' : 'Create Account' }
+  }
+}
+
+function signOut() {
+  if (!confirm('Sign out? Your local data stays on this device.')) return
+  localStorage.removeItem('bodhi-plan-token')
+  updatePlanUI()
+  updateAuthScreen()
+  toast('Signed out')
+  setScreen('chat')
+}
+
+function skipAuth() {
+  localStorage.setItem('bodhi-visited', '1')
+  setScreen('chat')
+  if (S.messages.length === 0) pushMsg('bot', `Namaste! I'm **Bodhi** 🌸\n\nRunning as a free guest — 30 messages/day. Tap **✨ Plans** to upgrade anytime.`)
 }
 
 // ── Service Worker ─────────────────────────────────────────────────────────

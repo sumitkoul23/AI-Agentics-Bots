@@ -63,6 +63,16 @@
   to = "/.netlify/functions/portal"
   status = 200
 
+[[redirects]]
+  from = "/api/auth/passkey"
+  to = "/.netlify/functions/auth-passkey"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/password"
+  to = "/.netlify/functions/auth-password"
+  status = 200
+
 # SPA fallback — all other paths serve index.html
 [[redirects]]
   from = "/*"
