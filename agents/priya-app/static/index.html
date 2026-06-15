@@ -15,6 +15,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script type="module">
+  import { startRegistration, startAuthentication } from 'https://esm.sh/@simplewebauthn/browser@13'
+  window._swReg = startRegistration
+  window._swAuth = startAuthentication
+</script>
 <style>
 /* ── Reset & base ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -284,6 +289,89 @@ body{
 .install-banner p{flex:1;font-size:.8rem;font-weight:500}
 .install-banner button{font-size:.78rem;font-weight:600;padding:6px 14px;border:none;border-radius:99px;cursor:pointer;background:var(--accent);color:#fff}
 .install-banner .close-banner{background:none;color:var(--text3);padding:4px;font-size:14px}
+
+/* ── Landing screen ── */
+.landing-hero{text-align:center;padding:32px 20px 24px;position:relative;overflow:hidden}
+.landing-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(139,92,246,.15) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:99px;padding:5px 14px;font-size:.73rem;font-weight:600;color:var(--accent);margin-bottom:18px;letter-spacing:.04em}
+.hero-title{font-size:1.85rem;font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:10px}
+.hero-title .g{background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:.9rem;color:var(--text2);line-height:1.55;max-width:320px;margin:0 auto 24px}
+.hero-btns{display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;border:none;border-radius:var(--r);padding:14px 24px;font-size:.9rem;font-weight:700;cursor:pointer;letter-spacing:.01em;transition:transform .12s,box-shadow .12s;box-shadow:0 4px 24px rgba(139,92,246,.3)}
+.btn-primary:hover,.btn-primary:active{transform:translateY(-1px);box-shadow:0 6px 32px rgba(139,92,246,.4)}
+.btn-ghost{background:none;color:var(--text2);border:1.5px solid var(--border);border-radius:var(--r);padding:13px 24px;font-size:.88rem;font-weight:600;cursor:pointer;transition:border-color .12s,color .12s}
+.btn-ghost:hover,.btn-ghost:active{border-color:var(--accent);color:var(--accent)}
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 16px}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;text-align:center}
+.feat-icon{font-size:26px;margin-bottom:8px}
+.feat-title{font-size:.8rem;font-weight:700;margin-bottom:4px}
+.feat-desc{font-size:.69rem;color:var(--text3);line-height:1.35}
+.landing-cta-strip{margin:0 16px 20px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(236,72,153,.08));border:1px solid rgba(139,92,246,.2);border-radius:var(--r);padding:16px;text-align:center}
+.landing-cta-strip h3{font-size:.88rem;font-weight:700;margin-bottom:4px}
+.landing-cta-strip p{font-size:.74rem;color:var(--text2);margin-bottom:12px}
+
+/* ── Pricing screen ── */
+.pricing-header{text-align:center;padding:24px 16px 12px}
+.pricing-title{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.pricing-sub{font-size:.82rem;color:var(--text2)}
+.plan-cards{display:flex;flex-direction:column;gap:10px;padding:0 14px 16px}
+.plan-card{border-radius:var(--r);border:1.5px solid var(--border);background:var(--surface);overflow:hidden;transition:border-color .15s}
+.plan-card.popular{border-color:var(--accent);position:relative}
+.plan-card.popular::before{content:'Most Popular';position:absolute;top:0;right:16px;background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:0 0 8px 8px;letter-spacing:.04em}
+.plan-top{padding:16px 16px 10px}
+.plan-name{font-size:1rem;font-weight:800;margin-bottom:2px}
+.plan-tagline{font-size:.73rem;color:var(--text3)}
+.plan-price{margin:10px 0;display:flex;align-items:baseline;gap:4px}
+.plan-price .amt{font-size:1.6rem;font-weight:800}
+.plan-price .per{font-size:.78rem;color:var(--text3)}
+.plan-price .alt{font-size:.73rem;color:var(--text3);margin-left:6px}
+.plan-features{list-style:none;padding:0 16px 12px;margin:0;display:flex;flex-direction:column;gap:6px}
+.plan-features li{font-size:.78rem;display:flex;align-items:flex-start;gap:7px;color:var(--text2)}
+.plan-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;margin-top:1px}
+.plan-features li.dim::before{content:'✕';color:var(--text3)}
+.plan-features li.dim{color:var(--text3)}
+.plan-cta{padding:0 14px 14px;display:flex;flex-direction:column;gap:7px}
+.pay-btn{width:100%;border:none;border-radius:var(--r-sm);padding:12px;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;gap:8px}
+.pay-btn.stripe{background:linear-gradient(135deg,#635bff,#7b73ff);color:#fff}
+.pay-btn.razorpay{background:linear-gradient(135deg,#072654,#0a5288);color:#fff}
+.pay-btn.coinbase{background:linear-gradient(135deg,#0052ff,#0070e0);color:#fff}
+.pay-btn.current{background:var(--surface2);color:var(--text2);cursor:default}
+.pay-btn:hover:not(.current):not(:disabled),.pay-btn:active:not(.current):not(:disabled){filter:brightness(1.1);transform:translateY(-1px)}
+.pay-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
+.pay-divider{text-align:center;font-size:.7rem;color:var(--text3);margin:2px 0}
+.geo-tag{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;color:var(--text3);background:var(--surface2);border-radius:99px;padding:3px 10px;margin:8px auto 4px}
+.plan-email-wrap{padding:0 14px 12px;display:flex;flex-direction:column;gap:5px}
+.plan-email-label{font-size:.73rem;color:var(--text3);font-weight:500}
+.plan-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(236,72,153,.15));border:1px solid rgba(139,92,246,.3);border-radius:99px;padding:3px 10px;font-size:.7rem;font-weight:700;color:var(--accent)}
+
+/* ── Auth screen ── */
+.auth-wrap{max-width:360px;margin:0 auto;padding:32px 20px 24px}
+.auth-logo{font-size:52px;text-align:center;margin-bottom:12px}
+.auth-title{font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:4px}
+.auth-sub{font-size:.82rem;color:var(--text2);text-align:center;margin-bottom:26px;line-height:1.5}
+.auth-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--surface2);border-radius:var(--r-sm);padding:3px}
+.auth-tab{flex:1;padding:8px;font-size:.8rem;font-weight:600;border:none;border-radius:calc(var(--r-sm) - 2px);background:none;color:var(--text3);cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
+.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.btn-passkey{width:100%;border:none;border-radius:var(--r);padding:15px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;transition:transform .12s,box-shadow .12s;box-shadow:0 4px 20px rgba(139,92,246,.3)}
+.btn-passkey:hover,.btn-passkey:active{transform:translateY(-1px);box-shadow:0 6px 28px rgba(139,92,246,.4)}
+.btn-passkey:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--text3);font-size:.75rem}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-form{display:flex;flex-direction:column;gap:10px}
+.pw-wrap{position:relative}
+.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px;line-height:1}
+.auth-action-btn{width:100%;border:none;border-radius:var(--r);padding:13px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;background:var(--surface3);color:var(--text);transition:all .12s;margin-top:2px}
+.auth-action-btn:hover,.auth-action-btn:active{background:var(--accent);color:#fff}
+.auth-action-btn:disabled{opacity:.4;cursor:not-allowed}
+.auth-skip{display:block;text-align:center;margin-top:20px;font-size:.78rem;color:var(--text3);cursor:pointer;padding:8px}
+.auth-skip:hover{color:var(--text2)}
+.auth-err{color:var(--red);font-size:.78rem;text-align:center;min-height:18px;margin-top:4px}
+.auth-user-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:16px}
+.auth-user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.auth-user-info{flex:1;min-width:0}
+.auth-user-email{font-size:.82rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-user-plan{font-size:.7rem;color:var(--text3)}
 </style>
 </head>
 <body>
@@ -399,6 +487,40 @@ body{
         </div>
         <div class="s-arrow">›</div>
       </div>
+      <div class="s-section">Account</div>
+      <div class="s-row" id="settings-account-row" onclick="setScreen('auth')">
+        <div class="s-icon">👤</div>
+        <div class="s-info">
+          <div class="s-name" id="settings-account-name">Sign In / Create Account</div>
+          <div class="s-sub" id="settings-account-sub">Sync plan, manage passkeys</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
+      <div class="s-section">Plans &amp; Billing</div>
+      <div class="s-row" id="plan-status-row" style="cursor:default">
+        <div class="s-icon">✨</div>
+        <div class="s-info">
+          <div class="s-name" id="plan-status-name">Free Plan</div>
+          <div class="s-sub" id="plan-status-sub">30 messages/day · 10 agents</div>
+        </div>
+        <div id="plan-badge-wrap"></div>
+      </div>
+      <div class="s-row" onclick="setScreen('pricing');renderPricing()">
+        <div class="s-icon">🚀</div>
+        <div class="s-info">
+          <div class="s-name">Upgrade to Pro</div>
+          <div class="s-sub">Unlimited messages · All 35 agents · Memory</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
+      <div class="s-row" id="billing-portal-row" onclick="openBillingPortal()" style="display:none">
+        <div class="s-icon">💳</div>
+        <div class="s-info">
+          <div class="s-name">Manage Subscription</div>
+          <div class="s-sub">Change plan, cancel, invoices</div>
+        </div>
+        <div class="s-arrow">›</div>
+      </div>
       <div class="s-section">About</div>
       <div class="s-row" style="cursor:default">
         <div class="s-icon">🌸</div>
@@ -406,6 +528,109 @@ body{
           <div class="s-name">Bodhi App v1.0</div>
           <div class="s-sub">On-device · No cloud · No API keys</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Auth -->
+  <div class="screen" id="screen-auth">
+    <div class="screen-body">
+      <div class="auth-wrap">
+        <div class="auth-logo">🌸</div>
+        <div class="auth-title">Welcome to Bodhi</div>
+        <div class="auth-sub">Create an account to sync your plan across devices, or continue as a guest.</div>
+
+        <!-- Signed-in state (hidden by default) -->
+        <div id="auth-signed-in" style="display:none">
+          <div class="auth-user-row">
+            <div class="auth-user-avatar" id="auth-avatar">?</div>
+            <div class="auth-user-info">
+              <div class="auth-user-email" id="auth-email-display">—</div>
+              <div class="auth-user-plan" id="auth-plan-display">Free Plan</div>
+            </div>
+          </div>
+          <button class="btn-ghost" style="width:100%;margin-bottom:10px" onclick="setScreen('chat')">Continue to Chat →</button>
+          <button class="btn-ghost" style="width:100%" onclick="signOut()">Sign Out</button>
+        </div>
+
+        <!-- Sign-in/Register form -->
+        <div id="auth-form-wrap">
+          <!-- Passkey button -->
+          <button class="btn-passkey" id="passkey-btn" onclick="handlePasskey()">
+            <span>🔑</span> Continue with Passkey
+          </button>
+          <div style="font-size:.7rem;color:var(--text3);text-align:center;margin:-8px 0 10px">
+            Uses Face ID, Touch ID, or your device PIN
+          </div>
+
+          <div class="auth-divider">or use email</div>
+
+          <!-- Email + password tabs -->
+          <div class="auth-tabs">
+            <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
+            <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Create Account</button>
+          </div>
+
+          <form class="auth-form" onsubmit="handlePasswordAuth(event)" autocomplete="on">
+            <input class="fi" id="auth-email" type="email" placeholder="Email address"
+              name="email" autocomplete="email" required/>
+            <div class="pw-wrap">
+              <input class="fi" id="auth-password" type="password" placeholder="Password (min 8 chars)"
+                name="password" autocomplete="current-password" required style="padding-right:40px"/>
+              <button type="button" class="pw-eye" onclick="togglePwEye()" id="pw-eye-btn">👁️</button>
+            </div>
+            <div class="auth-err" id="auth-err"></div>
+            <button type="submit" class="auth-action-btn" id="auth-submit-btn">Sign In</button>
+          </form>
+
+          <span class="auth-skip" onclick="skipAuth()">Skip — continue as free guest</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Landing -->
+  <div class="screen" id="screen-landing">
+    <div class="screen-body">
+      <div class="landing-hero">
+        <div class="hero-badge">✨ 35 AI Agents · Built for Doers</div>
+        <h1 class="hero-title">Your Personal <span class="g">AI Swarm</span><br>Offline-First</h1>
+        <p class="hero-sub">Finance, code, law, health, social — 35 specialists in one app. Runs on your device. No cloud needed.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="dismissLanding()">Start Chatting Free →</button>
+          <button class="btn-ghost" onclick="setScreen('pricing');renderPricing()">View Plans &amp; Pricing</button>
+        </div>
+      </div>
+      <div class="features-grid">
+        <div class="feat-card"><div class="feat-icon">🤖</div><div class="feat-title">35 Specialists</div><div class="feat-desc">Finance, legal, code, health, marketing &amp; more</div></div>
+        <div class="feat-card"><div class="feat-icon">📵</div><div class="feat-title">Works Offline</div><div class="feat-desc">Your data never leaves your device</div></div>
+        <div class="feat-card"><div class="feat-icon">🧠</div><div class="feat-title">Learns You</div><div class="feat-desc">Builds memory from your conversations</div></div>
+        <div class="feat-card"><div class="feat-icon">⚡</div><div class="feat-title">Instant Responses</div><div class="feat-desc">No API latency, no throttling</div></div>
+      </div>
+      <div class="landing-cta-strip">
+        <h3>Get the native app</h3>
+        <p>Android APK &amp; Windows EXE — no app store needed</p>
+        <button class="btn-ghost" style="width:100%;margin-top:0" onclick="window.open('https://github.com/sumitkoul23/AI-Agentics-Bots/releases','_blank')">⬇️ Download for Android / Windows</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="screen" id="screen-pricing">
+    <div class="screen-body">
+      <div class="pricing-header">
+        <div class="pricing-title">Simple, Honest Pricing</div>
+        <div class="pricing-sub">Start free. Upgrade when you're ready.</div>
+        <div id="geo-tag" class="geo-tag" style="display:none">📍 Detecting your region…</div>
+      </div>
+      <div class="plan-email-wrap" id="pricing-email-section">
+        <div class="plan-email-label">Your email (for licence delivery)</div>
+        <input class="fi" id="pay-email" type="email" placeholder="you@example.com" oninput="validatePayEmail()"/>
+      </div>
+      <div class="plan-cards" id="plan-cards"></div>
+      <div style="text-align:center;font-size:.7rem;color:var(--text3);padding:0 16px 24px;line-height:1.65">
+        Secure payments via Stripe · Razorpay · Coinbase Commerce<br>Cancel anytime · No hidden fees · Instant activation
       </div>
     </div>
   </div>
@@ -421,7 +646,10 @@ body{
     <span class="ni">👥</span>Agents
   </button>
   <button class="nav-item" id="nav-training" onclick="setScreen('training');loadTraining()">
-    <span class="ni">🧠</span>Training
+    <span class="ni">🧠</span>Train
+  </button>
+  <button class="nav-item" id="nav-pricing" onclick="setScreen('pricing');renderPricing()">
+    <span class="ni">✨</span>Plans
   </button>
   <button class="nav-item" id="nav-settings" onclick="setScreen('settings')">
     <span class="ni">⚙️</span>Settings
@@ -493,6 +721,227 @@ const S = {
   sending: false,
 }
 
+// ── Plan & Payment ─────────────────────────────────────────────────────────
+const DAILY_FREE_LIMIT = 30
+
+function getPlan() {
+  const token = localStorage.getItem('bodhi-plan-token')
+  if (!token) return { plan: 'free', email: null }
+  const parts = token.split('.')
+  if (parts.length < 2) return { plan: 'free', email: null }
+  try {
+    const decoded = atob(parts[0].replace(/-/g,'+').replace(/_/g,'/'))
+    const [email, plan, expiry] = decoded.split(':')
+    if (Date.now() > parseInt(expiry)) { localStorage.removeItem('bodhi-plan-token'); return { plan: 'free', email: null } }
+    return { plan, email }
+  } catch { return { plan: 'free', email: null } }
+}
+
+function setPlanToken(token, plan, email) {
+  localStorage.setItem('bodhi-plan-token', token)
+  updatePlanUI()
+}
+
+function getDailyMsgCount() {
+  const key = 'bodhi-msgs-' + new Date().toISOString().slice(0,10)
+  return parseInt(localStorage.getItem(key) || '0')
+}
+
+function incDailyMsgCount() {
+  const key = 'bodhi-msgs-' + new Date().toISOString().slice(0,10)
+  const n = getDailyMsgCount() + 1
+  localStorage.setItem(key, String(n))
+  return n
+}
+
+function checkFreeLimit() {
+  const { plan } = getPlan()
+  if (plan !== 'free') return true
+  if (getDailyMsgCount() >= DAILY_FREE_LIMIT) {
+    toast('Daily free limit reached — upgrading to Pro for unlimited messages!')
+    setTimeout(() => { setScreen('pricing'); renderPricing() }, 1500)
+    return false
+  }
+  return true
+}
+
+function updatePlanUI() {
+  const { plan, email } = getPlan()
+  const nameEl = document.getElementById('plan-status-name')
+  const subEl = document.getElementById('plan-status-sub')
+  const portalEl = document.getElementById('billing-portal-row')
+  if (!nameEl) return
+  if (plan === 'pro') {
+    nameEl.textContent = 'Pro Plan'
+    subEl.textContent = (email || '') + ' · Unlimited · All 35 agents'
+  } else if (plan === 'team') {
+    nameEl.textContent = 'Team Plan'
+    subEl.textContent = (email || '') + ' · Pro + API + 5 seats'
+  } else {
+    nameEl.textContent = 'Free Plan'
+    subEl.textContent = getDailyMsgCount() + '/' + DAILY_FREE_LIMIT + ' messages today · 10 agents'
+  }
+  if (portalEl) portalEl.style.display = (plan !== 'free' && email) ? 'flex' : 'none'
+}
+
+// ── Geo + Pricing ──────────────────────────────────────────────────────────
+let geoData = null
+async function fetchGeo() {
+  try { const r = await fetch('/api/geo'); geoData = await r.json() }
+  catch { geoData = { country:'US', isIndia:false, currency:'USD', plans:{} } }
+}
+
+async function renderPricing() {
+  if (!geoData) await fetchGeo()
+  const isIndia = geoData.isIndia
+  const country = geoData.country || 'US'
+  const geoTagEl = document.getElementById('geo-tag')
+  if (geoTagEl) {
+    geoTagEl.textContent = isIndia ? '🇮🇳 India — UPI & Cards available' : ('🌍 ' + country + ' — Cards & Crypto available')
+    geoTagEl.style.display = 'inline-flex'
+  }
+  const PLANS = [
+    { id:'free', name:'Free', tagline:'Try Bodhi risk-free', usd:'$0', inr:'₹0', per:'forever', popular:false,
+      features:['30 messages per day','10 agents','1 device','Chat history','Voice input'],
+      locked:['Unlimited messages','All 35 agents','Training memory','API access'] },
+    { id:'pro', name:'Pro', tagline:'For daily power users', usd:'$9.99', inr:'₹799', per:'/month', popular:true,
+      features:['Unlimited messages','All 35 agents','Training memory','Priority support'],
+      locked:['API access','5 seats'] },
+    { id:'team', name:'Team', tagline:'For founders & teams', usd:'$49', inr:'₹3,999', per:'/month', popular:false,
+      features:['Everything in Pro','API access','5 seats','Custom agent config'],
+      locked:[] },
+  ]
+  const { plan: curPlan } = getPlan()
+  const container = document.getElementById('plan-cards')
+  container.innerHTML = ''
+  PLANS.forEach(p => {
+    const priceAmt = isIndia ? p.inr : p.usd
+    const altAmt = isIndia ? p.usd : p.inr
+    const feats = [...p.features.map(f=>`<li>${f}</li>`),...p.locked.map(f=>`<li class="dim">${f}</li>`)].join('')
+    let cta = ''
+    if (p.id === 'free') {
+      cta = `<button class="pay-btn current">✓ Current Plan</button>`
+    } else if (curPlan === p.id) {
+      cta = `<button class="pay-btn current">✓ Current Plan</button>`
+    } else {
+      if (isIndia) {
+        cta = `<button class="pay-btn razorpay" id="rp-${p.id}" onclick="startRazorpay('${p.id}')">💳 Pay with UPI / Card</button>
+               <div class="pay-divider">or</div>
+               <button class="pay-btn coinbase" id="cb-${p.id}" onclick="startCoinbase('${p.id}')">🪙 Crypto (USDC)</button>`
+      } else {
+        cta = `<button class="pay-btn stripe" id="stripe-${p.id}" onclick="startStripe('${p.id}')">💳 Pay with Card</button>
+               <div class="pay-divider">or</div>
+               <button class="pay-btn coinbase" id="cb-${p.id}" onclick="startCoinbase('${p.id}')">🪙 Crypto (USDC)</button>`
+      }
+    }
+    const card = document.createElement('div')
+    card.className = 'plan-card' + (p.popular ? ' popular' : '')
+    card.innerHTML = `<div class="plan-top"><div class="plan-name">${p.name}</div><div class="plan-tagline">${p.tagline}</div>
+      <div class="plan-price"><span class="amt">${priceAmt}</span><span class="per">${p.per}</span>${p.per!=='forever'?`<span class="alt">${altAmt}/mo</span>`:''}</div></div>
+      <ul class="plan-features">${feats}</ul>
+      <div class="plan-cta">${cta}</div>`
+    container.appendChild(card)
+  })
+  validatePayEmail()
+}
+
+function validatePayEmail() {
+  const v = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('pay-email')?.value || '')
+  document.querySelectorAll('.pay-btn.stripe,.pay-btn.razorpay,.pay-btn.coinbase').forEach(b => { b.disabled = !v })
+  return v
+}
+
+function getPayEmail() {
+  const email = (document.getElementById('pay-email')?.value || '').trim()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter your email first'); document.getElementById('pay-email')?.focus(); return null }
+  return email
+}
+
+async function startStripe(plan) {
+  const email = getPayEmail(); if (!email) return
+  const btn = document.getElementById('stripe-'+plan)
+  if (btn) { btn.disabled = true; btn.textContent = 'Redirecting…' }
+  try {
+    const r = await fetch('/api/checkout', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({plan, method:'stripe', email}) })
+    const d = await r.json()
+    if (d.url) { window.location.href = d.url } else throw new Error(d || 'Checkout failed')
+  } catch(e) { toast('Payment error: ' + e.message); if (btn) { btn.disabled = false; btn.textContent = '💳 Pay with Card' } }
+}
+
+async function startCoinbase(plan) {
+  const email = getPayEmail(); if (!email) return
+  const btn = document.getElementById('cb-'+plan)
+  if (btn) { btn.disabled = true; btn.textContent = 'Redirecting…' }
+  try {
+    const r = await fetch('/api/checkout', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({plan, method:'coinbase', email}) })
+    const d = await r.json()
+    if (d.url) { window.location.href = d.url } else throw new Error(d || 'Checkout failed')
+  } catch(e) { toast('Payment error: ' + e.message); if (btn) { btn.disabled = false; btn.textContent = '🪙 Crypto (USDC)' } }
+}
+
+async function startRazorpay(plan) {
+  const email = getPayEmail(); if (!email) return
+  const btn = document.getElementById('rp-'+plan)
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading…' }
+  try {
+    const r = await fetch('/api/checkout', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({plan, method:'razorpay', email}) })
+    const d = await r.json()
+    if (!d.orderId) throw new Error('Order creation failed')
+    if (!window.Razorpay) {
+      await new Promise((res, rej) => { const s = document.createElement('script'); s.src='https://checkout.razorpay.com/v1/checkout.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s) })
+    }
+    if (btn) { btn.disabled = false; btn.textContent = '💳 Pay with UPI / Card' }
+    new window.Razorpay({
+      key: d.keyId, amount: d.amount, currency:'INR', order_id: d.orderId,
+      name:'Bodhi AI', description: plan.charAt(0).toUpperCase()+plan.slice(1)+' Plan',
+      image:'/icon.svg', prefill:{email}, theme:{color:'#8b5cf6'},
+      handler: async function(resp) {
+        toast('Verifying payment…')
+        try {
+          const vr = await fetch('/api/verify-payment', { method:'POST', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({method:'razorpay', razorpayOrderId:resp.razorpay_order_id, razorpayPaymentId:resp.razorpay_payment_id, razorpaySignature:resp.razorpay_signature, plan, email}) })
+          const vd = await vr.json()
+          if (vd.token) { setPlanToken(vd.token, vd.plan, vd.email); toast('🎉 Welcome to Bodhi '+plan.charAt(0).toUpperCase()+plan.slice(1)+'!'); setTimeout(()=>setScreen('chat'),1200) }
+        } catch { toast('Verification error — contact support') }
+      },
+      modal:{ondismiss:()=>{ if(btn){btn.disabled=false} }}
+    }).open()
+  } catch(e) { toast('Payment error: ' + e.message); if (btn) { btn.disabled = false; btn.textContent = '💳 Pay with UPI / Card' } }
+}
+
+async function openBillingPortal() {
+  const { email } = getPlan(); if (!email) { toast('No subscription found'); return }
+  try {
+    const r = await fetch('/api/portal', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email}) })
+    const d = await r.json()
+    if (d.url) { window.location.href = d.url } else toast('No subscription found for this email')
+  } catch { toast('Portal error') }
+}
+
+async function handlePaymentReturn() {
+  const params = new URLSearchParams(window.location.search)
+  const sessionId = params.get('session_id')
+  const plan = params.get('plan')
+  const method = params.get('method') || 'stripe'
+  if (sessionId && plan) {
+    toast('Verifying payment…')
+    try {
+      const r = await fetch('/api/verify-payment', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({method:'stripe', sessionId, plan}) })
+      const d = await r.json()
+      if (d.token) { setPlanToken(d.token, d.plan, d.email); toast('🎉 Welcome to Bodhi '+plan.charAt(0).toUpperCase()+plan.slice(1)+'!'); history.replaceState({},'','/'); setTimeout(()=>setScreen('chat'),1200) }
+    } catch { toast('Verification failed') }
+    return
+  }
+  if (method === 'coinbase' && plan) { toast('⏳ Crypto payment pending confirmation'); history.replaceState({},'','/'); return }
+  const screen = params.get('screen')
+  if (screen) { history.replaceState({},'','/'); setScreen(screen); if (screen==='pricing') renderPricing() }
+}
+
+function dismissLanding() {
+  localStorage.setItem('bodhi-visited','1')
+  setScreen('chat')
+}
+
 // Legacy agent ID map — renames from old installs
 const AGENT_REMAP = { priya: 'bodhi' }
 
@@ -523,20 +972,29 @@ function init() {
   buildSheetBody()
   renderMessages()
   setActiveAgent(S.agent, false)
+  updatePlanUI()
 
   document.getElementById('hub-url').value = S.hubURL
   document.getElementById('ci').addEventListener('input', () => {
     document.getElementById('send-btn').disabled = !document.getElementById('ci').value.trim()
   })
 
-  // Scroll to bottom when keyboard opens on mobile
   window.visualViewport?.addEventListener('resize', onViewportResize)
-
-  // Msgs scroll listener
   const msgs = document.getElementById('msgs')
   msgs.addEventListener('scroll', onMsgsScroll)
 
-  // If no messages yet, add a welcome message
+  // Handle Stripe/Razorpay/Coinbase return URLs
+  handlePaymentReturn()
+
+  updateAuthScreen()
+
+  // Show auth screen on first ever visit
+  const firstVisit = !localStorage.getItem('bodhi-visited')
+  if (firstVisit && !window.location.search) {
+    setScreen('auth')
+    return
+  }
+
   if (S.messages.length === 0) {
     pushMsg('bot', `Namaste! I'm **Bodhi** 🌸\n\nI'm your on-device AI assistant — running entirely on your device with no internet required.\n\nTap **👥 Agents** to choose a specialist, or just ask me anything!`)
   } else {
@@ -669,10 +1127,13 @@ async function send() {
   const ci = document.getElementById('ci')
   const text = ci.value.trim()
   if (!text || S.sending) return
+  if (!checkFreeLimit()) return
   ci.value = ''
   ci.style.height = ''
   document.getElementById('send-btn').disabled = true
   S.sending = true
+  incDailyMsgCount()
+  updatePlanUI()
 
   pushMsg('user', text)
   showTyping(true)
@@ -994,6 +1455,168 @@ function installPWA() {
 }
 function dismissBanner() {
   document.getElementById('install-banner').classList.remove('show')
+}
+
+// ── Auth ────────────────────────────────────────────────────────────────────
+let _authTab = 'signin'
+
+function switchAuthTab(tab) {
+  _authTab = tab
+  document.getElementById('tab-signin').classList.toggle('active', tab === 'signin')
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register')
+  const submitBtn = document.getElementById('auth-submit-btn')
+  if (submitBtn) submitBtn.textContent = tab === 'signin' ? 'Sign In' : 'Create Account'
+  const pw = document.getElementById('auth-password')
+  if (pw) pw.autocomplete = tab === 'signin' ? 'current-password' : 'new-password'
+  document.getElementById('auth-err').textContent = ''
+}
+
+function togglePwEye() {
+  const pw = document.getElementById('auth-password')
+  const btn = document.getElementById('pw-eye-btn')
+  if (pw.type === 'password') { pw.type = 'text'; btn.textContent = '🙈' }
+  else { pw.type = 'password'; btn.textContent = '👁️' }
+}
+
+function authError(msg) {
+  const el = document.getElementById('auth-err')
+  if (el) el.textContent = msg
+}
+
+function updateAuthScreen() {
+  const { plan, email } = getPlan()
+  const isSignedIn = !!email
+  document.getElementById('auth-signed-in').style.display = isSignedIn ? 'block' : 'none'
+  document.getElementById('auth-form-wrap').style.display = isSignedIn ? 'none' : 'block'
+  if (isSignedIn) {
+    const avatarEl = document.getElementById('auth-avatar')
+    if (avatarEl) avatarEl.textContent = email[0].toUpperCase()
+    const emailEl = document.getElementById('auth-email-display')
+    if (emailEl) emailEl.textContent = email
+    const planEl = document.getElementById('auth-plan-display')
+    if (planEl) planEl.textContent = plan === 'pro' ? 'Pro Plan' : plan === 'team' ? 'Team Plan' : 'Free Plan'
+  }
+  // Also update settings row
+  const settingsName = document.getElementById('settings-account-name')
+  const settingsSub = document.getElementById('settings-account-sub')
+  if (settingsName) {
+    if (isSignedIn) {
+      settingsName.textContent = email
+      if (settingsSub) settingsSub.textContent = plan === 'free' ? 'Free Plan · Click to upgrade' : plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan active'
+    } else {
+      settingsName.textContent = 'Sign In / Create Account'
+      if (settingsSub) settingsSub.textContent = 'Sync plan, manage passkeys'
+    }
+  }
+}
+
+async function handlePasskey() {
+  const email = (document.getElementById('auth-email')?.value || '').trim()
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    authError('Enter your email first, then tap Continue with Passkey')
+    document.getElementById('auth-email')?.focus()
+    return
+  }
+  const btn = document.getElementById('passkey-btn')
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span> Preparing passkey…' }
+  authError('')
+  try {
+    // Wait for SimpleWebAuthn module to load
+    let attempts = 0
+    while (!window._swReg && attempts++ < 30) await new Promise(r => setTimeout(r, 100))
+    if (!window._swReg) throw new Error('Passkey library not loaded — try refreshing')
+
+    if (_authTab === 'register') {
+      // Registration flow
+      const optRes = await fetch('/api/auth/passkey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'register-start', email })
+      })
+      if (!optRes.ok) throw new Error(await optRes.text())
+      const optionsJSON = await optRes.json()
+
+      const credential = await window._swReg({ optionsJSON })
+
+      const verRes = await fetch('/api/auth/passkey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'register-finish', email, credential })
+      })
+      if (!verRes.ok) throw new Error(await verRes.text())
+      const d = await verRes.json()
+      setPlanToken(d.token, d.plan, d.email)
+      toast('🎉 Passkey created & signed in!')
+      updateAuthScreen()
+      setTimeout(() => setScreen('chat'), 900)
+    } else {
+      // Authentication flow
+      const optRes = await fetch('/api/auth/passkey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'login-start', email })
+      })
+      if (!optRes.ok) throw new Error(await optRes.text())
+      const optionsJSON = await optRes.json()
+
+      const credential = await window._swAuth({ optionsJSON })
+
+      const verRes = await fetch('/api/auth/passkey', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'login-finish', email, credential })
+      })
+      if (!verRes.ok) throw new Error(await verRes.text())
+      const d = await verRes.json()
+      setPlanToken(d.token, d.plan, d.email)
+      toast('🔑 Signed in with passkey!')
+      updateAuthScreen()
+      setTimeout(() => setScreen('chat'), 900)
+    }
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
+      authError('Passkey prompt dismissed. Try again or use password.')
+    } else {
+      authError(err.message || 'Passkey error')
+    }
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span>🔑</span> Continue with Passkey' }
+  }
+}
+
+async function handlePasswordAuth(e) {
+  e.preventDefault()
+  const email = document.getElementById('auth-email').value.trim()
+  const password = document.getElementById('auth-password').value
+  const btn = document.getElementById('auth-submit-btn')
+  authError('')
+  if (btn) { btn.disabled = true; btn.textContent = 'Please wait…' }
+  try {
+    const res = await fetch('/api/auth/password', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: _authTab === 'signin' ? 'login' : 'register', email, password })
+    })
+    const text = await res.text()
+    if (!res.ok) throw new Error(text)
+    const d = JSON.parse(text)
+    setPlanToken(d.token, d.plan, d.email)
+    toast(_authTab === 'signin' ? '✓ Signed in!' : '🎉 Account created!')
+    updateAuthScreen()
+    setTimeout(() => setScreen('chat'), 800)
+  } catch (err) {
+    authError(err.message || 'Auth error')
+    if (btn) { btn.disabled = false; btn.textContent = _authTab === 'signin' ? 'Sign In' : 'Create Account' }
+  }
+}
+
+function signOut() {
+  if (!confirm('Sign out? Your local data stays on this device.')) return
+  localStorage.removeItem('bodhi-plan-token')
+  updatePlanUI()
+  updateAuthScreen()
+  toast('Signed out')
+  setScreen('chat')
+}
+
+function skipAuth() {
+  localStorage.setItem('bodhi-visited', '1')
+  setScreen('chat')
+  if (S.messages.length === 0) pushMsg('bot', `Namaste! I'm **Bodhi** 🌸\n\nRunning as a free guest — 30 messages/day. Tap **✨ Plans** to upgrade anytime.`)
 }
 
 // ── Service Worker ─────────────────────────────────────────────────────────

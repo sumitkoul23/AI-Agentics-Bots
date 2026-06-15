@@ -33,6 +33,46 @@
   to = "/.netlify/functions/events"
   status = 200
 
+[[redirects]]
+  from = "/api/geo"
+  to = "/.netlify/functions/geo"
+  status = 200
+
+[[redirects]]
+  from = "/api/checkout"
+  to = "/.netlify/functions/checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify-payment"
+  to = "/.netlify/functions/verify-payment"
+  status = 200
+
+[[redirects]]
+  from = "/api/webhook/stripe"
+  to = "/.netlify/functions/webhook-stripe"
+  status = 200
+
+[[redirects]]
+  from = "/api/webhook/razorpay"
+  to = "/.netlify/functions/webhook-razorpay"
+  status = 200
+
+[[redirects]]
+  from = "/api/portal"
+  to = "/.netlify/functions/portal"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/passkey"
+  to = "/.netlify/functions/auth-passkey"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/password"
+  to = "/.netlify/functions/auth-password"
+  status = 200
+
 # SPA fallback — all other paths serve index.html
 [[redirects]]
   from = "/*"
