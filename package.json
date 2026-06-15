@@ -1,0 +1,9 @@
+{
+  "name": "ai-agentics-bots",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "stripe": "^17.0.0",
+    "razorpay": "^2.9.6"
+  }
+}
