@@ -320,3 +320,20 @@ func supplyChainAgent() *Agent {
 		Handle: handleSupplyChain,
 	}
 }
+
+func mediaFinderAgent() *Agent {
+	return &Agent{
+		ID:   "media-finder",
+		Name: "Media Finder",
+		Desc: "Find videos and pictures of a person by name, visual description (demo), and location",
+		Keywords: []string{
+			"find video", "find videos", "find picture", "find pictures", "find photo", "find photos",
+			"find image", "find images", "find media", "search for video", "search for photo",
+			"videos of", "pictures of", "photos of", "images of", "footage of",
+			"reverse image search", "find footage", "look for video", "look for photo",
+			"locate video", "locate photo", "media of", "any videos or pictures",
+			"face search", "person search", "find any video", "find any picture",
+		},
+		Handle: handleMediaFinder,
+	}
+}

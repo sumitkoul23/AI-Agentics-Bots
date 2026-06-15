@@ -88,6 +88,7 @@ func agents(mem *Memory) []*Agent {
 		consultingAgent(),
 		medicalAgent(),
 		supplyChainAgent(),
+		mediaFinderAgent(),
 		bodhiAgent(),
 	}
 }
