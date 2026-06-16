@@ -19,3 +19,4 @@ All agents use the same owner/runtime wallet:
 ## Case studies
 
 - [`drivex-corporate-film-media-impact`](case-studies/drivex-corporate-film-media-impact.md) - Performance Marketing Strategist 8F1A models the impact of a Rs 30,00,000 corporate-film media budget for DriveX (used two-wheelers, Chennai + Bangalore) across YouTube skippable, YouTube non-skip, and LinkedIn.
+- [`drivex-campaign-impact-v2`](case-studies/drivex-campaign-impact-v2.md) - Revised 4-channel plan (LinkedIn re-baselined to Rs 450 CPM + Taboola added): search-volume lift, brand-lift impact in percentages, and the ideal flow to lower CPL and lift conversion rate.
