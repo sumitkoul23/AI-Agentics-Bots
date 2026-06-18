@@ -1,0 +1,27 @@
+{
+  "name": "SAPSageAI",
+  "agent_id": "sap-sage-ai-sap001",
+  "short_description": "Autonomous NLP/AI agent specialising in SAP ECC. Persistent memory, daily self-training, a self-awareness protocol, and a measurable confidence score.",
+  "description": "## SAP Sage AI — Autonomous SAP ECC Specialist\n\nSAP Sage AI is a self-improving agent focused on **SAP ECC (ERP Central Component)**. It understands the ECC model (enterprise structure, modules, master/transaction data, key T-codes and tables), answers questions accurately, and **gets better every day**.\n\n### Capabilities\n- **Deep SAP ECC model knowledge** — modules (FI, CO, SD, MM, PP, QM, PM, WM, LE, HCM, PS), org structure, end-to-end processes (O2C, P2P, R2R), key T-codes and tables.\n- **Persistent memory** — it remembers everything it learns to a durable brain (`memory.json`); teach it facts with `remember`.\n- **Daily learning / training** — a systemd timer runs a training cycle every day: self-test, ingest new decks/notes (via Deck Insight AI), recompute confidence, and log growth.\n- **Self-awareness protocol** — an honest introspection report: identity, knowledge inventory, confidence (and why), and explicit known gaps.\n- **Confidence score** — deterministic, not a vibe: 45% knowledge coverage + 40% self-test pass-rate + 15% training maturity.\n\n### Model strategy\nLocal-first: Ollama → Groq → Gemini → Claude → offline knowledge fallback (always answers).\n\n### Usage\n```bash\nnode main.js status                                  # self-awareness + confidence\nnode main.js ask \"How do I view a customer in SAP?\"  # accurate answer + confidence\nnode main.js train                                    # one learning cycle\nnode main.js remember \"Plant for Mumbai DC is 2110\"  # memorise a fact\n```\n\nSeeded from the SAP Customer Creation (XD01) SOP analysed by Deck Insight AI.",
+  "agent_type": "nlp",
+  "categories": [
+    "AI Assistant",
+    "SAP",
+    "ERP",
+    "Enterprise",
+    "Autonomous Agent",
+    "Self-Learning",
+    "NLP"
+  ],
+  "capabilities": [
+    {"name": "sap_ecc_expertise", "description": "Knows the SAP ECC model: enterprise structure, modules, master/transaction data, key T-codes and tables, and end-to-end processes."},
+    {"name": "persistent_memory", "description": "Durable JSON brain that memorises learned facts, ingested documents and training history across runs."},
+    {"name": "daily_self_training", "description": "Scheduled daily training cycle: self-test, ingest new material, recompute and log confidence."},
+    {"name": "self_awareness_protocol", "description": "Introspective self-report of identity, knowledge inventory, confidence with rationale, and explicit known gaps."},
+    {"name": "confidence_scoring", "description": "Deterministic confidence from knowledge coverage, self-test pass-rate and training maturity, with per-answer confidence."},
+    {"name": "accurate_qna", "description": "Retrieval-grounded answers to SAP questions, with an LLM when available and an accurate offline knowledge fallback."}
+  ],
+  "entrypoint": "main.js",
+  "runtime": "node>=18",
+  "pricing": "Local & free by default. 0.5 USDC per advanced Q&A when premium models are used."
+}

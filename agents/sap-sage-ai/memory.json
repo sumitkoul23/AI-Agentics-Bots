@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "name": "SAP Sage AI",
+    "specialisation": "SAP ECC (ERP Central Component)",
+    "born": "2026-06-18T16:50:45.230Z",
+    "version": 1
+  },
+  "learnedFacts": [],
+  "ingestedDocuments": [],
+  "training": {
+    "runs": 1,
+    "lastTrained": "2026-06-18T16:50:45.264Z",
+    "history": [
+      {
+        "ts": "2026-06-18T16:50:45.264Z",
+        "selfTestPassRate": 100,
+        "confidence": 74.5,
+        "ingested": []
+      }
+    ]
+  },
+  "confidenceHistory": [
+    {
+      "ts": "2026-06-18T16:50:45.264Z",
+      "overall": 74.5
+    }
+  ]
+}

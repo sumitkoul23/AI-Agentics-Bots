@@ -1,0 +1,17 @@
+{
+  "name": "sap-sage-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Autonomous NLP/AI agent specialising in SAP ECC — persistent memory, daily learning, self-awareness protocol, and confidence scoring.",
+  "bin": {
+    "sap-sage": "main.js"
+  },
+  "scripts": {
+    "status": "node main.js status",
+    "train": "node main.js train"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "topic": "SAP ECC Transaction Codes (T-Codes)",
+  "note": "A T-Code is a shortcut entered in the SAP command field to jump straight to a transaction.",
+  "tcodes": [
+    {"code": "XD01", "text": "Create Customer (Centrally)", "module": "SD/FI", "scope": "All views: General, Company Code, Sales Area"},
+    {"code": "XD02", "text": "Change Customer (Centrally)", "module": "SD/FI"},
+    {"code": "XD03", "text": "Display / View Customer (Centrally)", "module": "SD/FI", "scope": "Read-only mirror of XD01"},
+    {"code": "VD01", "text": "Create Customer (Sales area)", "module": "SD"},
+    {"code": "VD03", "text": "Display Customer (Sales area only)", "module": "SD"},
+    {"code": "FD01", "text": "Create Customer (Company code/Accounting)", "module": "FI"},
+    {"code": "FD03", "text": "Display Customer (Company code only)", "module": "FI"},
+    {"code": "BP", "text": "Business Partner (create/change/display)", "module": "S/4HANA", "note": "Single transaction that replaces XD/VD/FD and XK/MK/FK in S/4HANA"},
+    {"code": "XK01", "text": "Create Vendor (Centrally)", "module": "MM/FI"},
+    {"code": "XK03", "text": "Display Vendor (Centrally)", "module": "MM/FI"},
+    {"code": "MM01", "text": "Create Material", "module": "MM"},
+    {"code": "MM03", "text": "Display Material", "module": "MM"},
+    {"code": "FS00", "text": "Create/Display G/L Account (Centrally)", "module": "FI"},
+    {"code": "VA01", "text": "Create Sales Order", "module": "SD"},
+    {"code": "VA03", "text": "Display Sales Order", "module": "SD"},
+    {"code": "VL01N", "text": "Create Outbound Delivery", "module": "LE/SD"},
+    {"code": "VF01", "text": "Create Billing Document", "module": "SD"},
+    {"code": "ME21N", "text": "Create Purchase Order", "module": "MM"},
+    {"code": "MIGO", "text": "Goods Movement / Goods Receipt", "module": "MM"},
+    {"code": "MIRO", "text": "Enter Incoming Invoice (Invoice Verification)", "module": "MM/FI"},
+    {"code": "FB50", "text": "Post G/L Document", "module": "FI"},
+    {"code": "F-28", "text": "Post Incoming Payment", "module": "FI"},
+    {"code": "SPRO", "text": "Customizing / IMG (configuration)", "module": "Basis/Config"},
+    {"code": "SE16N", "text": "General Table Display", "module": "Basis"},
+    {"code": "SE11", "text": "ABAP Dictionary (table/structure definitions)", "module": "Basis"}
+  ]
+}

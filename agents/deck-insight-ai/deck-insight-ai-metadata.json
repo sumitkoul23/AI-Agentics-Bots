@@ -1,0 +1,38 @@
+{
+  "name": "DeckInsightAI",
+  "agent_id": "deck-insight-ai-d3ck01",
+  "short_description": "NLP/AI agent that reads a Keynote/PowerPoint deck, understands its content, and summarises it in the voice of a Head of Department (or executive).",
+  "description": "## Deck Insight AI — Presentation Analyst\n\nDeck Insight AI ingests a presentation (`.key` Apple Keynote or `.pptx` PowerPoint), extracts the text from every slide with a zero-dependency parser, and uses an LLM to produce a structured, audience-tuned briefing.\n\n### What it does\n- **Parses decks natively** — reads Keynote IWA (Snappy-compressed protobuf) and PowerPoint Open XML using only Node built-ins (no cloud upload required to extract text).\n- **Understands the content** — identifies the process/topic, ordered steps, critical configuration values, and compliance-sensitive fields.\n- **Summarises as a persona** — default **Head of Department**: executive summary, what the process does, key steps, critical data & configuration, risks & compliance watch-outs, and recommendations. An `exec` (C-suite) persona is also built in.\n\n### Model strategy (local-first, like the rest of the swarm)\nOllama (local, free) → Groq → Gemini → Claude → OpenAI → offline extractive fallback. It always produces output, even with no model and no network.\n\n### Example\nRun against an SAP `Customer Creation` (T-Code XD01) SOP deck, it returns a Head-of-Department briefing that surfaces the fixed values (Account Group Z002, Company Code 2100, Reconciliation Account 11000000), the regulated GST / Drug-License fields, and the Sold-to / Ship-to partner codes — plus the controls a department head should put in place.\n\n### Usage\n```bash\nnode main.js deck.key                       # Head of Department briefing\nnode main.js deck.pptx --persona exec        # C-suite summary\nnode main.js deck.key --out brief.md --json  # save + machine-readable\n```",
+  "agent_type": "nlp",
+  "categories": [
+    "AI Assistant",
+    "Analysis",
+    "NLP",
+    "Productivity",
+    "Document Intelligence",
+    "Summarization"
+  ],
+  "capabilities": [
+    {
+      "name": "deck_parsing",
+      "description": "Extracts slide text from Apple Keynote (.key) and PowerPoint (.pptx) files using a zero-dependency reader (custom ZIP + Snappy + Open XML)."
+    },
+    {
+      "name": "content_understanding",
+      "description": "Identifies the topic, ordered process steps, critical configuration values, and compliance-sensitive fields within a presentation."
+    },
+    {
+      "name": "persona_summarization",
+      "description": "Writes a structured briefing in a chosen voice — Head of Department (default) or Executive — grounded strictly in the deck's content."
+    },
+    {
+      "name": "smart_model_routing",
+      "description": "Routes to the best available model (Ollama, Groq, Gemini, Claude, OpenAI) and degrades to a deterministic offline summary when none are reachable."
+    }
+  ],
+  "inputs": ["presentation file (.key or .pptx)"],
+  "outputs": ["Markdown briefing", "JSON envelope (summary + extracted slides)"],
+  "entrypoint": "main.js",
+  "runtime": "node>=18",
+  "pricing": "First summary free. 0.5 USDC per deck summary."
+}

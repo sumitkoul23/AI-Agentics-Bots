@@ -1,0 +1,17 @@
+{
+  "name": "deck-insight-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NLP/AI agent that analyses a Keynote/PowerPoint deck and summarises it as a Head of Department.",
+  "bin": {
+    "deck-insight": "main.js"
+  },
+  "scripts": {
+    "start": "node main.js",
+    "help": "node main.js --help"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
