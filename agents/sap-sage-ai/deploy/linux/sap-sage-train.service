@@ -1,0 +1,14 @@
+[Unit]
+Description=SAP Sage AI — daily learning/training cycle
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=teneo
+WorkingDirectory=/opt/sap-sage-ai
+EnvironmentFile=-/opt/sap-sage-ai/.env
+ExecStart=/opt/sap-sage-ai/deploy/linux/sap-sage-train.sh
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sap-sage-ai

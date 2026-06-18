@@ -1,0 +1,17 @@
+{
+  "topic": "SAP ECC self-test Q&A (used to measure and grow confidence)",
+  "qa": [
+    {"q": "What T-code is used to view or display a customer centrally in SAP ECC?", "a": "XD03 — Display Customer (Centrally). It is the read-only mirror of XD01.", "keywords": ["view", "display", "customer", "xd03"]},
+    {"q": "What T-code creates a customer centrally?", "a": "XD01 — Create Customer (Centrally), covering General, Company Code and Sales Area views.", "keywords": ["create", "customer", "xd01"]},
+    {"q": "What is the Sales Area in SD?", "a": "A Sales Area is the combination of Sales Organization + Distribution Channel + Division.", "keywords": ["sales area", "distribution channel", "division"]},
+    {"q": "Which table stores customer general data?", "a": "KNA1 stores customer master general data; KNB1 company-code data; KNVV sales-area data; KNVP partner functions.", "keywords": ["table", "kna1", "customer", "general"]},
+    {"q": "What is a Company Code?", "a": "The smallest organisational unit in FI for which a complete set of legal financial statements can be drawn up (example in scope: 2100).", "keywords": ["company code", "fi", "legal"]},
+    {"q": "What is the Order-to-Cash process?", "a": "Customer master → Sales Order (VA01) → Delivery (VL01N) → Goods Issue → Billing (VF01) → AR posting → Incoming Payment (F-28).", "keywords": ["order to cash", "otc", "va01", "vf01"]},
+    {"q": "What is the Procure-to-Pay process?", "a": "Material & Vendor master → Purchase Order (ME21N) → Goods Receipt (MIGO) → Invoice Verification (MIRO) → Outgoing Payment (F-53).", "keywords": ["procure to pay", "ptp", "me21n", "migo", "miro"]},
+    {"q": "What is the successor of SAP ECC?", "a": "SAP S/4HANA, which runs on the HANA in-memory database and uses the Business Partner (BP) for customers and vendors.", "keywords": ["s/4hana", "successor", "business partner", "bp"]},
+    {"q": "What is a Reconciliation Account?", "a": "A G/L account that links a sub-ledger (e.g. customer AR) to the general ledger; in scope it is fixed at 11000000.", "keywords": ["reconciliation account", "11000000", "gl"]},
+    {"q": "What are the standard partner functions in SD?", "a": "AG = Sold-to party, WE = Ship-to party, RE = Bill-to party, RG = Payer.", "keywords": ["partner functions", "sold-to", "ship-to", "bill-to", "payer"]},
+    {"q": "What is the difference between master data and transaction data?", "a": "Master data is long-living reference data (customer, vendor, material) reused across documents; transaction data is the business documents (orders, deliveries, invoices) that reference it.", "keywords": ["master data", "transaction data"]},
+    {"q": "What T-code opens SAP configuration (IMG)?", "a": "SPRO opens the Implementation Guide (IMG) for customizing/configuration.", "keywords": ["spro", "img", "configuration", "customizing"]}
+  ]
+}

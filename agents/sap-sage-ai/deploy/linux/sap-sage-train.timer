@@ -1,0 +1,11 @@
+[Unit]
+Description=Run SAP Sage AI training every day
+
+[Timer]
+# Every day at 02:00, plus catch-up if the machine was off.
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

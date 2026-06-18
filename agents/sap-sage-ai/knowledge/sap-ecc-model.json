@@ -1,0 +1,45 @@
+{
+  "topic": "SAP ECC Model",
+  "summary": "SAP ECC (ERP Central Component) is SAP's core on-premise ERP — the R/3 successor and predecessor to SAP S/4HANA. It runs application modules on the SAP NetWeaver (ABAP) stack over a relational database. Business content is organised into an enterprise (organisational) structure, master data, transaction data, and configuration (IMG).",
+  "successor": "SAP S/4HANA (runs on the in-memory HANA database; consolidates customer & vendor masters into the Business Partner, transaction BP).",
+  "dataCategories": [
+    {"type": "Configuration / Customizing", "where": "IMG via T-Code SPRO", "note": "Defines org structure, account groups, number ranges, pricing, etc."},
+    {"type": "Master data", "note": "Long-living reference data: customer, vendor, material, GL accounts. Created once, reused across documents."},
+    {"type": "Transaction data", "note": "Business documents: sales orders, deliveries, billing, purchase orders, goods movements, accounting documents."}
+  ],
+  "enterpriseStructure": [
+    {"unit": "Client", "module": "Cross", "desc": "Highest level; an independent dataset (e.g. 100). Master/transaction data is client-specific."},
+    {"unit": "Company Code", "module": "FI", "desc": "Smallest unit for which a complete set of legal financial statements is produced. Example in scope: 2100."},
+    {"unit": "Controlling Area", "module": "CO", "desc": "Org unit for cost accounting; can span multiple company codes."},
+    {"unit": "Business Area", "module": "FI", "desc": "Optional unit for internal segment reporting across company codes."},
+    {"unit": "Credit Control Area", "module": "FI/SD", "desc": "Specifies and controls customer credit limits."},
+    {"unit": "Sales Organization", "module": "SD", "desc": "Responsible for selling and distributing goods/services. Example in scope: Z210."},
+    {"unit": "Distribution Channel", "module": "SD", "desc": "Means by which products reach customers (e.g. wholesale, retail)."},
+    {"unit": "Division", "module": "SD", "desc": "Product line grouping."},
+    {"unit": "Sales Area", "module": "SD", "desc": "Combination of Sales Organization + Distribution Channel + Division. The key that ties customer sales data together."},
+    {"unit": "Sales Office / Sales Group", "module": "SD", "desc": "Geographic / responsibility subdivisions of a sales area."},
+    {"unit": "Plant", "module": "MM/PP/SD", "desc": "Manufacturing or distribution location; central org unit in logistics."},
+    {"unit": "Storage Location", "module": "MM", "desc": "Subdivision of a plant where stock is physically kept."},
+    {"unit": "Purchasing Organization / Group", "module": "MM", "desc": "Procures materials/services and negotiates with vendors."},
+    {"unit": "Shipping Point", "module": "LE", "desc": "Location that processes outbound deliveries."}
+  ],
+  "modules": [
+    {"code": "FI", "name": "Financial Accounting", "covers": "General Ledger (G/L), Accounts Receivable (AR), Accounts Payable (AP), Asset Accounting (AA), Bank Accounting. External/legal reporting.", "keyTcodes": ["FS00", "FB50", "FB60", "FB70", "F-28", "F-53"]},
+    {"code": "CO", "name": "Controlling", "covers": "Cost Element/Center Accounting, Internal Orders, Profit Center Accounting, Product Costing, Profitability Analysis (CO-PA). Internal management reporting.", "keyTcodes": ["KS01", "KO01", "KP06", "KE30"]},
+    {"code": "SD", "name": "Sales & Distribution", "covers": "Order-to-Cash: customer master, inquiries/quotations, sales orders, pricing, deliveries, billing, credit management.", "keyTcodes": ["XD01", "VA01", "VL01N", "VF01"]},
+    {"code": "MM", "name": "Materials Management", "covers": "Procure-to-Pay: material master, vendor master, purchase requisitions/orders, goods receipt, inventory, invoice verification.", "keyTcodes": ["MM01", "XK01", "ME21N", "MIGO", "MIRO"]},
+    {"code": "PP", "name": "Production Planning", "covers": "BOMs, routings, work centers, MRP, planned and production orders, capacity planning.", "keyTcodes": ["CS01", "CA01", "MD01", "CO01"]},
+    {"code": "QM", "name": "Quality Management", "covers": "Inspection lots, quality notifications, certificates, quality in procurement/production."},
+    {"code": "PM", "name": "Plant Maintenance", "covers": "Equipment, functional locations, maintenance orders and notifications."},
+    {"code": "WM/EWM", "name": "Warehouse Management", "covers": "Bin-level stock management, putaway/picking strategies."},
+    {"code": "LE", "name": "Logistics Execution", "covers": "Shipping and transportation; outbound/inbound deliveries."},
+    {"code": "HCM", "name": "Human Capital Management", "covers": "Personnel administration, org management, payroll, time."},
+    {"code": "PS", "name": "Project System", "covers": "WBS, networks, project costing and scheduling."}
+  ],
+  "endToEndProcesses": [
+    {"name": "Order-to-Cash (OTC)", "module": "SD/FI", "flow": "Customer master → Sales Order (VA01) → Delivery (VL01N) → Goods Issue → Billing (VF01) → Accounting/AR posting → Incoming Payment (F-28)."},
+    {"name": "Procure-to-Pay (PTP)", "module": "MM/FI", "flow": "Material & Vendor master → Purchase Requisition → Purchase Order (ME21N) → Goods Receipt (MIGO) → Invoice Verification (MIRO) → Outgoing Payment (F-53)."},
+    {"name": "Record-to-Report (RTR)", "module": "FI/CO", "flow": "Journal postings → period-end closing → reconciliation → financial statements."},
+    {"name": "Plan-to-Produce", "module": "PP", "flow": "BOM/Routing → MRP run (MD01) → Production Order (CO01) → Confirmation → Goods Receipt of finished goods."}
+  ]
+}

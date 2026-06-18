@@ -1,0 +1,21 @@
+{
+  "topic": "Key SAP ECC Tables",
+  "tables": [
+    {"name": "KNA1", "text": "Customer master — General data (name, address, country)", "module": "SD/FI"},
+    {"name": "KNB1", "text": "Customer master — Company code data (recon account, payment terms)", "module": "FI"},
+    {"name": "KNVV", "text": "Customer master — Sales area data (sales org, dist channel, division)", "module": "SD"},
+    {"name": "KNVP", "text": "Customer master — Partner functions (Sold-to/Ship-to/Bill-to/Payer)", "module": "SD"},
+    {"name": "LFA1", "text": "Vendor master — General data", "module": "MM/FI"},
+    {"name": "LFB1", "text": "Vendor master — Company code data", "module": "FI"},
+    {"name": "MARA", "text": "Material master — General data", "module": "MM"},
+    {"name": "MARC", "text": "Material master — Plant data", "module": "MM"},
+    {"name": "VBAK", "text": "Sales document — Header", "module": "SD"},
+    {"name": "VBAP", "text": "Sales document — Item", "module": "SD"},
+    {"name": "LIKP", "text": "Delivery — Header", "module": "LE"},
+    {"name": "VBRK", "text": "Billing document — Header", "module": "SD"},
+    {"name": "EKKO", "text": "Purchasing document — Header", "module": "MM"},
+    {"name": "EKPO", "text": "Purchasing document — Item", "module": "MM"},
+    {"name": "BKPF", "text": "Accounting document — Header", "module": "FI"},
+    {"name": "BSEG", "text": "Accounting document — Line items", "module": "FI"}
+  ]
+}

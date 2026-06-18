@@ -1,0 +1,34 @@
+{
+  "topic": "Customer Master (SD/FI) — learned from the Customer Creation SOP",
+  "source": "Customer_Creation_01_16.011 (Keynote) analysed by Deck Insight AI",
+  "createTcode": "XD01",
+  "displayTcode": "XD03",
+  "changeTcode": "XD02",
+  "structure": {
+    "General Data": "Name, address, communication (mobile & email). Shared across all company codes / sales areas. Table KNA1.",
+    "Control Data": "Tax/registration numbers. In this org: GST Number in Tax Number 3, Drug License Number in Tax Number 5.",
+    "Company Code Data": "Reconciliation Account 11000000 (fixed), Authorization 2100. Table KNB1.",
+    "Sales Area Data": {
+      "Sales": "Sales District, Sales Office, Sales Group, Customer Group, Currency.",
+      "Shipping": "Delivery Priority, Shipping Conditions, Delivering Plant.",
+      "Billing": "Incoterms = NA, Payment Terms, Acct. Assignment Group; GST code 0 if registered, 1 if not.",
+      "Partner Functions": "Sales Person. Standard partner functions: AG=Sold-to, WE=Ship-to, RE=Bill-to, RG=Payer."
+    },
+    "Extras / Customer Group 4": "Z01 = Sold-to Customer, Z02 = Ship-to Customer."
+  },
+  "fixedValues": {
+    "Account Group": "Z002",
+    "Company Code": "2100",
+    "Sales Organization": "Z210",
+    "Reconciliation Account": "11000000",
+    "Authorization": "2100",
+    "Incoterms": "NA"
+  },
+  "complianceNotes": [
+    "GST code inversion (0 vs 1) is the highest-risk field; it drives tax treatment.",
+    "GST goes in Tax Number 3 and Drug License in Tax Number 5 — non-obvious fields, regulated for a drug distributor.",
+    "Reconciliation Account 11000000 is fixed and must not be changed.",
+    "Sold-to (Z01) vs Ship-to (Z02) must match the real commercial relationship."
+  ],
+  "howToView": "Enter XD03 → key in Customer number, Company Code 2100, Sales Org Z210 → review the same views (General, Control, Company Code, Sales Area, Partner Functions) in read-only mode. In S/4HANA use BP, role Customer, Display mode."
+}
