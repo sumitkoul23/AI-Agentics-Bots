@@ -1,0 +1,19 @@
+[Unit]
+Description=Deck Insight AI — NLP presentation analyst & summariser
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=teneo
+WorkingDirectory=/opt/deck-insight-ai
+EnvironmentFile=-/opt/deck-insight-ai/.env
+ExecStart=/opt/deck-insight-ai/deploy/linux/start-agent.sh
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=deck-insight-ai
+
+[Install]
+WantedBy=multi-user.target

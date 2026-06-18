@@ -1,0 +1,5 @@
+.env
+inbox/
+outbox/
+node_modules/
+*.log
