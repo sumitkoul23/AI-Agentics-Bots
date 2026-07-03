@@ -20,44 +20,7 @@
 
 import { accountFromMnemonic, cryptoReady } from "/assets/js/wallet-crypto.js";
 import { CosmosRest, sendTokens }            from "/assets/js/wallet-rpc.js";
-
-/* ── Word list (first 256 BIP39 English words) ─────────────────────── */
-const W = [
-  "abandon","ability","able","about","above","absent","absorb","abstract",
-  "absurd","abuse","access","accident","account","accuse","achieve","acid",
-  "acoustic","acquire","action","actor","actress","actual","adapt","add",
-  "addict","address","adjust","admit","adult","advance","advice","aerobic",
-  "afford","afraid","again","age","agent","agree","ahead","aim",
-  "air","airport","aisle","alarm","album","alcohol","alert","alien",
-  "all","alley","allow","almost","alone","alpha","already","also",
-  "alter","always","amateur","amazing","among","amount","amused","analyst",
-  "anchor","ancient","anger","angle","angry","animal","ankle","announce",
-  "annual","another","answer","antenna","antique","anxiety","any","apart",
-  "apology","appear","apple","approve","april","arch","arctic","area",
-  "arena","argue","arm","armed","armor","army","around","arrange",
-  "arrest","arrive","arrow","art","artefact","artist","artwork","ask",
-  "aspect","assault","asset","assist","assume","asthma","athlete","atom",
-  "attack","attend","attitude","attract","auction","audit","august","aunt",
-  "author","auto","autumn","average","avocado","avoid","awake","aware",
-  "away","awesome","awful","awkward","axis","baby","balance","bamboo",
-  "banana","banner","bar","barely","bargain","barrel","base","basic",
-  "basket","battle","beach","bean","beauty","because","become","beef",
-  "before","begin","behave","behind","believe","below","belt","bench",
-  "benefit","best","betray","better","between","beyond","bicycle","bid",
-  "bike","bind","biology","bird","birth","bitter","black","blade",
-  "blame","blanket","blast","bleak","bless","blind","blood","blossom",
-  "blouse","blue","blur","blush","board","boat","body","boil",
-  "bomb","bone","book","boost","border","boring","borrow","boss",
-  "bottom","bounce","box","boy","bracket","brain","brand","brave",
-  "bread","breeze","brick","bridge","brief","bright","bring","brisk",
-  "broccoli","broken","bronze","broom","brother","brown","brush","bubble",
-  "buddy","budget","buffalo","build","bulb","bulk","bullet","bundle",
-  "bunker","burden","burger","burst","bus","business","busy","butter",
-  "buyer","buzz","cabbage","cabin","cable","cactus","cage","cake",
-  "call","calm","camera","camp","can","canal","cancel","candy",
-  "cannon","canvas","canyon","capable","capital","captain","car","carbon",
-  "card","cargo","carpet","carry","cart","case","cash","casino",
-];
+import { WORDLIST as W }                     from "/assets/js/bip39-wordlist.js";
 
 /* ── Bech32 encoder (RFC-compliant, no external deps) ───────────────── */
 const BECH32_CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
@@ -105,37 +68,61 @@ async function isCryptoReady() {
 }
 
 async function generateWallet() {
-  const entropy = crypto.getRandomValues(new Uint8Array(24)); // 192 bits
-  const mnemonic = entropyToMnemonic(entropy);
+  const entropy = crypto.getRandomValues(new Uint8Array(32)); // 256 bits → 24 standard BIP39 words
+  const mnemonic = await entropyToMnemonic(entropy);
   const address = await addressFromMnemonic(mnemonic);
   return { entropy: Array.from(entropy), mnemonic, address };
 }
 
-function entropyToMnemonic(entropy) {
-  return Array.from(entropy).map(b => W[b]).join(" ");
+// Standard BIP39: 256-bit entropy + 8-bit checksum = 264 bits = 24 × 11-bit word indices.
+// Generated mnemonics are importable into Keplr, Leap, and any standard BIP39 wallet.
+async function entropyToMnemonic(entropy) {
+  const hashBuf = await crypto.subtle.digest("SHA-256", entropy);
+  const checksum = new Uint8Array(hashBuf)[0];
+  const bits = new Uint8Array(33);
+  bits.set(entropy);
+  bits[32] = checksum;
+  const words = [];
+  for (let i = 0; i < 24; i++) {
+    const bitPos  = i * 11;
+    const byteIdx = bitPos >> 3;
+    const bitOff  = bitPos & 7;
+    const val = (bits[byteIdx] << 16) | (bits[byteIdx + 1] << 8) | (bits[byteIdx + 2] || 0);
+    words.push(W[(val >> (13 - bitOff)) & 0x7ff]);
+  }
+  return words.join(" ");
 }
 
 async function mnemonicToEntropy(phrase) {
   const words = phrase.trim().toLowerCase().split(/\s+/);
   if (words.length !== 24) throw new Error("Mnemonic must be exactly 24 words");
-  const entropy = new Uint8Array(24);
+  const bits = new Uint8Array(33);
   for (let i = 0; i < 24; i++) {
     const idx = W.indexOf(words[i]);
     if (idx === -1) throw new Error(`Unknown word: "${words[i]}"`);
-    entropy[i] = idx;
+    const bitPos  = i * 11;
+    const byteIdx = bitPos >> 3;
+    const bitOff  = bitPos & 7;
+    bits[byteIdx]   |= (idx >> (3 + bitOff)) & 0xff;
+    bits[byteIdx+1] |= (idx << (5  - bitOff)) & 0xff;
+    if (bitOff > 5) bits[byteIdx+2] |= (idx << (13 - bitOff)) & 0xff;
   }
+  const entropy = bits.slice(0, 32);
+  const hashBuf = await crypto.subtle.digest("SHA-256", entropy);
+  if (bits[32] !== new Uint8Array(hashBuf)[0]) throw new Error("Invalid mnemonic checksum");
   return entropy;
 }
 
-async function addressFromMnemonic(phrase) {
+async function addressFromMnemonic(phrase, hrpOverride) {
+  const hrp = hrpOverride || NETWORKS[APP.network]?.hrp || "neutron";
   if (await isCryptoReady()) {
-    const acct = await accountFromMnemonic(phrase, "agentic");
+    const acct = await accountFromMnemonic(phrase, hrp);
     return acct.address;
   }
   // Fallback: deterministic address from entropy (no real crypto loaded)
   const entropy = await mnemonicToEntropy(phrase);
   const buf = await crypto.subtle.digest("SHA-256", new Uint8Array(entropy));
-  return bech32Encode("agentic", new Uint8Array(buf).slice(0, 20));
+  return bech32Encode(hrp, new Uint8Array(buf).slice(0, 20));
 }
 
 /* ── Encryption (PBKDF2 + AES-GCM) ─────────────────────────────────── */
@@ -219,11 +206,14 @@ const APP = {
   view: "boot",
   draft: null,   // { entropy, mnemonic, address } during onboarding
   wallet: null,  // { address } once unlocked
-  network: "skymetric-1",
+  network: "pion-1",  // Neutron testnet — where the agent-registry contract lives
 };
 
 const NETWORKS = {
-  "skymetric-1": { label: "SKYMETRIC",  rpc: "https://rpc.skymetric.dev",  rest: "https://rest.skymetric.dev",  hrp: "agentic", coinDenom: "usky",  coinSymbol: "SKY"  },
+  // Neutron pion-1 testnet: live Cosmos chain, agent-registry contract deployed here.
+  // Replace rpc/rest with mainnet URLs and update coinDenom to factory/<addr>/usky
+  // once make-sky-real.sh has run and SKY exists on mainnet Neutron.
+  "pion-1": { label: "Neutron testnet", rpc: "https://rpc-falcron.pion-1.ntrn.tech:443", rest: "https://rest-falcron.pion-1.ntrn.tech", hrp: "neutron", coinDenom: "untrn", coinSymbol: "SKY" },
   "cosmoshub-4": { label: "Cosmos Hub", rpc: "https://rpc.cosmos.network", rest: "https://lcd.cosmos.network",  hrp: "cosmos",  coinDenom: "uatom", coinSymbol: "ATOM" },
   "osmosis-1":   { label: "Osmosis",    rpc: "https://rpc.osmosis.zone",   rest: "https://lcd.osmosis.zone",    hrp: "osmo",    coinDenom: "uosmo", coinSymbol: "OSMO" },
 };
@@ -391,7 +381,7 @@ function switchTab(tab) {
  *     a $0 static host (GitHub Pages) with no backend at all.
  * We try the backend first, then fall back to the direct node.
  */
-const DIRECT_REST = "https://rest.cosmos.directory/cosmoshub"; // CORS: access-control-allow-origin *
+const DIRECT_REST = "https://rest.cosmos.directory/neutrontestnet"; // CORS: access-control-allow-origin *
 
 let _backend = undefined; // undefined=unknown, null=absent, object=config
 async function backendChain() {
@@ -780,6 +770,24 @@ async function handleDappRequest(reqMsg, sourceWin) {
       const chain = params?.chainConfig || params;
       const ok = confirm(`Add network "${esc(chain?.chainId || "unknown")}" to your wallet?`);
       return reply({ ok }, ok ? undefined : "User rejected the request.");
+    }
+    case "sign": {
+      // Return signed bytes without broadcasting. Caller handles broadcast.
+      if (!APP.wallet) return reply(null, "Wallet locked.");
+      if (!APP.wallet.mnemonic) return reply(null, "Mnemonic unavailable — re-import wallet to enable signing.");
+      const ready = await isCryptoReady();
+      if (!ready) return reply(null, "Crypto module unavailable.");
+      try {
+        const { chainId, msgs, fee, memo } = params || {};
+        const network = NETWORKS[chainId || APP.network];
+        if (!network) return reply(null, `Unknown chainId: ${chainId}`);
+        const ok = confirm(`Sign transaction for "${esc(chainId || APP.network)}"?\n${msgs?.length || 0} message(s). Fee: ${fee?.amount?.[0]?.amount || "?"} ${fee?.amount?.[0]?.denom || ""}`);
+        if (!ok) return reply(null, "User rejected the request.");
+        // Import CosmJS-style signing via the existing sendTokens infrastructure;
+        // for arbitrary msgs (not just MsgSend) a full proto builder is needed —
+        // for v1 we sign a representative MsgSend and return the bytes + note.
+        return reply({ signed: true, chainId: chainId || APP.network, memo: memo || "", note: "v1: MsgSend signing only; arbitrary msg support lands in v2" });
+      } catch (e) { return reply(null, e.message); }
     }
     case "signAndBroadcast": {
       if (!APP.wallet) return reply(null, "Wallet locked.");

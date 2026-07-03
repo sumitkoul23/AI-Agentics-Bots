@@ -10,11 +10,14 @@
  * avoids CORS and keeps a single source of truth for the active node.
  */
 
-const RPC  = (process.env.CHAIN_RPC  || "https://cosmos-rpc.publicnode.com").replace(/\/+$/, "");
-const REST = (process.env.CHAIN_REST || "https://cosmos-rest.publicnode.com").replace(/\/+$/, "");
-const CHAIN_ID    = process.env.CHAIN_ID    || "";          // optional override / display
-const BECH32      = process.env.CHAIN_BECH32 || "agentic";  // address prefix
-const COIN_DENOM  = process.env.CHAIN_DENOM  || "usky";
+// Default to Neutron pion-1 testnet — the chain where the Skymetric
+// agent-registry contract is deployed. Override via env vars for mainnet
+// or a sovereign skymetricd node.
+const RPC  = (process.env.CHAIN_RPC  || "https://rpc-falcron.pion-1.ntrn.tech:443").replace(/\/+$/, "");
+const REST = (process.env.CHAIN_REST || "https://rest-falcron.pion-1.ntrn.tech").replace(/\/+$/, "");
+const CHAIN_ID    = process.env.CHAIN_ID     || "pion-1";
+const BECH32      = process.env.CHAIN_BECH32 || "neutron";  // Neutron testnet prefix
+const COIN_DENOM  = process.env.CHAIN_DENOM  || "untrn";    // native gas token; override with factory/<addr>/usky after deploy
 const COIN_SYMBOL = process.env.CHAIN_SYMBOL || "SKY";
 
 const TIMEOUT_MS = 12_000;
