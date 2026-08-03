@@ -1,0 +1,70 @@
+# AI-Agentics-Bots — full stack docker-compose
+# One command to run the entire ecosystem locally:
+#   docker compose up --build
+#
+# Services:
+#   agentic-os   → Python FastAPI gateway  http://localhost:8001
+#   studio       → Node.js Chain Studio    http://localhost:8000
+#
+# Env:
+#   Copy agents/agentic-os/.env.example to .env and fill in your API keys.
+
+services:
+  # ── Agentic OS — Python agent gateway ────────────────────────────────
+  agentic-os:
+    build:
+      context: agents/agentic-os
+      dockerfile: Dockerfile
+    image: agentic-os:latest
+    container_name: agentic-os
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - agentic_data:/data
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - AGENT_DEFAULT_MODEL=${AGENT_DEFAULT_MODEL:-gpt-4o-mini}
+      - BRAVE_SEARCH_KEY=${BRAVE_SEARCH_KEY:-}
+      - SERPER_API_KEY=${SERPER_API_KEY:-}
+      - AGENTIC_DATA_DIR=/data
+      - AGENTIC_WORKERS=${AGENTIC_WORKERS:-4}
+      - PORT=8001
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ── Chain Deployment Studio — Node.js backend ─────────────────────────
+  studio:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    image: skymetric-studio:latest
+    container_name: skymetric-studio
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - studio_data:/data
+    environment:
+      - PORT=8000
+      - DATA_FILE=/data/deployments.json
+      - CHAIN_RPC=${CHAIN_RPC:-https://cosmos-rpc.publicnode.com}
+      - CHAIN_REST=${CHAIN_REST:-https://cosmos-rest.publicnode.com}
+      - CHAIN_BECH32=${CHAIN_BECH32:-agentic}
+      - CHAIN_DENOM=${CHAIN_DENOM:-usky}
+      - CHAIN_SYMBOL=${CHAIN_SYMBOL:-SKY}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  agentic_data:
+  studio_data:

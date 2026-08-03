@@ -1,0 +1,68 @@
+# CI for the Agentic OS Python gateway — lint + unit tests (no LLM keys needed).
+name: agentic-os
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "agents/agentic-os/**"
+      - ".github/workflows/agentic-os.yml"
+  pull_request:
+    paths:
+      - "agents/agentic-os/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps (no playwright browser — tests don't need it)
+        run: |
+          pip install --upgrade pip
+          pip install pytest pytest-asyncio httpx pydantic fastapi uvicorn aiofiles
+          # chromadb is optional — install lightly
+          pip install chromadb || true
+
+      - name: Syntax check — import all modules
+        run: |
+          cd agents/agentic-os
+          python -c "from kernel.registry import AgentRegistry"
+          python -c "from kernel.bus import MessageBus"
+          python -c "from kernel.scheduler import Scheduler"
+          python -c "from kernel.capability import CapabilityManager"
+          python -c "from memory.short_term import ShortTermMemory"
+          python -c "from memory.episodic import EpisodicMemory"
+          python -c "from tools.file_io import FileIOTool"
+          python -c "from tools.code_exec import CodeExecutor"
+          python -c "from tools.web_search import WebSearchTool"
+          python -c "from tools.http_client import HttpClientTool"
+          python -c "from browser.reader import PageReader"
+          python -c "from agent import BaseAgent"
+          echo "All imports OK"
+
+      - name: Unit tests
+        run: |
+          cd agents/agentic-os
+          python -m pytest tests/test_kernel.py -v --tb=short
+
+      - name: FastAPI app loads
+        run: |
+          cd agents/agentic-os
+          python -c "
+          import importlib, sys
+          sys.path.insert(0, '.')
+          # Just import the app object — don't start the server
+          from gateway.main import app
+          assert app.title == 'Agentic OS Gateway'
+          print('FastAPI app OK')
+          "
