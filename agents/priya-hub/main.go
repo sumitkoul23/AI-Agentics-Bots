@@ -48,7 +48,24 @@ func main() {
 	defer swarm.Stop()
 	defer mesh.Stop()
 
+	// Start IP tunnel (cloudflared / ngrok) if configured
+	tunnel := StartTunnel(port)
+	if tunnel != nil {
+		defer tunnel.Stop()
+	}
+
 	log.Printf("Bodhi Hub — %d agents | port %s | mesh discovery active", len(swarm.agents), port)
+	if ReasoningModeActive() {
+		log.Printf("Reasoning  : %s", os.Getenv("REASONING_MODE"))
+	}
+	tools := EnabledTools()
+	if len(tools) > 0 {
+		names := make([]string, len(tools))
+		for i, t := range tools {
+			names[i] = t.Name
+		}
+		log.Printf("MCP tools  : %s", strings.Join(names, ", "))
+	}
 
 	if os.Getenv("CLI") == "1" {
 		runCLI(router, registry, mem, swarm, mesh)
@@ -57,9 +74,11 @@ func main() {
 
 	mux := http.NewServeMux()
 	registerRoutes(mux, router, registry, mem, swarm, mesh)
+	registerExtRoutes(mux, swarm, tunnel)
 
 	log.Printf("UI:        http://localhost:%s", port)
 	log.Printf("API:       POST /chat  GET /status /agents /memory /mesh /peers")
+	log.Printf("Extended:  POST /transcribe /vision  GET /speak /voice/status /tunnel /tunnel/qr /capabilities")
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}

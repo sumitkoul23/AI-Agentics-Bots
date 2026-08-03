@@ -294,9 +294,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <button class="scr-btn" id="scr-btn" onclick="scrollBot(true)" title="Scroll to bottom">↓</button>
 
     <div class="inp-area">
+      <div id="img-preview-bar" style="display:none;padding:4px 0 6px;display:flex;align-items:center;gap:8px"></div>
       <div class="inp-row">
         <textarea id="ci" placeholder="Ask Bodhi anything… (Enter to send, Shift+Enter for newline)" rows="1"></textarea>
         <span class="ccount" id="cc"></span>
+        <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImageSelect(this)"/>
+        <button class="ibtn vbtn" id="imgbtn" onclick="document.getElementById('img-input').click()" title="Attach image for vision analysis (I)">📎</button>
         <button class="ibtn vbtn" id="vbtn" onclick="toggleVoice()" title="Voice input (V)">🎤</button>
         <button class="ibtn sbtn" id="sbtn" onclick="doSend()" title="Send (Enter)">↑</button>
       </div>
@@ -309,6 +312,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <div class="ptab on" data-tab="status" onclick="setTab('status')">Swarm</div>
       <div class="ptab" data-tab="memory" onclick="setTab('memory')">Memory</div>
       <div class="ptab" data-tab="mesh" onclick="setTab('mesh')">Mesh</div>
+      <div class="ptab" data-tab="tools" onclick="setTab('tools')">Tools</div>
     </div>
     <div class="pcnt" id="pcnt"><div class="empty"><div class="empty-i">🔄</div>Loading…</div></div>
   </aside>
@@ -458,7 +462,8 @@ const CMDS=[
 const S={
   msgs:[],activeAgent:'auto',tab:'status',
   statusTxt:null,memData:null,peers:[],
-  loading:false,voiceOn:false,rec:null,lastInput:'',
+  loading:false,voiceOn:false,rec:null,mediaRec:null,lastInput:'',
+  caps:{},mcpTools:{},voiceStatus:{},tunnelInfo:{},
   baseURL:localStorage.getItem('p_url')||'',
   theme:localStorage.getItem('p_theme')||'dark',
 }
@@ -493,6 +498,16 @@ async function loadMesh(){
   S.peers=await r.json()||[]
   if(S.tab==='mesh')renderPanel()
   document.getElementById('mesh-cnt').textContent=(S.peers.length||0)+' peers'
+}
+async function loadTools(){
+  const [capsR,toolsR,voiceR,tunnelR]=await Promise.all([
+    get('/capabilities'),get('/mcp/tools'),get('/voice/status'),get('/tunnel')
+  ])
+  S.caps=capsR?await capsR.json():{}
+  S.mcpTools=toolsR?await toolsR.json():{}
+  S.voiceStatus=voiceR?await voiceR.json():{}
+  S.tunnelInfo=tunnelR?await tunnelR.json():{}
+  if(S.tab==='tools')renderPanel()
 }
 function parseHeader(txt){
   const dot=document.getElementById('ai-dot'),atxt=document.getElementById('ai-txt')
@@ -533,13 +548,21 @@ function rmTyping(){document.querySelectorAll('.typing').forEach(e=>e.remove())}
 
 async function doSend(){
   const el=document.getElementById('ci'),txt=el.value.trim()
-  if(!txt||S.loading)return
+  if((!txt&&!pendingImage)||S.loading)return
   el.value='';el.style.height='auto';document.getElementById('cc').textContent='';S.lastInput=txt
-  push({role:'user',text:txt,agent:'user'})
+  const imgFile=pendingImage
+  if(imgFile)clearImage()
+  push({role:'user',text:imgFile?(txt||'[image attached]')+' 📎':txt,agent:'user'})
   S.loading=true;document.getElementById('sbtn').disabled=true
   document.getElementById('typing-label').textContent='Bodhi is thinking…'
   showTyping()
-  const reply=await chat(txt)
+  let reply
+  if(imgFile){
+    try{reply=await sendWithImage(txt,imgFile)}
+    catch(e){reply='Vision error: '+e.message}
+  } else {
+    reply=await chat(txt)
+  }
   rmTyping();S.loading=false
   document.getElementById('sbtn').disabled=false
   document.getElementById('typing-label').textContent=''
@@ -577,11 +600,13 @@ function setTab(t){
   renderPanel()
   if(t==='memory')loadMem()
   if(t==='mesh')loadMesh()
+  if(t==='tools')loadTools()
 }
 function renderPanel(){
   const el=document.getElementById('pcnt')
   if(S.tab==='status')el.innerHTML=renderStatus()
   else if(S.tab==='memory')el.innerHTML=renderMem()
+  else if(S.tab==='tools')el.innerHTML=renderToolsPanel()
   else el.innerHTML=renderMeshPanel()
 }
 function renderStatus(){
@@ -638,6 +663,42 @@ function renderMeshPanel(){
   S.peers.forEach(p=>h+=`<div class="peer"><div class="peer-av">💻</div><div class="peer-inf"><div class="peer-nm">${esc(p.Hostname||'Device')}</div><div class="peer-ad">${esc(p.Addr||'')}</div></div><div class="peer-st">● Live</div></div>`)
   return h+'</div>'
 }
+function renderToolsPanel(){
+  let h=''
+  // Voice
+  const v=S.voiceStatus||{}
+  h+=`<div class="psec"><div class="psec-t">🎤 Voice</div>`
+  h+=`<div class="scard"><div class="scard-l">Speech-to-Text (Whisper)</div><div class="scard-v" style="color:${v.stt_ready?'var(--green)':'var(--red)'}">${v.stt_ready?'✓ Ready':'✗ Not configured'}</div></div>`
+  h+=`<div class="scard"><div class="scard-l">Text-to-Speech (Piper)</div><div class="scard-v" style="color:${v.tts_ready?'var(--green)':'var(--red)'}">${v.tts_ready?'✓ Ready':'✗ Not configured'}</div></div>`
+  if(!v.stt_ready||!v.tts_ready)h+=`<div style="font-size:.71rem;color:var(--text3);padding:4px 2px">Set WHISPER_BIN and PIPER_BIN env vars — see GET /guide</div>`
+  h+='</div>'
+  // Vision
+  const caps=S.caps||{}
+  h+=`<div class="psec"><div class="psec-t">👁️ Vision</div>`
+  h+=`<div class="scard"><div class="scard-l">Vision model</div><div class="scard-v" style="color:${caps.vision?'var(--green)':'var(--text3)'}">${caps.vision||'auto (VISION_MODEL not set)'}</div></div>`
+  h+=`<div style="font-size:.71rem;color:var(--text3);padding:4px 2px">Use 📎 button or POST /vision to analyse images</div>`
+  h+='</div>'
+  // Tunnel
+  const tn=S.tunnelInfo||{}
+  h+=`<div class="psec"><div class="psec-t">🌐 Tunnel</div>`
+  h+=`<div class="scard"><div class="scard-l">Status</div><div class="scard-v" style="color:${tn.status==='active'?'var(--green)':tn.status==='starting'?'var(--accent)':'var(--text3)'}">${tn.status||'disabled'}</div></div>`
+  if(tn.url)h+=`<div class="scard"><div class="scard-l">Public URL</div><a href="${esc(tn.url)}" target="_blank" style="font-size:.79rem;color:var(--accent)">${esc(tn.url)}</a></div>`
+  if(tn.url)h+=`<div style="text-align:center;margin:8px 0"><img src="/tunnel/qr" style="max-width:180px;border-radius:8px" alt="QR code"/><div style="font-size:.69rem;color:var(--text3);margin-top:4px">Scan to connect from phone</div></div>`
+  if(!tn.url)h+=`<div style="font-size:.71rem;color:var(--text3);padding:4px 2px">Start with: TUNNEL=cloudflared ./bodhi-hub</div>`
+  h+='</div>'
+  // MCP tools
+  const mt=S.mcpTools||{}
+  const tools=(mt.tools||[])
+  h+=`<div class="psec"><div class="psec-t">🔧 MCP Tools (${tools.filter(t=>t.enabled).length}/${tools.length} active)</div>`
+  tools.forEach(t=>h+=`<div class="scard" style="margin-bottom:4px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.79rem;font-weight:600">${esc(t.name)}</span><span style="font-size:.69rem;color:${t.enabled?'var(--green)':'var(--text3)'}">${t.enabled?'ON':'off'}</span></div><div style="font-size:.69rem;color:var(--text3);margin-top:2px">${esc(t.description.split('.')[0])}</div></div>`)
+  if(tools.length)h+=`<div style="font-size:.71rem;color:var(--text3);padding:4px 2px">Enable: MCP_SHELL=1 MCP_FILESYSTEM=1 MCP_FETCH=1</div>`
+  h+='</div>'
+  // Reasoning
+  h+=`<div class="psec"><div class="psec-t">💭 Reasoning</div>`
+  h+=`<div class="scard"><div class="scard-v" style="font-size:.79rem;color:var(--text2)">${esc(caps.reasoning_info||'Set REASONING_MODE=chain-of-thought')}</div></div>`
+  h+='</div>'
+  return h
+}
 function renderMemModal(){
   const el=document.getElementById('mem-body');if(!el||!S.memData)return
   const d=S.memData
@@ -682,7 +743,11 @@ function buildWChips(){
 // ═══════════════════════════ VOICE ══════════════════════════
 function initVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition
-  if(!SR){document.getElementById('vbtn').style.opacity='.25';return}
+  if(!SR){
+    // Browser STT unavailable — Whisper fallback will be used
+    document.getElementById('vbtn').title='Voice input — uses Whisper STT server'
+    return
+  }
   const r=new SR();r.continuous=false;r.interimResults=false;r.lang='en-US'
   r.onresult=e=>{const t=e.results[0][0].transcript;document.getElementById('ci').value=t;resize(document.getElementById('ci'))}
   r.onend=()=>{S.voiceOn=false;document.getElementById('vbtn').classList.remove('rec')}
@@ -690,12 +755,63 @@ function initVoice(){
   S.rec=r
 }
 function toggleVoice(){
-  if(!S.rec){toast('Voice not available in this browser','err');return}
-  if(S.voiceOn){S.rec.stop();S.voiceOn=false;document.getElementById('vbtn').classList.remove('rec')}
-  else{S.rec.start();S.voiceOn=true;document.getElementById('vbtn').classList.add('rec');toast('🎤 Listening…')}
+  if(S.rec){
+    // Browser SpeechRecognition
+    if(S.voiceOn){S.rec.stop();S.voiceOn=false;document.getElementById('vbtn').classList.remove('rec')}
+    else{S.rec.start();S.voiceOn=true;document.getElementById('vbtn').classList.add('rec');toast('🎤 Listening…')}
+  } else {
+    // Whisper STT via MediaRecorder → POST /transcribe
+    toggleWhisperVoice()
+  }
 }
-function spk(btn){
+async function toggleWhisperVoice(){
+  if(S.voiceOn){
+    // Stop recording
+    if(S.mediaRec&&S.mediaRec.state!=='inactive')S.mediaRec.stop()
+    return
+  }
+  if(!navigator.mediaDevices){toast('Microphone not available','err');return}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true})
+    const chunks=[]
+    const mr=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/ogg'})
+    mr.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)}
+    mr.onstop=async()=>{
+      stream.getTracks().forEach(t=>t.stop())
+      S.voiceOn=false
+      document.getElementById('vbtn').classList.remove('rec')
+      toast('⏳ Transcribing…')
+      const blob=new Blob(chunks,{type:mr.mimeType})
+      const fd=new FormData()
+      fd.append('audio',blob,'recording.webm')
+      try{
+        const r=await fetch('/transcribe',{method:'POST',body:fd})
+        const d=await r.json()
+        if(d.text){document.getElementById('ci').value=d.text;resize(document.getElementById('ci'));toast('✓ Transcribed')}
+        else toast('Transcription empty — check WHISPER_BIN','err')
+      }catch(e){toast('Transcribe error: '+e.message,'err')}
+    }
+    mr.start()
+    S.mediaRec=mr
+    S.voiceOn=true
+    document.getElementById('vbtn').classList.add('rec')
+    toast('🎤 Recording… click mic to stop')
+  }catch(e){toast('Mic error: '+e.message,'err')}
+}
+async function spk(btn){
   const txt=btn.closest('.msg').querySelector('.bbl').textContent.trim().substring(0,600)
+  // Try Piper TTS first; fall back to browser SpeechSynthesis
+  try{
+    const r=await fetch('/speak?text='+encodeURIComponent(txt))
+    if(r.ok){
+      const ab=await r.arrayBuffer()
+      const ctx=new AudioContext()
+      const buf=await ctx.decodeAudioData(ab)
+      const src=ctx.createBufferSource();src.buffer=buf;src.connect(ctx.destination);src.start()
+      return
+    }
+  }catch(_){}
+  // Browser fallback
   const u=new SpeechSynthesisUtterance(txt);u.lang='en-US';window.speechSynthesis.speak(u)
 }
 function replyTo(btn){
@@ -703,6 +819,36 @@ function replyTo(btn){
   document.getElementById('ci').value='Re: "'+txt.substring(0,60)+'…"\n\n'
   document.getElementById('ci').focus()
   resize(document.getElementById('ci'))
+}
+
+// ═══════════════════════════ VISION / IMAGE ══════════════════
+let pendingImage=null
+function handleImageSelect(input){
+  const file=input.files[0];if(!file)return
+  pendingImage=file
+  const bar=document.getElementById('img-preview-bar')
+  bar.style.display='flex'
+  const url=URL.createObjectURL(file)
+  bar.innerHTML=`<img src="${url}" style="height:44px;border-radius:6px;border:1px solid var(--border)"/>
+    <span style="font-size:.76rem;color:var(--text2)">${esc(file.name)}</span>
+    <button onclick="clearImage()" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:14px" title="Remove image">✕</button>`
+  document.getElementById('ci').placeholder='Ask about this image…'
+  input.value=''
+}
+function clearImage(){
+  pendingImage=null
+  const bar=document.getElementById('img-preview-bar')
+  bar.style.display='none';bar.innerHTML=''
+  document.getElementById('ci').placeholder='Ask Bodhi anything… (Enter to send, Shift+Enter for newline)'
+}
+async function sendWithImage(text,file){
+  const fd=new FormData()
+  fd.append('image',file)
+  if(text)fd.append('prompt',text)
+  const r=await fetch('/vision',{method:'POST',body:fd})
+  if(!r.ok)throw new Error('Vision error '+r.status)
+  const d=await r.json()
+  return d.reply||d.error||'No response'
 }
 
 // ═══════════════════════════ SETTINGS ═══════════════════════
