@@ -376,7 +376,169 @@ See [`web/README.md`](web/README.md) for full details.
 
 ---
 
-## Safety
+## Extended Capabilities
+
+### Voice (Speech ↔ Text)
+
+| Direction | Technology | Setup |
+|-----------|-----------|-------|
+| **Speak → text** | [whisper.cpp](https://github.com/ggerganov/whisper.cpp) | `WHISPER_BIN=/path/to/whisper-cli` |
+| **Text → speak** | [Piper TTS](https://github.com/rhasspy/piper) | `PIPER_BIN=/path/to/piper` |
+
+```bash
+# Mac quick install
+brew install whisper-cpp
+wget https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+
+pip install piper-tts
+piper --download-voice en_US-amy-medium
+
+# Start hub with voice
+WHISPER_BIN=$(which whisper-cli) WHISPER_MODEL=ggml-base.en.bin \
+PIPER_BIN=$(which piper) PIPER_MODEL=~/.local/share/piper/en_US-amy-medium.onnx \
+./bodhi-hub
+
+# Use via API
+curl -X POST http://localhost:8080/transcribe -F 'audio=@recording.wav'   # STT
+curl "http://localhost:8080/speak?text=Hello+Bodhi" -o reply.wav           # TTS
+
+# Status
+curl http://localhost:8080/voice/status
+```
+
+In the web UI: click the **🎤** mic button. If the browser supports `SpeechRecognition` it uses that; otherwise it records via MediaRecorder and sends to the Whisper server. Click again to stop.
+
+---
+
+### Vision (Image Understanding)
+
+```bash
+# Pull a vision model
+ollama pull llava           # recommended
+# ollama pull moondream     # lighter
+
+# Start hub
+VISION_MODEL=llava ./bodhi-hub
+
+# Analyse an image via API
+curl -X POST http://localhost:8080/vision \
+  -F 'image=@photo.jpg' \
+  -F 'prompt=What is in this image?'
+
+# Analyse with default prompt
+curl -X POST http://localhost:8080/vision -F 'image=@chart.png'
+```
+
+In the web UI: click the **📎** paperclip button to attach an image, then type your question and send.
+
+---
+
+### MCP Tools (System Control)
+
+Agents can use tools by emitting XML tags in their output — the hub executes them and re-prompts with results.
+
+```bash
+# Enable tools (any combination)
+MCP_SHELL=1 MCP_FILESYSTEM=1 MCP_FETCH=1 ./bodhi-hub
+
+# List available tools
+curl http://localhost:8080/mcp/tools
+
+# Example agent tool call (automatic, no user action needed):
+# <tool name="shell"><cmd>ls -la ~</cmd></tool>
+# <tool name="read_file"><path>/etc/hosts</path></tool>
+# <tool name="write_file"><path>/tmp/notes.txt</path><content>Hello</content></tool>
+# <tool name="list_dir"><path>/home</path></tool>
+# <tool name="fetch"><url>https://example.com</url></tool>
+```
+
+> ⚠️ `MCP_SHELL=1` gives the LLM ability to run arbitrary shell commands. Use in a trusted environment only.
+
+---
+
+### Reasoning (Chain-of-Thought)
+
+```bash
+# Enable step-by-step reasoning before every answer
+REASONING_MODE=chain-of-thought ./bodhi-hub
+
+# Reasoning traces are:
+#   - Shown as a collapsible block below each answer in the UI
+#   - Stored in memory for trainer self-improvement
+#   - Retrievable via GET /memory
+```
+
+---
+
+### IP Tunneling (Remote Access)
+
+Share your local Bodhi with anyone — phone, colleague, internet.
+
+```bash
+# Install cloudflared (recommended, no account needed)
+brew install cloudflared          # Mac
+sudo apt install cloudflared      # Ubuntu / Debian
+
+# Start hub with tunnel
+TUNNEL=cloudflared ./bodhi-hub
+# → Public URL printed to console
+# → QR code at http://localhost:8080/tunnel/qr
+
+# Or use ngrok
+TUNNEL=ngrok ./bodhi-hub
+
+# Check tunnel status
+curl http://localhost:8080/tunnel
+```
+
+Scan the QR code from any phone to open Bodhi in the browser, or install as a PWA.
+
+---
+
+### How to Chat — All Methods
+
+| Method | How |
+|--------|-----|
+| **Web UI** | `open http://localhost:8080` |
+| **Mobile PWA** | iOS Safari → Add to Home Screen · Android Chrome → Install App |
+| **Remote via tunnel** | `TUNNEL=cloudflared ./bodhi-hub` → scan QR |
+| **curl** | `curl -X POST localhost:8080/chat -d '{"message":"hello"}'` |
+| **Voice** | Click 🎤 mic in UI, or POST `/transcribe` |
+| **Image** | Click 📎 in UI and attach, or POST `/vision` |
+| **CLI** | `CLI=1 ./bodhi-hub` |
+| **SSE stream** | `curl -N http://localhost:8080/events` |
+
+Full guide: `curl http://localhost:8080/guide`
+
+---
+
+### All Extended Environment Variables
+
+```bash
+# Tunnel
+TUNNEL=cloudflared|ngrok|off
+
+# MCP tools
+MCP_FILESYSTEM=1
+MCP_SHELL=1
+MCP_FETCH=1
+
+# Voice STT
+WHISPER_BIN=/path/to/whisper-cli
+WHISPER_MODEL=/path/to/ggml-base.en.bin
+
+# Voice TTS
+PIPER_BIN=/path/to/piper
+PIPER_MODEL=/path/to/en_US-amy-medium.onnx
+
+# Vision
+VISION_MODEL=llava
+
+# Reasoning
+REASONING_MODE=chain-of-thought
+```
+
+---
 
 - No API keys required — Ollama is fully local
 - `.env` files and memory state are git-ignored
