@@ -23,10 +23,12 @@ web/dist/
 agents/priya-hub/priya-hub
 agents/priya-hub/priya-hub-*
 agents/priya-hub/bodhi-hub
+agents/priya-hub/skyagents-hub
 agents/priya-hub/dist/
 agents/priya-app/priya-app
 agents/priya-app/priya-app-*
 agents/priya-app/bodhi-app
+agents/priya-app/skybot-app
 agents/priya-app/dist/
 agents/priya-bot/priya-bot
 agents/mobile-assistant-bot/mobile-assistant-bot
