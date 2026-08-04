@@ -36,9 +36,13 @@ func NewOllamaClient() *OllamaClient {
 	if base == "" {
 		base = "http://localhost:11434"
 	}
+	model := os.Getenv("OLLAMA_MODEL")
+	if model == "" {
+		model = "llama3.2"
+	}
 	return &OllamaClient{
 		baseURL: strings.TrimRight(base, "/"),
-		Model:   "llama3.2",
+		Model:   model,
 		http:    &http.Client{Timeout: 120 * time.Second},
 	}
 }
