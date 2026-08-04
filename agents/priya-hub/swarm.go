@@ -78,11 +78,41 @@ func (a *swarmAgent) process(ctx context.Context, input string, systemTask bool)
 	if sysAppend != "" {
 		systemPrompt += "\n\n" + sysAppend
 	}
+	// Inject MCP tool descriptions if any tools are enabled
+	if tp := ToolsSystemPrompt(); tp != "" {
+		systemPrompt += tp
+	}
 
 	var response string
 
+	// ── Reasoning pre-pass (chain-of-thought) ────────────────────────────────
+	if !systemTask && ReasoningModeActive() && a.ollama != nil {
+		history := a.mem.RecentHistory(8)
+		var hb strings.Builder
+		for _, t := range history {
+			if t.Role == "user" {
+				hb.WriteString("User: " + t.Content + "\n")
+			} else {
+				hb.WriteString("Assistant: " + t.Content + "\n")
+			}
+		}
+		prompt := input
+		if hb.Len() > 0 {
+			prompt = "Recent conversation:\n" + hb.String() + "\nUser: " + input
+		}
+		answer, trace := ApplyReasoning(a.ollama, systemPrompt, prompt)
+		if answer != "" {
+			response = answer
+			if trace != "" {
+				// Store trace for trainer learning; append collapsible block to answer
+				a.mem.Learn("reasoning_trace_"+a.id, trace[:min(len(trace), 500)])
+				response += FormatReasoningTrace(trace)
+			}
+		}
+	}
+
 	// ── Ollama (on-device LLM) ────────────────────────────────────────────────
-	if a.ollama != nil {
+	if response == "" && a.ollama != nil {
 		history := a.mem.RecentHistory(8)
 		var hb strings.Builder
 		for _, t := range history {
@@ -100,6 +130,23 @@ func (a *swarmAgent) process(ctx context.Context, input string, systemTask bool)
 		response, err = a.ollama.Generate(genCtx, systemPrompt, prompt)
 		if err != nil {
 			log.Printf("[%s] ollama error: %v — using template", a.id, err)
+		}
+
+		// ── MCP tool execution loop ───────────────────────────────────────────
+		// If the LLM called a tool, execute it and re-prompt (up to 3 rounds).
+		for i := 0; i < 3 && err == nil; i++ {
+			augmented, called := ProcessToolCalls(response)
+			if !called {
+				break
+			}
+			// Re-prompt with tool result appended to the prompt
+			rePrompt := prompt + "\n\nAssistant (mid-generation):\n" + augmented
+			response, err = a.ollama.Generate(genCtx, systemPrompt, rePrompt)
+			if err != nil {
+				log.Printf("[%s] ollama tool re-prompt error: %v", a.id, err)
+				response = augmented // return what we have
+				break
+			}
 		}
 	}
 

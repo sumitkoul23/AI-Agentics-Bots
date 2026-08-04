@@ -38,6 +38,11 @@ func main() {
 	}
 
 	mem := NewMemory(".bodhi-memory.json")
+
+	// Load NLP training corpora before starting the swarm so all agents
+	// benefit from the injected domain knowledge from the first request.
+	LoadNLPTrainingData(mem)
+
 	registry := NewRegistry(mem)
 	swarm := NewSwarm(registry, mem)
 	router := NewRouter(registry, swarm)
@@ -48,7 +53,27 @@ func main() {
 	defer swarm.Stop()
 	defer mesh.Stop()
 
-	log.Printf("Bodhi Hub — %d agents | port %s | mesh discovery active", len(swarm.agents), port)
+	// Start IP tunnel (cloudflared / ngrok) if configured
+	tunnel := StartTunnel(port)
+	if tunnel != nil {
+		defer tunnel.Stop()
+	}
+
+	log.Printf("SkyAgents-hub — %d agents | port %s | mesh discovery active", len(swarm.agents), port)
+	if model := os.Getenv("OLLAMA_MODEL"); model != "" {
+		log.Printf("LLM model  : %s (OLLAMA_MODEL override)", model)
+	}
+	if ReasoningModeActive() {
+		log.Printf("Reasoning  : %s", os.Getenv("REASONING_MODE"))
+	}
+	tools := EnabledTools()
+	if len(tools) > 0 {
+		names := make([]string, len(tools))
+		for i, t := range tools {
+			names[i] = t.Name
+		}
+		log.Printf("MCP tools  : %s", strings.Join(names, ", "))
+	}
 
 	if os.Getenv("CLI") == "1" {
 		runCLI(router, registry, mem, swarm, mesh)
@@ -57,9 +82,17 @@ func main() {
 
 	mux := http.NewServeMux()
 	registerRoutes(mux, router, registry, mem, swarm, mesh)
+	registerExtRoutes(mux, swarm, tunnel)
+
+	// NLP training endpoint — enabled when NLP_TRAIN_ENDPOINT=1
+	RegisterTrainEndpoint(mux, mem)
 
 	log.Printf("UI:        http://localhost:%s", port)
 	log.Printf("API:       POST /chat  GET /status /agents /memory /mesh /peers")
+	log.Printf("Extended:  POST /transcribe /vision  GET /speak /voice/status /tunnel /tunnel/qr /capabilities")
+	if os.Getenv("NLP_TRAIN_ENDPOINT") == "1" {
+		log.Printf("Training:  POST /train  GET /train/status")
+	}
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
