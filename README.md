@@ -1,3 +1,7 @@
+<div align="center">
+
+<img src=".github/assets/banner.svg" alt="Bodhi — Autonomous AI Swarm" width="100%"/>
+
 # Bodhi — Autonomous AI Swarm
 
 [![Release](https://img.shields.io/github/v/release/sumitkoul23/AI-Agentics-Bots?label=latest%20release&color=brightgreen)](https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest)
@@ -5,7 +9,12 @@
 [![Go](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://go.dev)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Android%20%7C%20iOS-lightgrey)](https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest)
+[![Stars](https://img.shields.io/github/stars/sumitkoul23/AI-Agentics-Bots?style=social)](https://github.com/sumitkoul23/AI-Agentics-Bots/stargazers)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+**If Bodhi saves you time or money, a ⭐ star helps others find it — thank you!**
+
+</div>
 
 ---
 
@@ -17,6 +26,29 @@
 bodhi-hub  →  12 specialist agents  →  SSE push notifications
 bodhi-app  →  mobile chat UI (PWA — installs as Android / iOS app)
 ```
+
+---
+
+## ⚡ Quick Start (macOS / Linux)
+
+```bash
+# 1. Install Ollama and pull a model
+brew install ollama && ollama pull llama3.2   # macOS
+# curl -fsSL https://ollama.ai/install.sh | sh && ollama pull llama3.2  # Linux
+
+# 2. Download Bodhi (Apple Silicon — swap arm64→amd64 for Intel/Linux)
+curl -L https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest/download/bodhi-hub-macos-arm64.tar.gz | tar xz
+curl -L https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest/download/bodhi-app-macos-arm64.tar.gz | tar xz
+
+# 3. Run
+ollama serve & ./bodhi-hub-macos-arm64 & ./bodhi-app-macos-arm64
+
+# 4. Open
+open http://localhost:9090
+```
+
+> Windows? Download [`bodhi-windows-amd64.zip`](https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest/download/bodhi-windows-amd64.zip), extract, and run `start-bodhi.bat`.
+> Android? See the [Android section](#android-via-termux) below.
 
 ---
 
@@ -49,6 +81,7 @@ bodhi-app  →  mobile chat UI (PWA — installs as Android / iOS app)
 - [Architecture](#architecture)
 - [Build from Source](#build-from-source)
 - [Chain Deployment Studio](#chain-deployment-studio)
+- [Community & Support](#community--support)
 - [Contributing](CONTRIBUTING.md)
 - [Security](SECURITY.md)
 - [Safety](#safety)
@@ -428,3 +461,37 @@ See [`web/README.md`](web/README.md) for full details.
 - `.env` files and memory state are git-ignored
 - Finance / trading: advisory only — no live execution by default
 - SSE `/events` has no wildcard CORS — safe from cross-origin reads
+
+---
+
+## Community & Support
+
+| Channel | Link |
+|---------|------|
+| 🐛 Bug reports | [Open an issue](.github/ISSUE_TEMPLATE/bug_report.md) |
+| 💡 Feature requests | [Request a feature](.github/ISSUE_TEMPLATE/feature_request.md) |
+| 🔒 Security issues | [SECURITY.md](SECURITY.md) — private disclosure |
+| 🤝 Contributing | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| ⭐ Star the repo | [Click here to star](https://github.com/sumitkoul23/AI-Agentics-Bots/stargazers) — it helps other developers discover Bodhi |
+
+---
+
+## Related Projects & Keywords
+
+<!-- SEO: these keywords help people discover Bodhi via GitHub search and web search engines -->
+
+Bodhi is an open-source **local AI assistant** and **autonomous AI agent framework** built in Go. It is designed for users who want a **private AI**, **offline AI chatbot**, **no-cloud AI**, or **self-hosted LLM** experience on macOS, Windows, Linux, Android, and iOS.
+
+**Key technologies:** [Ollama](https://ollama.ai) · Go (Golang) · SSE (Server-Sent Events) · PWA (Progressive Web App) · Cosmos SDK · CometBFT
+
+**Use cases:** AI personal assistant · crypto trading assistant · code review bot · health coaching AI · social media content AI · freelance job assistant · research agent · news summarizer · portfolio manager · task organiser
+
+**Similar projects:** [Open WebUI](https://github.com/open-webui/open-webui) · [LocalAI](https://github.com/mudler/LocalAI) · [Ollama](https://github.com/ollama/ollama) · [Jan](https://github.com/janhq/jan) · [LM Studio](https://lmstudio.ai)
+
+---
+
+<div align="center">
+
+Made with ❤️ · [MIT License](LICENSE) · [⭐ Star on GitHub](https://github.com/sumitkoul23/AI-Agentics-Bots)
+
+</div>
