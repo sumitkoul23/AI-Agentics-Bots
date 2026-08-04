@@ -1,11 +1,57 @@
 # Bodhi — Autonomous AI Swarm
 
-On-device self-learning AI assistant. 12 specialist agents. No cloud. No API keys. Runs entirely on your device using [Ollama](https://ollama.ai).
+[![Release](https://img.shields.io/github/v/release/sumitkoul23/AI-Agentics-Bots?label=latest%20release&color=brightgreen)](https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest)
+[![Build](https://img.shields.io/github/actions/workflow/status/sumitkoul23/AI-Agentics-Bots/release.yml?label=build)](https://github.com/sumitkoul23/AI-Agentics-Bots/actions/workflows/release.yml)
+[![Go](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://go.dev)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Android%20%7C%20iOS-lightgrey)](https://github.com/sumitkoul23/AI-Agentics-Bots/releases/latest)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+---
+
+## What is Bodhi?
+
+**Bodhi** is an on-device autonomous AI swarm — 12 specialist agents that run entirely on your hardware using [Ollama](https://ollama.ai). There is no cloud dependency, no API key, and no data ever leaves your machine. The swarm self-improves over time: every 8 conversations it evaluates its own output, extracts new facts, and raises per-agent confidence scores. Whether you need crypto market analysis, code review, content drafting, or health coaching, Bodhi routes your request to the best specialist automatically.
 
 ```
 bodhi-hub  →  12 specialist agents  →  SSE push notifications
 bodhi-app  →  mobile chat UI (PWA — installs as Android / iOS app)
 ```
+
+---
+
+## Why Bodhi?
+
+| | **Bodhi** | Cloud AI (ChatGPT / Claude) |
+|---|---|---|
+| **Privacy** | 100% local — data never leaves device | Sent to third-party servers |
+| **Cost** | Free forever | Subscription or pay-per-token |
+| **Internet** | Not required | Required |
+| **Latency** | Device-speed (no round-trip) | Network-dependent |
+| **Custom memory** | Learns your preferences permanently | Resets each session |
+| **Background agents** | Push insights every 4–12 h | Manual only |
+| **Offline** | ✅ Fully offline capable | ❌ |
+
+---
+
+## Table of Contents
+
+- [Download](#download)
+- [Installation by Platform](#installation-by-platform)
+  - [macOS](#macos)
+  - [Windows](#windows)
+  - [Linux x86\_64](#linux-x86_64--ubuntu-amd64)
+  - [Linux ARM64](#linux-arm64--raspberry-pi--arm-server--ubuntu-arm)
+  - [Android](#android-via-termux)
+  - [iOS](#ios)
+- [CLI Reference](#cli-reference)
+- [Agents](#agents)
+- [Architecture](#architecture)
+- [Build from Source](#build-from-source)
+- [Chain Deployment Studio](#chain-deployment-studio)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [Safety](#safety)
 
 ---
 
