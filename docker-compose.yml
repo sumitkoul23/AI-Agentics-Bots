@@ -65,6 +65,80 @@ services:
       retries: 3
       start_period: 10s
 
+  # ── SkyAgents-hub (Bodhi) — Go AI swarm with IP tunnel + LLM + NLP training ──
+  priya-hub:
+    build:
+      context: agents/priya-hub
+      dockerfile: Dockerfile
+    image: priya-hub:latest
+    container_name: priya-hub
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # NLP training corpora (all *.jsonl files are loaded on startup)
+      - ./training:/training:ro
+      # Persistent agent memory (learned facts, preferences, training score)
+      - hub_data:/data
+    environment:
+      - PORT=8080
+      # ── IP Tunnel — set to "cloudflared" to expose hub over the internet ──
+      # cloudflared is pre-installed in the image; no account needed.
+      # The public URL + QR code will be logged on startup and served at GET /tunnel/qr
+      - TUNNEL=${TUNNEL:-cloudflared}
+      # ── LLM attachment ────────────────────────────────────────────────────
+      # Points at the ollama sidecar defined below.
+      # Override OLLAMA_MODEL to pin a specific model (e.g. mistral, phi3:mini).
+      # Leave blank to let the hub auto-detect the best available model.
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://ollama:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-}
+      # ── NLP training data pipeline ────────────────────────────────────────
+      # /training is mounted read-only above; all *.jsonl files are ingested
+      # on startup to pre-seed agent memory with domain knowledge.
+      - NLP_TRAIN_DIR=/training
+      # Expose POST /train endpoint for remote training pushes over tunnel
+      - NLP_TRAIN_ENDPOINT=${NLP_TRAIN_ENDPOINT:-1}
+      # ── Reasoning mode ────────────────────────────────────────────────────
+      - REASONING_MODE=${REASONING_MODE:-chain-of-thought}
+      # ── MCP tools (optional) ─────────────────────────────────────────────
+      - MCP_FETCH=${MCP_FETCH:-}
+      - MCP_FILESYSTEM=${MCP_FILESYSTEM:-}
+      - MCP_SHELL=${MCP_SHELL:-}
+      # ── Vision (optional — requires a llava-compatible Ollama model) ─────
+      - VISION_MODEL=${VISION_MODEL:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      ollama:
+        condition: service_started
+
+  # ── Ollama — local LLM inference engine ──────────────────────────────────────
+  # Pulls and serves any Ollama model (llama3.2, mistral, phi3, gemma2, etc.)
+  # To pull a model: docker compose exec ollama ollama pull llama3.2
+  # GPU acceleration: add "deploy: resources: reservations: devices: [{driver: nvidia, ...}]"
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # Uncomment the section below to enable NVIDIA GPU acceleration:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
 volumes:
   agentic_data:
   studio_data:
+  hub_data:
+  ollama_data:

@@ -10,6 +10,8 @@ Everything you need to run the full stack, from local development to production.
 |---|---|---|
 | **Agentic OS Gateway** | `8001` | Python FastAPI — agent kernel, tools, browser, memory |
 | **Chain Deployment Studio** | `8000` | Node.js — SKYMETRIC chain wizard + live Cosmos node proxy |
+| **SkyAgents-hub (Bodhi)** | `8080` | Go AI swarm — 35 specialist agents, IP tunnel, LLM, NLP training |
+| **Ollama** | `11434` | Local LLM inference — llama3.2, mistral, phi3, gemma2, etc. |
 
 ---
 
@@ -155,6 +157,96 @@ curl -X POST http://localhost:8001/tools/execute \
 
 ---
 
+## SkyAgents-hub — IP tunnel · LLM · NLP training
+
+The `priya-hub` service is the Bodhi Go AI swarm. It starts automatically with
+`docker compose up` and wires together three key capabilities:
+
+### 1. LLM model attachment (Ollama)
+
+The hub connects to the `ollama` sidecar at `http://ollama:11434` and
+auto-selects the best available model (llama3.2 → llama3.1 → mistral → phi3 …).
+
+**Pull a model before chatting:**
+
+```bash
+# Pull llama3.2 (recommended — fast, runs on 8 GB RAM)
+docker compose exec ollama ollama pull llama3.2
+
+# Or a smaller model for low-memory machines
+docker compose exec ollama ollama pull phi3:mini
+
+# Or a vision-capable model (enables /vision endpoint)
+docker compose exec ollama ollama pull llava
+```
+
+Override the model via env: `OLLAMA_MODEL=mistral docker compose up priya-hub`
+
+### 2. IP tunneling (cloudflared)
+
+`cloudflared` is pre-installed in the image. Set `TUNNEL=cloudflared` (the
+default) and on startup the hub prints a public `*.trycloudflare.com` URL and
+a scannable QR code:
+
+```bash
+# View the public URL
+curl http://localhost:8080/tunnel
+
+# Scan the QR SVG in a browser
+open http://localhost:8080/tunnel/qr
+
+# Or disable the tunnel
+TUNNEL=off docker compose up priya-hub
+```
+
+Any device on the internet can then reach your hub at the public URL for:
+- Conversations (`POST <url>/chat`)
+- Remote NLP training pushes (`POST <url>/train`)
+- Mobile PWA access (add to home screen)
+
+### 3. NLP training data pipeline
+
+The `training/` directory is mounted read-only into the container at `/training`.
+All `*.jsonl` files are loaded on startup to pre-seed agent memory:
+
+| File | Domain |
+|---|---|
+| `training/code-devops.jsonl` | Go, Python, TypeScript, API design, DevOps |
+| `training/finance-trading.jsonl` | Perpetual markets, funding rates, trade plans |
+| `training/general-knowledge.jsonl` | Research, health, sleep, nutrition |
+| `training/marketing-comms.jsonl` | LinkedIn, cold email, negotiation, virality |
+
+**Add your own training data:**
+
+```jsonl
+{"agent":"code","key":"my-pattern","value":"Always use X when doing Y because Z."}
+{"agent":"research","key":"my-domain","value":"Key insight about my domain."}
+{"agent":"","key":"global-fact","value":"Shared across all agents."}
+```
+
+Drop any `*.jsonl` file in `training/` and restart: `docker compose restart priya-hub`
+
+**Push training data live over the tunnel:**
+
+```bash
+# Single record
+curl -X POST http://localhost:8080/train \
+  -H 'Content-Type: application/json' \
+  -d '{"agent":"code","key":"my-tip","value":"Always validate inputs."}'
+
+# JSONL batch
+curl -X POST http://localhost:8080/train \
+  --data-binary @training/code-devops.jsonl
+
+# Check training status
+curl http://localhost:8080/train/status
+```
+
+The `Learner` also extracts facts from every conversation automatically —
+the hub gains experience with every interaction, even without manual training pushes.
+
+---
+
 ## Architecture
 
 ```
@@ -167,6 +259,21 @@ AI-Agentics-Bots/
 │   ├── gateway/main.py       ←   FastAPI REST gateway
 │   ├── agent.py              ←   BaseAgent (LLM loop)
 │   └── Dockerfile
+├── agents/priya-hub/         ← SkyAgents-hub / Bodhi (Go)
+│   ├── main.go               ←   HTTP server, CLI, routing
+│   ├── swarm.go              ←   35-agent swarm orchestration
+│   ├── ollama.go             ←   LLM model attachment (Ollama API)
+│   ├── tunnel.go             ←   IP tunneling (cloudflared / ngrok)
+│   ├── nlp_training.go       ←   NLP training data pipeline + /train endpoint
+│   ├── learner.go            ←   Continuous learning from conversations
+│   ├── memory.go             ←   Persistent agent memory
+│   ├── reasoning.go          ←   Chain-of-thought reasoning mode
+│   └── Dockerfile
+├── training/                 ← NLP training corpora (JSONL)
+│   ├── code-devops.jsonl
+│   ├── finance-trading.jsonl
+│   ├── general-knowledge.jsonl
+│   └── marketing-comms.jsonl
 ├── server/                   ← Chain Deployment Studio (Node.js)
 ├── web/                      ← Static frontend
 ├── genesis/                  ← SKYMETRIC chain (Cosmos SDK / CosmWasm)
@@ -210,3 +317,13 @@ CI runs automatically on every push via GitHub Actions.
 | `CHAIN_REST` | studio | No | Cosmos Hub public | Cosmos REST endpoint |
 | `CHAIN_BECH32` | studio | No | `agentic` | Address prefix |
 | `CHAIN_DENOM` | studio | No | `usky` | Native coin denom |
+| `TUNNEL` | priya-hub | No | `cloudflared` | IP tunnel provider (`cloudflared`/`ngrok`/`off`) |
+| `OLLAMA_HOST` | priya-hub | No | `http://ollama:11434` | Ollama API endpoint |
+| `OLLAMA_MODEL` | priya-hub | No | auto-detect | LLM model name (e.g. `llama3.2`, `mistral`) |
+| `NLP_TRAIN_DIR` | priya-hub | No | `/training` | Directory of `*.jsonl` training corpora |
+| `NLP_TRAIN_ENDPOINT` | priya-hub | No | `1` | Enable `POST /train` live training endpoint |
+| `REASONING_MODE` | priya-hub | No | `chain-of-thought` | Enable reasoning traces |
+| `VISION_MODEL` | priya-hub | No | — | Ollama vision model (`llava`, `moondream`) |
+| `MCP_SHELL` | priya-hub | No | — | Set `1` to allow agents to run shell commands |
+| `MCP_FILESYSTEM` | priya-hub | No | — | Set `1` to allow agents to read/write files |
+| `MCP_FETCH` | priya-hub | No | — | Set `1` to allow agents to fetch URLs |
